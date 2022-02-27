@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Homework_1</string>
+    <string name="main_contact_init">Здесь будет ваш список контактов</string>
+    <string name="main_contact_empty">Список контактов пуст, добавьте контакты на телефон и повторите</string>
+    <string name="main_next_button">Далее</string>
+    <string name="start_service">Поиск контактов</string>
+    <string name="second_permission_error">Пока вы не предоставите разрешение, мы не можем отображать имена</string>
+</resources>
