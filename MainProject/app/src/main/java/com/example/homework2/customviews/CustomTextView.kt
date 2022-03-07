@@ -1,0 +1,98 @@
+package com.example.homework2.customviews
+
+import android.content.Context
+import android.graphics.*
+import android.graphics.drawable.shapes.RoundRectShape
+import android.text.StaticLayout
+import android.text.TextPaint
+import android.util.AttributeSet
+import android.view.View
+import androidx.core.view.marginBottom
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
+import androidx.core.view.marginTop
+import com.example.homework2.R
+
+class CustomTextView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : View(context, attrs) {
+
+    private val textPaint = TextPaint().apply {
+        isAntiAlias = true
+    }
+
+    var text = ""
+    var emoji: String = "\uD83E\uDD70"
+    var emojiNumber: Int = 0
+
+    private val tempBound = Rect()
+    private val tempTextPoint = PointF()
+
+    var sumWidth = 0
+    var sumHeight = 0
+
+
+
+    init {
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CustomTextView)
+
+        textPaint.textSize =
+            typedArray.getDimension(R.styleable.CustomTextView_customTextSize, 50f)
+        textPaint.color =
+            typedArray.getColor(R.styleable.CustomTextView_customTextColor, Color.BLACK)
+
+        typedArray.recycle()
+    }
+
+    fun setEmojiOnView(emo: String) {
+        emoji = emo
+        requestLayout()
+    }
+
+    fun setEmojiNumberOnView(number: Int) {
+        emojiNumber = number
+        requestLayout()
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        text = "$emoji $emojiNumber"
+        textPaint.getTextBounds(text, 0, text.length, tempBound)
+
+        val textWidth = tempBound.width()
+        val textHeight = tempBound.height()
+
+        sumWidth = textWidth + paddingLeft + paddingRight
+        sumHeight = textHeight + paddingTop + paddingBottom
+
+        val resultWidth = resolveSize(sumWidth, widthMeasureSpec)
+        val resultHeight = resolveSize(sumHeight, heightMeasureSpec)
+
+        setMeasuredDimension(resultWidth, resultHeight)
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        tempTextPoint.y = h / 2f + tempBound.height() / 2f - textPaint.descent()
+        tempTextPoint.x = w / 2f - tempBound.width() / 2f
+    }
+
+
+    override fun onDraw(canvas: Canvas) {
+        canvas.drawText(text, tempTextPoint.x, tempTextPoint.y, textPaint)
+
+    }
+
+    override fun onCreateDrawableState(extraSpace: Int): IntArray {
+        val drawableState = super.onCreateDrawableState(extraSpace + SUPPORTED_DRAWABLE_STATE.size)
+        if (isSelected) {
+            mergeDrawableStates(drawableState, SUPPORTED_DRAWABLE_STATE)
+        }
+        return drawableState
+    }
+
+    companion object {
+        private val SUPPORTED_DRAWABLE_STATE = intArrayOf(android.R.attr.state_selected)
+    }
+}
+
+

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/avatar_image_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="12dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/message_title_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="8dp"
+        android:text="This is title text"
+        android:textColor="@color/teal_700"
+        android:textSize="22sp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/message_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:text="Если бы мы знали что это такое, мы не знаем что это такое, очень страшно"
+        android:textColor="@color/white"
+        android:textSize="22sp" />
+
+    <com.example.homework2.customviews.CustomFlexBox
+        android:id="@+id/custom_flex_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_main"
+        android:padding="0dp"
+        android:theme="@style/CustomTextView">
+
+        <com.example.homework2.customviews.CustomTextView
+            android:id="@+id/emoji_view_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.example.homework2.customviews.CustomTextView
+            android:id="@+id/emoji_view_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.example.homework2.customviews.CustomTextView
+            android:id="@+id/emoji_view_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.example.homework2.customviews.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.example.homework2.customviews.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add" />
+
+    </com.example.homework2.customviews.CustomFlexBox>
+
+
+</merge>
