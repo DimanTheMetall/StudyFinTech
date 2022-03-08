@@ -4,12 +4,14 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk rootProject.compileSdkVersion
+
+
 
     defaultConfig {
         applicationId "com.example.homework2"
         minSdk rootProject.minSdkVersion
-        targetSdk 31
+        targetSdk rootProject.targetSdkVersion
         versionCode 1
         versionName "1.0"
 

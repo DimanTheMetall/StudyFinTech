@@ -1,38 +1,35 @@
 package com.example.homework2.customviews
 
 import android.content.Context
-import android.graphics.*
-import android.graphics.drawable.shapes.RoundRectShape
-import android.text.StaticLayout
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.PointF
+import android.graphics.Rect
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.view.marginBottom
-import androidx.core.view.marginLeft
-import androidx.core.view.marginRight
-import androidx.core.view.marginTop
 import com.example.homework2.R
 
 class CustomTextView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null
-) : View(context, attrs) {
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : View(context, attrs, defStyleAttr, defStyleRes) {
 
     private val textPaint = TextPaint().apply {
         isAntiAlias = true
     }
 
-    var text = ""
-    var emoji: String = "\uD83E\uDD70"
-    var emojiNumber: Int = 0
+    private var text = ""
+    private var emoji: String = "\uD83E\uDD70"
+    private var emojiNumber: Int = 0
 
     private val tempBound = Rect()
     private val tempTextPoint = PointF()
 
-    var sumWidth = 0
-    var sumHeight = 0
-
-
+    private var sumWidth = 0
+    private var sumHeight = 0
 
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CustomTextView)

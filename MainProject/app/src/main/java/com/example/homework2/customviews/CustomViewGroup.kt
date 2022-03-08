@@ -1,35 +1,55 @@
 package com.example.homework2.customviews
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
-import androidx.core.view.*
+import androidx.core.view.marginBottom
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
+import androidx.core.view.marginTop
 import com.example.homework2.R
-import kotlin.math.max
 
 class CustomViewGroup @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
 ) : ViewGroup(context, attrs) {
 
-    private var imageView = getChildAt(0)
-    private var messageTitle = getChildAt(1)
-    private var message = getChildAt(2)
-    private var flexBox = getChildAt(3)
+    private val imageView by lazy { getChildAt(0) }
+    private val messageTitle by lazy { getChildAt(1) }
+    private val message by lazy { getChildAt(2) }
+    private val flexBox by lazy { getChildAt(3) as CustomFlexBox }
 
 
     init {
         inflate(context, R.layout.custom_view_group_layout, this)
     }
 
+
+    fun addEmoji(emoji: String, number: Int) {
+        flexBox.addView(CustomTextView(ContextThemeWrapper(context, R.style.CustomTextView)).apply {
+            layoutParams =
+                MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+                    setMargins(
+                        context.dpToPx(0),
+                        context.dpToPx(6),
+                        context.dpToPx(10),
+                        context.dpToPx(0)
+                    )
+
+                }
+            setOnClickListener { view ->
+                view.isSelected = !view.isSelected
+            }
+            setEmojiNumberOnView(number)
+            setEmojiOnView(emoji)
+        }, flexBox.childCount - 1)
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        indexAllChild()
 
         measureChildWithMargins(imageView, widthMeasureSpec, 0, heightMeasureSpec, 0)
         measureChildWithMargins(
@@ -102,7 +122,7 @@ class CustomViewGroup @JvmOverloads constructor(
     }
 
     private val paintRectRound = Paint().apply {
-       color =  ContextCompat.getColor(context, R.color.unselected)
+        color = ContextCompat.getColor(context, R.color.unselected)
     }
 
 
@@ -123,29 +143,12 @@ class CustomViewGroup @JvmOverloads constructor(
     }
 
     override fun checkLayoutParams(p: LayoutParams?): Boolean {
-        return p is MarginLayoutParams
+        return p is ViewGroup.MarginLayoutParams
     }
 
     override fun generateLayoutParams(p: LayoutParams?): LayoutParams {
-        return MarginLayoutParams(p)
+        return ViewGroup.MarginLayoutParams(p)
     }
 
-    val View.measuredWidthWithMargins: Int
-        get() {
-            val params = layoutParams as MarginLayoutParams
-            return measuredWidth + params.rightMargin + params.leftMargin
-        }
-    val View.measuredHeightWithMargins: Int
-        get() {
-            val params = layoutParams as MarginLayoutParams
-            return measuredHeight + params.topMargin + params.bottomMargin
-        }
-
-    private fun indexAllChild() {
-        imageView = getChildAt(0)
-        messageTitle = getChildAt(1)
-        message = getChildAt(2)
-        flexBox = getChildAt(3)
-    }
 
 }

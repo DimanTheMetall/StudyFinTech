@@ -2,10 +2,8 @@ package com.example.homework2.customviews
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.marginLeft
-import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 
 class CustomFlexBox @JvmOverloads constructor(
@@ -31,7 +29,7 @@ class CustomFlexBox @JvmOverloads constructor(
                 totalHeight
             )
             if (totalHeight == 0) {
-                totalHeight=child.measuredHeightWithMargins
+                totalHeight = child.measuredHeightWithMargins
             }
 
             usedWidth += child.measuredWidthWithMargins
@@ -54,8 +52,8 @@ class CustomFlexBox @JvmOverloads constructor(
             val child = getChildAt(i)
 
             child.layout(
-                usedWidth+child.marginLeft,
-                currentHeight+child.marginTop,
+                usedWidth + child.marginLeft,
+                currentHeight + child.marginTop,
                 usedWidth + child.measuredWidth,
                 currentHeight + child.measuredHeight
             )
@@ -81,15 +79,5 @@ class CustomFlexBox @JvmOverloads constructor(
         return ViewGroup.MarginLayoutParams(p)
     }
 
-    val View.measuredWidthWithMargins: Int
-        get() {
-            val params = layoutParams as MarginLayoutParams
-            return measuredWidth + params.rightMargin + params.leftMargin
-        }
-    val View.measuredHeightWithMargins: Int
-        get() {
-            val params = layoutParams as MarginLayoutParams
-            return measuredHeight + params.topMargin + params.bottomMargin
-        }
 
 }
