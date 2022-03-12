@@ -91,5 +91,3 @@ class CustomTextView @JvmOverloads constructor(
         private val SUPPORTED_DRAWABLE_STATE = intArrayOf(android.R.attr.state_selected)
     }
 }
-
-

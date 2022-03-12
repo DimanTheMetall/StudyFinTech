@@ -79,5 +79,4 @@ class CustomFlexBox @JvmOverloads constructor(
         return ViewGroup.MarginLayoutParams(p)
     }
 
-
 }

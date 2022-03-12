@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -7,16 +8,16 @@
         android:id="@+id/avatar_image_view"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginRight="12dp"
+        android:layout_marginEnd="12dp"
         android:src="@mipmap/ic_launcher" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/message_title_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="14dp"
+        android:layout_marginStart="14dp"
         android:layout_marginTop="8dp"
-        android:text="This is title text"
+        tools:text="Title text"
         android:textColor="@color/teal_700"
         android:textSize="22sp" />
 
@@ -25,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="14dp"
-        android:text="Если бы мы знали что это такое, мы не знаем что это такое, очень страшно"
+        tools:text="Если бы мы знали что это такое, мы не знаем что это такое, очень страшно"
         android:textColor="@color/white"
         android:textSize="22sp" />
 
@@ -34,9 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/bg_main"
-        android:padding="0dp"
-        >
-
+        android:padding="0dp">
 
         <androidx.appcompat.widget.AppCompatImageView
             style="@style/CustomTextView"
@@ -46,6 +45,5 @@
             android:padding="10dp" />
 
     </com.example.homework2.customviews.CustomFlexBox>
-
 
 </merge>

@@ -20,7 +20,6 @@ fun Context.dpToPx(dp: Float): Float {
     return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
 }
 
-
 fun Context.dpToPx(dp: Int): Int {
     return this.dpToPx(dp.toFloat()).toInt()
 }

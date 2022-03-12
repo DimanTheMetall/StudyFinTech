@@ -23,11 +23,9 @@ class CustomViewGroup @JvmOverloads constructor(
     private val message by lazy { getChildAt(2) }
     private val flexBox by lazy { getChildAt(3) as CustomFlexBox }
 
-
     init {
         inflate(context, R.layout.custom_view_group_layout, this)
     }
-
 
     fun addEmoji(emoji: String, number: Int) {
         flexBox.addView(CustomTextView(ContextThemeWrapper(context, R.style.CustomTextView)).apply {
@@ -39,7 +37,6 @@ class CustomViewGroup @JvmOverloads constructor(
                         context.dpToPx(10),
                         context.dpToPx(0)
                     )
-
                 }
             setOnClickListener { view ->
                 view.isSelected = !view.isSelected
@@ -90,7 +87,6 @@ class CustomViewGroup @JvmOverloads constructor(
 
     }
 
-
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
 
         imageView.layout(
@@ -125,7 +121,6 @@ class CustomViewGroup @JvmOverloads constructor(
         color = ContextCompat.getColor(context, R.color.unselected)
     }
 
-
     override fun dispatchDraw(canvas: Canvas?) {
         canvas?.drawRoundRect(
             imageView.right.toFloat(),
@@ -149,6 +144,5 @@ class CustomViewGroup @JvmOverloads constructor(
     override fun generateLayoutParams(p: LayoutParams?): LayoutParams {
         return ViewGroup.MarginLayoutParams(p)
     }
-
 
 }
