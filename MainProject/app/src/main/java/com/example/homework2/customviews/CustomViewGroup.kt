@@ -23,6 +23,8 @@ class CustomViewGroup @JvmOverloads constructor(
     private val message by lazy { getChildAt(2) }
     private val flexBox by lazy { getChildAt(3) as CustomFlexBox }
 
+    private var isYours: Boolean = true
+
     init {
         inflate(context, R.layout.custom_view_group_layout, this)
     }
@@ -47,6 +49,7 @@ class CustomViewGroup @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        println("AAAA On MEASURED")
 
         measureChildWithMargins(imageView, widthMeasureSpec, 0, heightMeasureSpec, 0)
         measureChildWithMargins(
@@ -117,8 +120,14 @@ class CustomViewGroup @JvmOverloads constructor(
 
     }
 
-    private val paintRectRound = Paint().apply {
+    private var paintRectRound = Paint().apply {
         color = ContextCompat.getColor(context, R.color.unselected)
+    }
+    fun setRectangleColor (colorId: Int){
+        paintRectRound = Paint().apply {
+            color = ContextCompat.getColor(context, colorId)
+            requestLayout()
+        }
     }
 
     override fun dispatchDraw(canvas: Canvas?) {
