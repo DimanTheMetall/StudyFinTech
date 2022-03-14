@@ -1,9 +1,12 @@
 package com.example.homework2.customviews
 
+import android.content.Context
 import android.view.Gravity
+import android.view.Gravity.RIGHT
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.core.view.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.Message
@@ -12,16 +15,27 @@ import com.example.homework2.databinding.CustomViewGroupLayoutBinding
 
 class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageHolder>() {
     private val messageList = ArrayList<Message>()
-    lateinit var view: CustomViewGroup
 
-    class MessageHolder(_item: ViewGroup) : RecyclerView.ViewHolder(_item) {
-        private val binding = CustomViewGroupLayoutBinding.bind(_item)
+
+    class MessageHolder(private val customViewGroup: CustomViewGroup) :
+        RecyclerView.ViewHolder(customViewGroup) {
+        private val binding = CustomViewGroupLayoutBinding.bind(customViewGroup)
 
         fun bind(item: Message) = with(binding) {
             messageTextView.text = item.textMessage
             messageTitleTextView.text = item.titleMessage
             avatarImageView.setImageResource(item.imageId)
 
+            when (item.isYou) {
+                true -> {
+                    customViewGroup.setRectangleColor(R.color.teal_700)
+                    customViewGroup.setYoursMessage(true)
+                }
+                false -> {
+                    customViewGroup.setRectangleColor(R.color.unselected)
+                    customViewGroup.setYoursMessage(false)
+                }
+            }
             println("AAAA bind")
 
             if (item.isYou) {
@@ -39,19 +53,18 @@ class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageHolder>() {
         parent: ViewGroup,
         viewType: Int
     ): MessageAdapter.MessageHolder {
-        println("AAAA OnCreateViewHolder")
-        view = CustomViewGroup(parent.context)
 
-        return MessageAdapter.MessageHolder(view)
+        return MessageAdapter.MessageHolder(CustomViewGroup(parent.context).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        })
     }
 
     override fun onBindViewHolder(holder: MessageAdapter.MessageHolder, position: Int) {
         holder.bind(messageList[position])
-        when (messageList[position].isYou) {
-            true -> view.setRectangleColor(R.color.teal_700)
-            false -> view.setRectangleColor(R.color.unselected)
-        }
-        println("AAAA OnBindViewHolder")
+
     }
 
     override fun getItemCount(): Int {

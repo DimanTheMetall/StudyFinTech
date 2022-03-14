@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
@@ -22,7 +23,6 @@ class CustomViewGroup @JvmOverloads constructor(
     private val messageTitle by lazy { getChildAt(1) }
     private val message by lazy { getChildAt(2) }
     private val flexBox by lazy { getChildAt(3) as CustomFlexBox }
-
     private var isYours: Boolean = true
 
     init {
@@ -78,10 +78,14 @@ class CustomViewGroup @JvmOverloads constructor(
             messageTitle.measuredWidthWithMargins,
             message.measuredWidthWithMargins,
         )
-        val groupHeight = maxOf(
-            imageView.measuredHeightWithMargins,
-            (messageTitle.measuredHeightWithMargins + message.measuredHeightWithMargins + flexBox.measuredHeightWithMargins)
-        )
+        val groupHeight = if (!isYours) {
+            maxOf(
+                imageView.measuredHeightWithMargins,
+                (messageTitle.measuredHeightWithMargins + message.measuredHeightWithMargins + flexBox.measuredHeightWithMargins)
+            )
+        } else {
+            message.measuredHeightWithMargins
+        }
 
         setMeasuredDimension(
             resolveSize(groupWidth, widthMeasureSpec),
@@ -91,54 +95,87 @@ class CustomViewGroup @JvmOverloads constructor(
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        if (!isYours) {
+            imageView.layout(
+                imageView.marginLeft,
+                imageView.marginTop,
+                imageView.measuredWidthWithMargins,
+                imageView.measuredHeightWithMargins
+            )
 
-        imageView.layout(
-            imageView.marginLeft,
-            imageView.marginTop,
-            imageView.measuredWidthWithMargins,
-            imageView.measuredHeightWithMargins
-        )
+            messageTitle.layout(
+                imageView.measuredWidthWithMargins + messageTitle.marginLeft,
+                messageTitle.marginTop,
+                imageView.measuredWidthWithMargins + messageTitle.measuredWidthWithMargins,
+                messageTitle.measuredWidthWithMargins
+            )
+            message.layout(
+                imageView.measuredWidthWithMargins + message.marginLeft,
+                messageTitle.measuredHeightWithMargins + message.marginTop,
+                imageView.measuredWidthWithMargins + message.measuredWidth + message.marginRight,
+                messageTitle.measuredHeightWithMargins + message.measuredHeightWithMargins
+            )
+            flexBox.layout(
+                imageView.measuredWidthWithMargins + flexBox.marginLeft,
+                message.bottom + flexBox.marginTop,
+                imageView.measuredWidthWithMargins + flexBox.measuredWidthWithMargins,
+                message.bottom + flexBox.measuredHeight + flexBox.marginBottom
+            )
 
-        messageTitle.layout(
-            imageView.measuredWidthWithMargins + messageTitle.marginLeft,
-            messageTitle.marginTop,
-            imageView.measuredWidthWithMargins + messageTitle.measuredWidthWithMargins,
-            messageTitle.measuredWidthWithMargins
-        )
-        message.layout(
-            imageView.measuredWidthWithMargins + message.marginLeft,
-            messageTitle.measuredHeightWithMargins + message.marginTop,
-            imageView.measuredWidthWithMargins + message.measuredWidth + message.marginRight,
-            messageTitle.measuredHeightWithMargins + message.measuredHeightWithMargins
-        )
-        flexBox.layout(
-            imageView.measuredWidthWithMargins + flexBox.marginLeft,
-            message.bottom + flexBox.marginTop,
-            imageView.measuredWidthWithMargins + flexBox.measuredWidthWithMargins,
-            message.bottom + flexBox.measuredHeight + flexBox.marginBottom
-        )
+        } else {
 
+            message.layout(
+                message.measuredWidthWithMargins,
+                message.marginTop,
+                (parent as View).measuredWidth,
+                message.measuredHeightWithMargins
+            )
+            flexBox.layout(
+                flexBox.measuredWidthWithMargins,
+                message.bottom + flexBox.marginTop,
+                flexBox.marginRight,
+                message.bottom + flexBox.measuredHeight + flexBox.marginBottom
+            )
+        }
     }
 
     private var paintRectRound = Paint().apply {
         color = ContextCompat.getColor(context, R.color.unselected)
     }
-    fun setRectangleColor (colorId: Int){
+
+    fun setRectangleColor(colorId: Int) {
         paintRectRound = Paint().apply {
             color = ContextCompat.getColor(context, colorId)
-            requestLayout()
+            invalidate()
         }
     }
 
+    fun setYoursMessage(isYou: Boolean) {
+        isYours = isYou
+        requestLayout()
+    }
+
     override fun dispatchDraw(canvas: Canvas?) {
-        canvas?.drawRoundRect(
-            imageView.right.toFloat(),
-            imageView.top.toFloat(),
-            maxOf(messageTitle.right.toFloat(), message.right.toFloat()),
-            maxOf(imageView.bottom.toFloat(), message.bottom.toFloat()),
-            30f, 30f,
-            paintRectRound
-        )
+        println("AAAA despatchDraw ")
+        if (!isYours) {
+            canvas?.drawRoundRect(
+                imageView.right.toFloat(),
+                imageView.top.toFloat(),
+                maxOf(messageTitle.right.toFloat(), message.right.toFloat()),
+                maxOf(imageView.bottom.toFloat(), message.bottom.toFloat()),
+                30f, 30f,
+                paintRectRound
+            )
+        } else {
+            canvas?.drawRoundRect(
+                message.measuredWidthWithMargins.toFloat(),
+                message.top.toFloat(),
+                message.right.toFloat(),
+                messageTitle.bottom.toFloat() + message.measuredHeight ,
+                30f, 30f,
+                paintRectRound
+            )
+        }
         super.dispatchDraw(canvas)
     }
 
