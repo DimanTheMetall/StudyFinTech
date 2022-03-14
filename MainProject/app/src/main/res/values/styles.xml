@@ -7,5 +7,10 @@
         <item name="android:background">@drawable/bg_custom_text_view_selector</item>
     </style>
 
+    <style name="BottomSheetDialog">
+        <item name="android:padding">6dp</item>
+        <item name="android:textSize">36sp</item>
+    </style>
+
 
 </resources>

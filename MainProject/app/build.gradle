@@ -47,4 +47,3 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
     implementation "net.danlew:android.joda:$jodaTime"
 }
-

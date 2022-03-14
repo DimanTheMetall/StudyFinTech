@@ -27,6 +27,7 @@ class CustomViewGroup @JvmOverloads constructor(
 
     init {
         inflate(context, R.layout.custom_view_group_layout, this)
+
     }
 
     fun addEmoji(emoji: String, number: Int) {
@@ -84,7 +85,7 @@ class CustomViewGroup @JvmOverloads constructor(
                 (messageTitle.measuredHeightWithMargins + message.measuredHeightWithMargins + flexBox.measuredHeightWithMargins)
             )
         } else {
-            message.measuredHeightWithMargins
+            message.measuredHeightWithMargins + flexBox.measuredHeightWithMargins
         }
 
         setMeasuredDimension(
