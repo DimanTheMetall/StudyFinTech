@@ -16,7 +16,10 @@ class CustomFlexBox @JvmOverloads constructor(
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         var totalHeight = 0
         var usedWidth = 0
+        var maxUsedWidth = 0
+
         maxWidth = MeasureSpec.getSize(widthMeasureSpec)
+
 
         for (i in 0 until childCount) {
             val child = getChildAt(i)
@@ -28,21 +31,27 @@ class CustomFlexBox @JvmOverloads constructor(
                 heightMeasureSpec,
                 totalHeight
             )
-            if (totalHeight == 0) {
-                totalHeight = child.measuredHeightWithMargins
-            }
+            if (totalHeight==0) totalHeight = child.measuredHeightWithMargins
 
             usedWidth += child.measuredWidthWithMargins
-
+            if (maxUsedWidth < usedWidth) maxUsedWidth = usedWidth
             if (maxWidth - usedWidth < child.measuredWidthWithMargins) {
+
                 usedWidth = 0
                 totalHeight += child.measuredHeightWithMargins
             }
         }
-        setMeasuredDimension(
-            resolveSize(maxWidth, widthMeasureSpec),
-            resolveSize(totalHeight, heightMeasureSpec)
-        )
+
+        when (childCount) {
+            1 -> setMeasuredDimension(
+                resolveSize(0, widthMeasureSpec),
+                resolveSize(0, heightMeasureSpec)
+            )
+            else -> setMeasuredDimension(
+                resolveSize(maxUsedWidth, widthMeasureSpec),
+                resolveSize(totalHeight, heightMeasureSpec)
+            )
+        }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
@@ -55,10 +64,11 @@ class CustomFlexBox @JvmOverloads constructor(
                 usedWidth + child.marginLeft,
                 currentHeight + child.marginTop,
                 usedWidth + child.measuredWidth,
-                currentHeight + child.measuredHeight
+                currentHeight + child.measuredHeightWithMargins
             )
 
             usedWidth += child.measuredWidthWithMargins
+
             if (maxWidth - usedWidth < child.measuredWidthWithMargins) {
                 usedWidth = 0
                 currentHeight += child.measuredHeightWithMargins
@@ -66,6 +76,7 @@ class CustomFlexBox @JvmOverloads constructor(
 
         }
     }
+
 
     override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
         return ViewGroup.MarginLayoutParams(context, attrs)

@@ -3,28 +3,32 @@ package com.example.homework2
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.customviews.CustomBottomSheetDialog
-import com.example.homework2.customviews.MessageAdapter
-import com.example.homework2.customviews.SelectViewTypeClass
-import com.example.homework2.customviews.dpToPx
+import com.example.homework2.customviews.*
 import com.example.homework2.databinding.ActivityMainBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.joda.time.DateTime
 
 class MainActivity : AppCompatActivity() {
+
+    private var position = -1
     private lateinit var binding: ActivityMainBinding
     private val messageAdapter = MessageAdapter { position ->
+        this.position = position
         bottomSheetDialog?.show()
     }
+
+
     private var dateTime: DateTime = DateTime()
     private var bottomSheetDialog: CustomBottomSheetDialog? = null
-    private var itemDivider = object: RecyclerView.ItemDecoration(){
+
+    private var itemDivider = object : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(
             outRect: Rect,
             view: View,
@@ -38,15 +42,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        bottomSheetDialog = CustomBottomSheetDialog(this)
+        bottomSheetDialog = CustomBottomSheetDialog(this) { emoji ->
+            messageAdapter.addEmojiReaction(emoji, position)
+            bottomSheetDialog?.hide()
+        }
 
 
         binding.apply {
@@ -72,6 +76,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private var index = 0
+
+    //Test function
     private fun nextMessage() {
 
         val firstMessage =
@@ -84,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         val secondMessage =
             SelectViewTypeClass.Message(
                 binding.messageField.text.toString(),
-                "Title Message 2",
+                "text title 2",
                 R.mipmap.ic_launcher,
                 false
             )

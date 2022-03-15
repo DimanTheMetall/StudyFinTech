@@ -10,6 +10,7 @@ sealed class SelectViewTypeClass {
         val textMessage: String,
         val titleMessage: String,
         val imageId: Int,
-        val isYou: Boolean = true
+        val isYou: Boolean = true,
+        val emoji: MutableList<Reaction> = mutableListOf()
     ) : SelectViewTypeClass()
 }

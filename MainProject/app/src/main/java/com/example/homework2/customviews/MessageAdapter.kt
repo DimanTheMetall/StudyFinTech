@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.core.view.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.R
-import com.example.homework2.customviews.MessageAdapter.MessageHolder
 import com.example.homework2.databinding.CustomViewGroupLayoutBinding
 import com.example.homework2.databinding.TimeTvBinding
 
@@ -19,7 +18,6 @@ class MessageAdapter(val onLongTap: (Int) -> Unit) :
     }
 
     override fun getItemViewType(position: Int): Int {
-
         return when (messageList[position]) {
             is SelectViewTypeClass.Data -> MessageType.DATA.ordinal
             is SelectViewTypeClass.Message -> MessageType.MESSAGE.ordinal
@@ -43,6 +41,12 @@ class MessageAdapter(val onLongTap: (Int) -> Unit) :
             messageTitleTextView.text = item.titleMessage
             avatarImageView.setImageResource(item.imageId)
 
+            customViewGroup.clearEmoji()
+
+            item.emoji.forEach {
+                customViewGroup.addEmoji(it.emoji, it.count)
+            }
+
             binding.root.setOnLongClickListener {
                 onLongTap.invoke(adapterPosition)
                 true
@@ -58,7 +62,6 @@ class MessageAdapter(val onLongTap: (Int) -> Unit) :
                     customViewGroup.setYoursMessage(false)
                 }
             }
-            println("AAAA bind")
 
             if (item.isYou) {
                 avatarImageView.isVisible = false
@@ -94,7 +97,9 @@ class MessageAdapter(val onLongTap: (Int) -> Unit) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val inform = messageList[position]) {
             is SelectViewTypeClass.Data -> (holder as DataHolder).bind(inform.time)
-            is SelectViewTypeClass.Message -> (holder as MessageHolder).bind(inform)
+            is SelectViewTypeClass.Message -> {
+                (holder as MessageHolder).bind(inform)
+            }
         }
     }
 
@@ -107,4 +112,13 @@ class MessageAdapter(val onLongTap: (Int) -> Unit) :
         notifyDataSetChanged()
     }
 
+    fun addEmojiReaction(emoji: String, position: Int) {
+        (messageList[position] as? SelectViewTypeClass.Message)?.emoji?.add(Reaction(emoji, 0))
+        notifyItemChanged(position)
+    }
+
+    fun removeEmoji(position: Int) {
+        (messageList[position] as? SelectViewTypeClass.Message)?.emoji?.removeLast()
+        notifyItemChanged(position)
+    }
 }

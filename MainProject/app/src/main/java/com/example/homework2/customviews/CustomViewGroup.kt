@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.view.ContextThemeWrapper
@@ -33,6 +34,7 @@ class CustomViewGroup @JvmOverloads constructor(
 
 
     fun addEmoji(emoji: String, number: Int) {
+
         flexBox.addView(CustomTextView(ContextThemeWrapper(context, R.style.CustomTextView)).apply {
             layoutParams =
                 MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
@@ -43,16 +45,21 @@ class CustomViewGroup @JvmOverloads constructor(
                         context.dpToPx(0)
                     )
                 }
+
             setOnClickListener { view ->
                 view.isSelected = !view.isSelected
             }
             setEmojiNumberOnView(number)
             setEmojiOnView(emoji)
         }, flexBox.childCount - 1)
+
+    }
+    fun clearEmoji(){
+        flexBox.removeAllViews()
+        requestLayout()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        println("AAAA On MEASURED")
 
         measureChildWithMargins(imageView, widthMeasureSpec, 0, heightMeasureSpec, 0)
         measureChildWithMargins(
@@ -136,9 +143,9 @@ class CustomViewGroup @JvmOverloads constructor(
                 message.measuredHeightWithMargins
             )
             flexBox.layout(
-                flexBox.measuredWidthWithMargins,
+                message.right - flexBox.measuredWidthWithMargins,
                 message.measuredHeightWithMargins + flexBox.marginTop,
-                flexBox.marginRight,
+                message.right,
                 flexBox.top + flexBox.measuredWidthWithMargins
             )
         }
@@ -161,7 +168,6 @@ class CustomViewGroup @JvmOverloads constructor(
     }
 
     override fun dispatchDraw(canvas: Canvas?) {
-        println("AAAA despatchDraw ")
         if (!isYours) {
             canvas?.drawRoundRect(
                 imageView.right.toFloat(),
