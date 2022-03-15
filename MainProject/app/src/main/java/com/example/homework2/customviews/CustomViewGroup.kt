@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
@@ -27,8 +28,9 @@ class CustomViewGroup @JvmOverloads constructor(
 
     init {
         inflate(context, R.layout.custom_view_group_layout, this)
-
     }
+
+
 
     fun addEmoji(emoji: String, number: Int) {
         flexBox.addView(CustomTextView(ContextThemeWrapper(context, R.style.CustomTextView)).apply {
@@ -82,7 +84,9 @@ class CustomViewGroup @JvmOverloads constructor(
         val groupHeight = if (!isYours) {
             maxOf(
                 imageView.measuredHeightWithMargins,
-                (messageTitle.measuredHeightWithMargins + message.measuredHeightWithMargins + flexBox.measuredHeightWithMargins)
+                (messageTitle.measuredHeightWithMargins +
+                        message.measuredHeightWithMargins +
+                        flexBox.measuredHeightWithMargins)
             )
         } else {
             message.measuredHeightWithMargins + flexBox.measuredHeightWithMargins
@@ -113,29 +117,29 @@ class CustomViewGroup @JvmOverloads constructor(
             message.layout(
                 imageView.measuredWidthWithMargins + message.marginLeft,
                 messageTitle.measuredHeightWithMargins + message.marginTop,
-                imageView.measuredWidthWithMargins + message.measuredWidth + message.marginRight,
+                imageView.measuredWidthWithMargins + message.measuredWidthWithMargins + message.marginRight,
                 messageTitle.measuredHeightWithMargins + message.measuredHeightWithMargins
             )
             flexBox.layout(
                 imageView.measuredWidthWithMargins + flexBox.marginLeft,
                 message.bottom + flexBox.marginTop,
                 imageView.measuredWidthWithMargins + flexBox.measuredWidthWithMargins,
-                message.bottom + flexBox.measuredHeight + flexBox.marginBottom
+                message.bottom + flexBox.measuredHeightWithMargins
             )
 
         } else {
 
             message.layout(
-                message.measuredWidthWithMargins,
+                (parent as View).right - message.measuredWidthWithMargins,
                 message.marginTop,
-                (parent as View).measuredWidth,
+                (parent as View).measuredWidthWithMargins,
                 message.measuredHeightWithMargins
             )
             flexBox.layout(
                 flexBox.measuredWidthWithMargins,
-                message.bottom + flexBox.marginTop,
+                message.measuredHeightWithMargins + flexBox.marginTop,
                 flexBox.marginRight,
-                message.bottom + flexBox.measuredHeight + flexBox.marginBottom
+                flexBox.top + flexBox.measuredWidthWithMargins
             )
         }
     }
@@ -169,10 +173,10 @@ class CustomViewGroup @JvmOverloads constructor(
             )
         } else {
             canvas?.drawRoundRect(
-                message.measuredWidthWithMargins.toFloat(),
+                (parent as View).right - message.measuredWidthWithMargins.toFloat(),
                 message.top.toFloat(),
                 message.right.toFloat(),
-                messageTitle.bottom.toFloat() + message.measuredHeight ,
+                message.top.toFloat() + message.measuredHeightWithMargins ,
                 30f, 30f,
                 paintRectRound
             )

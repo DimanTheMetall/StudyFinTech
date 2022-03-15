@@ -1,13 +1,18 @@
 package com.example.homework2
 
+import android.graphics.Rect
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.customviews.CustomBottomSheetDialog
 import com.example.homework2.customviews.MessageAdapter
 import com.example.homework2.customviews.SelectViewTypeClass
+import com.example.homework2.customviews.dpToPx
 import com.example.homework2.databinding.ActivityMainBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.joda.time.DateTime
@@ -15,19 +20,33 @@ import org.joda.time.DateTime
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val messageAdapter = MessageAdapter { position ->
-        Toast.makeText(this, "AAA $position", Toast.LENGTH_LONG).show()
         bottomSheetDialog?.show()
     }
     private var dateTime: DateTime = DateTime()
     private var bottomSheetDialog: CustomBottomSheetDialog? = null
+    private var itemDivider = object: RecyclerView.ItemDecoration(){
+        override fun getItemOffsets(
+            outRect: Rect,
+            view: View,
+            parent: RecyclerView,
+            state: RecyclerView.State
+        ) {
+            outRect.apply {
+                top += this@MainActivity.dpToPx(6)
+                bottom += this@MainActivity.dpToPx(6)
+            }
+        }
+    }
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        bottomSheetDialog = CustomBottomSheetDialog(this)
 
+        bottomSheetDialog = CustomBottomSheetDialog(this)
 
 
         binding.apply {
@@ -37,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                     this@MainActivity,
                     LinearLayoutManager.VERTICAL, false
                 )
+            rcView.addItemDecoration(itemDivider)
 
             messageField.doOnTextChanged { text, start, before, count ->
                 if (text.isNullOrEmpty()) {
@@ -56,14 +76,14 @@ class MainActivity : AppCompatActivity() {
 
         val firstMessage =
             SelectViewTypeClass.Message(
-                "Text message 1",
+                binding.messageField.text.toString(),
                 "Title Message 1",
                 R.mipmap.ic_launcher
             )
 
         val secondMessage =
             SelectViewTypeClass.Message(
-                "Text message 2",
+                binding.messageField.text.toString(),
                 "Title Message 2",
                 R.mipmap.ic_launcher,
                 false
@@ -85,7 +105,6 @@ class MainActivity : AppCompatActivity() {
                 messageAdapter.addMessage(thirdMessage)
                 index = 0
             }
-
         }
     }
 }
