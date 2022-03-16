@@ -77,7 +77,6 @@ class CustomFlexBox @JvmOverloads constructor(
         }
     }
 
-
     override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
         return ViewGroup.MarginLayoutParams(context, attrs)
     }
@@ -89,5 +88,4 @@ class CustomFlexBox @JvmOverloads constructor(
     override fun generateLayoutParams(p: LayoutParams?): LayoutParams {
         return ViewGroup.MarginLayoutParams(p)
     }
-
 }

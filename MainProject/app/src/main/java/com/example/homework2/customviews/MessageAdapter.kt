@@ -11,11 +11,10 @@ import com.example.homework2.R
 import com.example.homework2.databinding.CustomViewGroupLayoutBinding
 import com.example.homework2.databinding.TimeTvBinding
 
-class MessageAdapter(val onLongTap: (Int) -> Unit) :
+class MessageAdapter(val onTab: (Int) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val differ = AsyncListDiffer(this, DiffCallback())
-
     private var messageList: MutableList<SelectViewTypeClass> = mutableListOf()
 
     private enum class MessageType {
@@ -34,7 +33,6 @@ class MessageAdapter(val onLongTap: (Int) -> Unit) :
         fun bind(time: String) {
             timeViewBinding.timeTv.text = time
         }
-
     }
 
     inner class MessageHolder(private val customViewGroup: CustomViewGroup) :
@@ -46,14 +44,19 @@ class MessageAdapter(val onLongTap: (Int) -> Unit) :
             messageTitleTextView.text = item.titleMessage
             avatarImageView.setImageResource(item.imageId)
 
+            customFlexBox.getChildAt(customFlexBox.childCount - 1)
+                .setOnClickListener {
+                    onTab.invoke(adapterPosition)
+                }
+
             customViewGroup.clearEmoji()
 
             item.emoji.forEach {
-                customViewGroup.addEmoji(it.emoji, it.count)
+                if (it.count != 0) customViewGroup.addEmoji(it)
             }
 
             binding.root.setOnLongClickListener {
-                onLongTap.invoke(adapterPosition)
+                onTab.invoke(adapterPosition)
                 true
             }
 
@@ -93,7 +96,7 @@ class MessageAdapter(val onLongTap: (Int) -> Unit) :
             MessageType.DATA -> {
                 val view =
                     LayoutInflater.from(parent.context).inflate(R.layout.time_tv, parent, false)
-                DataHolder(view)
+                MessageAdapter.DataHolder(view)
             }
         }
 
@@ -117,8 +120,8 @@ class MessageAdapter(val onLongTap: (Int) -> Unit) :
         notifyDataSetChanged()
     }
 
-    fun addEmojiReaction(emoji: String, position: Int) {
-        (messageList[position] as? SelectViewTypeClass.Message)?.emoji?.add(Reaction(emoji, 0))
+    fun addEmojiReaction(reaction: Reaction, position: Int) {
+        (messageList[position] as? SelectViewTypeClass.Message)?.emoji?.add(reaction)
         notifyItemChanged(position)
     }
 

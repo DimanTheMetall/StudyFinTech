@@ -19,4 +19,5 @@
         android:paddingEnd="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
         tools:text="25.02.2020 23.54" />
+
 </FrameLayout>

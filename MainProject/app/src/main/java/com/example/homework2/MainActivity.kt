@@ -3,16 +3,12 @@ package com.example.homework2
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.customviews.*
 import com.example.homework2.databinding.ActivityMainBinding
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.joda.time.DateTime
 
 class MainActivity : AppCompatActivity() {
@@ -23,7 +19,6 @@ class MainActivity : AppCompatActivity() {
         this.position = position
         bottomSheetDialog?.show()
     }
-
 
     private var dateTime: DateTime = DateTime()
     private var bottomSheetDialog: CustomBottomSheetDialog? = null
@@ -36,8 +31,8 @@ class MainActivity : AppCompatActivity() {
             state: RecyclerView.State
         ) {
             outRect.apply {
-                top += this@MainActivity.dpToPx(6)
-                bottom += this@MainActivity.dpToPx(6)
+                top += this@MainActivity.dpToPx(10)
+                bottom += this@MainActivity.dpToPx(10)
             }
         }
     }
@@ -48,10 +43,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         bottomSheetDialog = CustomBottomSheetDialog(this) { emoji ->
-            messageAdapter.addEmojiReaction(emoji, position)
+            messageAdapter.addEmojiReaction(Reaction(emoji, 3), position)
             bottomSheetDialog?.hide()
         }
-
 
         binding.apply {
             rcView.adapter = messageAdapter
@@ -65,15 +59,15 @@ class MainActivity : AppCompatActivity() {
             messageField.doOnTextChanged { text, start, before, count ->
                 if (text.isNullOrEmpty()) {
                     binding.messageTranslateImage.setImageResource(R.drawable.ic_add_circle_no_text)
+                    binding.messageTranslateImage.setBackgroundResource(R.drawable.send_message_circle_background_no_text)
                 } else {
                     binding.messageTranslateImage.setImageResource(R.drawable.ic_add_circle_yes_text)
+                    binding.messageTranslateImage.setBackgroundResource(R.drawable.send_message_circle_background_text)
                 }
             }
             binding.messageTranslateImage.setOnClickListener { nextMessage() }
-
         }
     }
-
 
     private var index = 0
 
@@ -114,5 +108,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-

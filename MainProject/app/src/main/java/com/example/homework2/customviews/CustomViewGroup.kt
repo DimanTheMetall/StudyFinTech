@@ -4,13 +4,10 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.core.view.marginTop
@@ -18,7 +15,7 @@ import com.example.homework2.R
 
 class CustomViewGroup @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : ViewGroup(context, attrs) {
 
     private val imageView by lazy { getChildAt(0) }
@@ -29,35 +26,6 @@ class CustomViewGroup @JvmOverloads constructor(
 
     init {
         inflate(context, R.layout.custom_view_group_layout, this)
-    }
-
-
-
-    fun addEmoji(emoji: String, number: Int) {
-
-        flexBox.addView(CustomTextView(ContextThemeWrapper(context, R.style.CustomTextView)).apply {
-            layoutParams =
-                MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
-                    setMargins(
-                        context.dpToPx(0),
-                        context.dpToPx(6),
-                        context.dpToPx(10),
-                        context.dpToPx(0)
-                    )
-                }
-
-            setOnClickListener { view ->
-                view.isSelected = !view.isSelected
-
-            }
-            setEmojiNumberOnView(number)
-            setEmojiOnView(emoji)
-        }, flexBox.childCount - 1)
-
-    }
-    fun clearEmoji(){
-        if (flexBox.childCount>1) flexBox.removeViews(0, flexBox.childCount-1)
-        requestLayout()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -104,7 +72,6 @@ class CustomViewGroup @JvmOverloads constructor(
             resolveSize(groupWidth, widthMeasureSpec),
             resolveSize(groupHeight, heightMeasureSpec)
         )
-
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
@@ -122,6 +89,7 @@ class CustomViewGroup @JvmOverloads constructor(
                 imageView.measuredWidthWithMargins + messageTitle.measuredWidthWithMargins,
                 messageTitle.measuredWidthWithMargins
             )
+
             message.layout(
                 imageView.measuredWidthWithMargins + message.marginLeft,
                 messageTitle.measuredHeightWithMargins + message.marginTop,
@@ -134,9 +102,7 @@ class CustomViewGroup @JvmOverloads constructor(
                 imageView.measuredWidthWithMargins + flexBox.measuredWidthWithMargins,
                 message.bottom + flexBox.measuredHeightWithMargins
             )
-
         } else {
-
             message.layout(
                 (parent as View).right - message.measuredWidthWithMargins,
                 message.marginTop,
@@ -168,6 +134,11 @@ class CustomViewGroup @JvmOverloads constructor(
         requestLayout()
     }
 
+    fun clearEmoji() {
+        if (flexBox.childCount > 1) flexBox.removeViews(0, flexBox.childCount - 1)
+        requestLayout()
+    }
+
     override fun dispatchDraw(canvas: Canvas?) {
         if (!isYours) {
             canvas?.drawRoundRect(
@@ -183,12 +154,39 @@ class CustomViewGroup @JvmOverloads constructor(
                 (parent as View).right - message.measuredWidthWithMargins.toFloat(),
                 message.top.toFloat(),
                 message.right.toFloat(),
-                message.top.toFloat() + message.measuredHeightWithMargins ,
+                message.top.toFloat() + message.measuredHeightWithMargins,
                 30f, 30f,
                 paintRectRound
             )
         }
         super.dispatchDraw(canvas)
+    }
+
+    fun addEmoji(reaction: Reaction) {
+        flexBox.addView(
+            CustomTextView(ContextThemeWrapper(context, R.style.CustomTextView))
+                .apply {
+                    layoutParams =
+                        ViewGroup.MarginLayoutParams(
+                            LayoutParams.WRAP_CONTENT,
+                            LayoutParams.WRAP_CONTENT
+                        ).apply {
+                            setMargins(
+                                context.dpToPx(0),
+                                context.dpToPx(6),
+                                context.dpToPx(10),
+                                context.dpToPx(0)
+                            )
+                        }
+
+                    setOnClickListener { view ->
+                        view.isSelected = !view.isSelected
+                        onCLickOnEmoji(view.isSelected)
+                    }
+                    setEmojiNumberOnView(reaction.count)
+                    setEmojiOnView(reaction.emoji)
+                }, flexBox.childCount - 1
+        )
     }
 
     override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
@@ -202,5 +200,4 @@ class CustomViewGroup @JvmOverloads constructor(
     override fun generateLayoutParams(p: LayoutParams?): LayoutParams {
         return ViewGroup.MarginLayoutParams(p)
     }
-
 }

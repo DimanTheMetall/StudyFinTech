@@ -99,7 +99,6 @@
             android:layout_height="wrap_content"
             android:text="@string/emoji_14" />
 
-
     </GridLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

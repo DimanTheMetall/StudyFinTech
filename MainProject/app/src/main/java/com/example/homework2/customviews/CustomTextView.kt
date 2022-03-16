@@ -14,7 +14,7 @@ class CustomTextView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    defStyleRes: Int = 0
+    defStyleRes: Int = 0,
 ) : View(context, attrs, defStyleAttr, defStyleRes) {
 
     private val textPaint = TextPaint().apply {
@@ -31,6 +31,7 @@ class CustomTextView @JvmOverloads constructor(
     private var sumWidth = 0
     private var sumHeight = 0
 
+
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CustomTextView)
 
@@ -42,15 +43,7 @@ class CustomTextView @JvmOverloads constructor(
         typedArray.recycle()
     }
 
-    fun setEmojiOnView(emo: String) {
-        emoji = emo
-        requestLayout()
-    }
 
-    fun setEmojiNumberOnView(number: Int) {
-        emojiNumber = number
-        requestLayout()
-    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         text = "$emoji $emojiNumber"
@@ -86,6 +79,25 @@ class CustomTextView @JvmOverloads constructor(
         }
         return drawableState
     }
+
+    fun setEmojiOnView(emo: String) {
+        emoji = emo
+        requestLayout()
+    }
+
+    fun setEmojiNumberOnView(number: Int) {
+        emojiNumber = number
+        requestLayout()
+    }
+
+    fun onCLickOnEmoji(isSelected: Boolean) {
+        if (isSelected) {
+            emojiNumber++
+        } else emojiNumber--
+        requestLayout()
+    }
+
+    fun getEmojiCountFromTextView(): Int = emojiNumber
 
     companion object {
         private val SUPPORTED_DRAWABLE_STATE = intArrayOf(android.R.attr.state_selected)

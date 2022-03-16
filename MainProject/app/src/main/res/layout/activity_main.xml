@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/bg_main">
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcView"
@@ -37,10 +35,11 @@
         android:id="@+id/message_translate_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:padding="4dp"
         app:layout_constraintStart_toEndOf="@id/message_field"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/ic_add_circle_no_text"/>
-
+        android:src="@drawable/ic_add_circle_no_text"
+        android:background="@drawable/send_message_circle_background_no_text"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

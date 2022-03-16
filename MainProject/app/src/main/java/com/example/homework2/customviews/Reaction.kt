@@ -1,7 +1,7 @@
 package com.example.homework2.customviews
 
 data class Reaction(
-    val emoji: String,
-    val count: Int,
+    var emoji: String,
+    var count: Int,
     val userId: Int = 0
 )
