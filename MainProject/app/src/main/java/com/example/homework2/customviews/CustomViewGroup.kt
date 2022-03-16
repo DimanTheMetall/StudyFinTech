@@ -48,6 +48,7 @@ class CustomViewGroup @JvmOverloads constructor(
 
             setOnClickListener { view ->
                 view.isSelected = !view.isSelected
+
             }
             setEmojiNumberOnView(number)
             setEmojiOnView(emoji)
@@ -55,7 +56,7 @@ class CustomViewGroup @JvmOverloads constructor(
 
     }
     fun clearEmoji(){
-        flexBox.removeAllViews()
+        if (flexBox.childCount>1) flexBox.removeViews(0, flexBox.childCount-1)
         requestLayout()
     }
 

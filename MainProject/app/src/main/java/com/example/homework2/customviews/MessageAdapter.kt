@@ -4,14 +4,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.*
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
+import com.example.homework2.DiffCallback
 import com.example.homework2.R
 import com.example.homework2.databinding.CustomViewGroupLayoutBinding
 import com.example.homework2.databinding.TimeTvBinding
 
 class MessageAdapter(val onLongTap: (Int) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val messageList = ArrayList<SelectViewTypeClass>()
+
+    private val differ = AsyncListDiffer(this, DiffCallback())
+
+    private var messageList: MutableList<SelectViewTypeClass> = mutableListOf()
 
     private enum class MessageType {
         MESSAGE, DATA
