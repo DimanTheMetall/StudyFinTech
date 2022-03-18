@@ -16,23 +16,12 @@
         app:layout_constraintBottom_toTopOf="@id/message_field"
         />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/b_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@drawable/bg_message"
-        app:itemIconTint="@drawable/b_nav_selector"
-        app:itemTextColor="@drawable/b_nav_selector"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/b_nav_menu" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/message_field"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        app:layout_constraintBottom_toTopOf="@id/b_navigation"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="8dp"

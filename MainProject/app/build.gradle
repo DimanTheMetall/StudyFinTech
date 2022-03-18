@@ -42,8 +42,17 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appCompatVersion"
     implementation "com.google.android.material:material:$materialVersion"
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayoutVersion"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit-ktx:$androidXTestExtKotlinRunnerVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
     implementation "net.danlew:android.joda:$jodaTime"
+    implementation"androidx.viewpager2:viewpager2:$viewPager2Version"
+    implementation"androidx.fragment:fragment-ktx:$fragmentVersion"
+
+    implementation"androidx.navigation:navigation-fragment-ktx:$navVersion"
+    implementation"androidx.navigation:navigation-ui-ktx:$navVersion"
+
+
+
 }

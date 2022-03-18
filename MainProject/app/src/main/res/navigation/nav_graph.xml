@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/channelFragment">
+
+    <fragment
+        android:id="@+id/channelFragment"
+        android:name="com.example.homework2.fragments.ChannelFragment"
+        android:label="fragment_channel"
+        tools:layout="@layout/fragment_channel" />
+    <fragment
+        android:id="@+id/peopleFragment"
+        android:name="com.example.homework2.fragments.PeopleFragment"
+        android:label="fragment_people"
+        tools:layout="@layout/fragment_people" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.homework2.fragments.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/recycleChannelsFragment"
+        android:name="com.example.homework2.fragments.RecycleChannelsFragment"
+        android:label="fragment_recycle_channels"
+        tools:layout="@layout/fragment_recycle_channels" />
+</navigation>

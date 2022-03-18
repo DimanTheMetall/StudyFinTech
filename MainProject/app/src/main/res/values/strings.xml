@@ -18,4 +18,9 @@
 
     <string name="message_field_hint">Write something…</string>
 
+    <string name="tab_item_subscribe">Subscribed</string>
+    <string name="tab_item_all">All Streams</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
