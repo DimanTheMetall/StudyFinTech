@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.R
 import com.example.homework2.customviews.*
 import com.example.homework2.databinding.ActivityMainBinding
+import com.example.homework2.databinding.FragmentChatBinding
 import org.joda.time.DateTime
 
 
@@ -20,7 +21,7 @@ class ChatFragment : Fragment() {
 
     private var index = 0
     private var position = -1
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: FragmentChatBinding
     private val messageAdapter = MessageAdapter { position ->
         this.position = position
         bottomSheetDialog?.show()
@@ -46,8 +47,13 @@ class ChatFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
+    }
 
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         bottomSheetDialog = CustomBottomSheetDialog(requireContext())
         { emoji ->
             messageAdapter.addEmojiReaction(Reaction(emoji, 3), position)
@@ -62,6 +68,8 @@ class ChatFragment : Fragment() {
                     )
                 rcView.addItemDecoration(itemDivider)
 
+                messageTranslateImage.setOnClickListener { nextMessage() }
+
                 messageField.doOnTextChanged { text, start, before, count ->
                     if (text.isNullOrEmpty()) {
                         binding.messageTranslateImage.setImageResource(R.drawable.ic_add_circle_no_text)
@@ -71,17 +79,11 @@ class ChatFragment : Fragment() {
                         binding.messageTranslateImage.setBackgroundResource(R.drawable.send_message_circle_background_text)
                     }
                 }
-                binding.messageTranslateImage.setOnClickListener { nextMessage() }
+
             }
 
         }
-    }
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
         return inflater.inflate(R.layout.fragment_chat, container, false)
     }
 
@@ -124,10 +126,9 @@ class ChatFragment : Fragment() {
 
 
     companion object {
+        const val TAG = "ChatFragment"
 
-        @JvmStatic
         fun newInstance(): ChatFragment {
-
             return ChatFragment()
         }
     }

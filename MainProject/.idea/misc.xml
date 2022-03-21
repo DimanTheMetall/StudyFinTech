@@ -20,6 +20,7 @@
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/drawable/ic_add.xml" value="0.1385" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/drawable/ic_add_circle_no_text.xml" value="0.1385" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/drawable/ic_add_circle_yes_text.xml" value="0.141" />
+        <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/drawable/ic_arrow_top.xml" value="0.1385" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1385" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/drawable/ic_people.xml" value="0.1385" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/drawable/message_separator.xml" value="0.141" />
@@ -29,14 +30,16 @@
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/add_emoji_view.xml" value="0.22" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/bottom_sheet_dialog_layout.xml" value="0.22" />
+        <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/channel_item.xml" value="0.2" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/custom_view_group_layout.xml" value="0.18" />
-        <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/fragment_channel.xml" value="0.22" />
+        <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/fragment_channel.xml" value="0.2" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/fragment_channels.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/fragment_chat.xml" value="0.18811881188118812" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/fragment_people.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/fragment_profile.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/fragment_recycle_channels.xml" value="0.18811881188118812" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/recycle_channel.xml" value="0.18811881188118812" />
+        <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/streams_topic.xml" value="0.18177083333333333" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/layout/time_tv.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Gospodin_Kozlov/AndroidStudioProjects/kursach_tfs-android-spring-2022/MainProject/app/src/main/res/menu/b_nav_menu.xml" value="0.18802083333333333" />
       </map>

@@ -5,24 +5,66 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.homework2.Channel
+import com.example.homework2.ChannelTopic
+import com.example.homework2.ChannelViewModel
 import com.example.homework2.R
+import com.example.homework2.databinding.FragmentRecycleChannelsBinding
 
 class RecycleChannelsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    lateinit var binding: FragmentRecycleChannelsBinding
+    private var recycleAdapter = ChannelRecycleViewAdapter() {
+        openFrag(ChatFragment.newInstance(), ChatFragment.TAG)
+        println("AAA OpenChat")
     }
+
+
+    private val viewModel: ChannelViewModel by viewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recycle_channels, container, false)
+    ): View {
+
+        binding = FragmentRecycleChannelsBinding.inflate(inflater)
+        binding.recycleChannel.adapter = recycleAdapter
+        binding.recycleChannel.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.VERTICAL, false
+        )
+
+        viewModel.channelList.observe(viewLifecycleOwner) {
+            recycleAdapter.updateList(it)
+        }
+        binding.textButton.setOnClickListener {
+            viewModel.updateData(
+                mutableListOf(
+                    Channel(
+                        "NameChannel",
+                        mutableListOf(
+                            ChannelTopic("topikName1", 1),
+                            ChannelTopic("topikName2", 2)
+                        )
+                    )
+                )
+            )
+        }
+        return binding.root
+    }
+
+    private fun openFrag(fragment: Fragment, tag: String? = null) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_holder, fragment, tag)
+            .addToBackStack(null)
+            .commit()
+
+        println("AAA Open chat fragment")
     }
 
     companion object {
