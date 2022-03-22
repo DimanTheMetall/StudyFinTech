@@ -96,7 +96,10 @@ class ChatFragment() : Fragment() {
     }
 
     private fun nextMessage(message: String) {
-        messageAdapter.addMessage(message)
+        messageAdapter.addMessage(message){
+            viewModel.updateListData(it)
+        }
+
     }
 
 

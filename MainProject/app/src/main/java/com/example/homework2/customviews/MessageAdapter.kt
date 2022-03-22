@@ -4,18 +4,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.*
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.DiffCallback
 import com.example.homework2.R
 import com.example.homework2.databinding.CustomViewGroupLayoutBinding
 import com.example.homework2.databinding.TimeTvBinding
+import com.example.homework2.viewmodels.ChatViewModel
+
 
 class MessageAdapter(val onTab: (Int) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val differ = AsyncListDiffer(this, DiffCallback())
     private var currentId = 0
+
 
     init {
         for (index in differ.currentList.lastIndex downTo 0) {
@@ -24,7 +28,6 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
                 continue
             }
         }
-
 
     }
 
@@ -126,8 +129,11 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
         differ.submitList(chatList)
     }
 
-    fun addMessage(messageText: String) {
+    fun getCurrentList(): List<SelectViewTypeClass> {
+        return differ.currentList
+    }
 
+    fun addMessage(messageText: String, onAdd: (List<SelectViewTypeClass>) -> Unit) {
         val list = differ.currentList.toMutableList()
         list.add(
             SelectViewTypeClass.Message(
@@ -140,6 +146,7 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
         )
         differ.submitList(list)
         currentId++
+        onAdd.invoke(list)
     }
 
     fun addEmojiReaction(reaction: Reaction, position: Int) {
