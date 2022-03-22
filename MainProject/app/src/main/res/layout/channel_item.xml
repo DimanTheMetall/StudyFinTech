@@ -38,6 +38,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:orientation="vertical"
         android:visibility="gone"
+        app:showDividers="middle"
+        app:divider="@drawable/shape_divider"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

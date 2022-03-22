@@ -12,10 +12,11 @@ import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import com.example.homework2.R
+import com.example.homework2.dataclasses.Reaction
 
 class CustomViewGroup @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
+    attrs: AttributeSet? = null
 ) : ViewGroup(context, attrs) {
 
     private val imageView by lazy { getChildAt(0) }
@@ -23,6 +24,7 @@ class CustomViewGroup @JvmOverloads constructor(
     private val message by lazy { getChildAt(2) }
     private val flexBox by lazy { getChildAt(3) as CustomFlexBox }
     private var isYours: Boolean = true
+    private var onAddEmojiCLick: (Reaction) -> Unit = {}
 
     init {
         inflate(context, R.layout.custom_view_group_layout, this)
@@ -181,12 +183,16 @@ class CustomViewGroup @JvmOverloads constructor(
 
                     setOnClickListener { view ->
                         view.isSelected = !view.isSelected
-                        onCLickOnEmoji(view.isSelected)
+                        onAddEmojiCLick.invoke(reaction)
                     }
                     setEmojiNumberOnView(reaction.count)
                     setEmojiOnView(reaction.emoji)
                 }, flexBox.childCount - 1
         )
+    }
+
+    fun setOnEmojiClickListener(l: (Reaction) -> Unit){
+        onAddEmojiCLick = l
     }
 
     override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {

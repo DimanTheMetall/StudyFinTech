@@ -1,4 +1,4 @@
-package com.example.homework2
+package com.example.homework2.dataclasses
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

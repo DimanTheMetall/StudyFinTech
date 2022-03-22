@@ -3,8 +3,8 @@ package com.example.homework2.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.homework2.Channel
-import com.example.homework2.ChannelTopic
+import com.example.homework2.dataclasses.Channel
+import com.example.homework2.dataclasses.ChannelTopic
 
 class ChannelViewModel() : ViewModel() {
 

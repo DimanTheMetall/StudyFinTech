@@ -1,35 +1,24 @@
-package com.example.homework2.customviews
+package com.example.homework2
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.*
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.DiffCallback
-import com.example.homework2.R
+import com.example.homework2.customviews.CustomViewGroup
+import com.example.homework2.dataclasses.SelectViewTypeClass
 import com.example.homework2.databinding.CustomViewGroupLayoutBinding
 import com.example.homework2.databinding.TimeTvBinding
-import com.example.homework2.viewmodels.ChatViewModel
+import com.example.homework2.dataclasses.Reaction
 
-
-class MessageAdapter(val onTab: (Int) -> Unit) :
+class MessageAdapter(
+    val onTab: (Int) -> Unit,
+    val onEmoji: (Int, Reaction) -> Unit
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val differ = AsyncListDiffer(this, DiffCallback())
-    private var currentId = 0
-
-
-    init {
-        for (index in differ.currentList.lastIndex downTo 0) {
-            if (differ.currentList[index] is SelectViewTypeClass.Message) {
-                currentId = (differ.currentList[index] as SelectViewTypeClass.Message).id
-                continue
-            }
-        }
-
-    }
 
     private enum class MessageType {
         MESSAGE, DATA
@@ -57,14 +46,12 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
             messageTextView.text = item.textMessage
             messageTitleTextView.text = item.titleMessage
 
-
             customFlexBox.getChildAt(customFlexBox.childCount - 1)
                 .setOnClickListener {
                     onTab.invoke(adapterPosition)
                 }
 
             customViewGroup.clearEmoji()
-
             item.emojiList.forEach {
                 if (it.count != 0) customViewGroup.addEmoji(it)
             }
@@ -72,6 +59,10 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
             binding.root.setOnLongClickListener {
                 onTab.invoke(adapterPosition)
                 true
+            }
+
+            (binding.root as CustomViewGroup).setOnEmojiClickListener {
+                onEmoji.invoke(adapterPosition, it)
             }
 
             when (item.isYou) {
@@ -105,18 +96,20 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
             })
             MessageType.DATA -> {
                 val view =
-                    LayoutInflater.from(parent.context).inflate(R.layout.time_tv, parent, false)
-                MessageAdapter.DataHolder(view)
+                    LayoutInflater.from(parent.context).inflate(
+                        R.layout.time_tv,
+                        parent,
+                        false)
+                DataHolder(view)
             }
         }
-
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val inform = differ.currentList[position]) {
-            is SelectViewTypeClass.Date -> (holder as DataHolder).bind(inform.time)
+            is SelectViewTypeClass.Date -> (holder as MessageAdapter.DataHolder).bind(inform.time)
             is SelectViewTypeClass.Message -> {
-                (holder as MessageHolder).bind(inform)
+                (holder as MessageAdapter.MessageHolder).bind(inform)
             }
         }
     }
@@ -127,36 +120,5 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
 
     fun updateChatList(chatList: List<SelectViewTypeClass>) {
         differ.submitList(chatList)
-    }
-
-    fun getCurrentList(): List<SelectViewTypeClass> {
-        return differ.currentList
-    }
-
-    fun addMessage(messageText: String, onAdd: (List<SelectViewTypeClass>) -> Unit) {
-        val list = differ.currentList.toMutableList()
-        list.add(
-            SelectViewTypeClass.Message(
-                currentId,
-                messageText,
-                "You Name",
-                2,
-                true
-            )
-        )
-        differ.submitList(list)
-        currentId++
-        onAdd.invoke(list)
-    }
-
-    fun addEmojiReaction(reaction: Reaction, position: Int) {
-        (differ.currentList[position] as? SelectViewTypeClass.Message)?.emojiList?.add(reaction)
-        differ.submitList(differ.currentList)
-        notifyItemChanged(position)
-    }
-
-    fun removeEmoji(position: Int) {
-        (differ.currentList[position] as? SelectViewTypeClass.Message)?.emojiList?.removeLast()
-        differ.submitList(differ.currentList)
     }
 }

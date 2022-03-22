@@ -1,7 +1,7 @@
 package com.example.homework2
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.homework2.customviews.SelectViewTypeClass
+import com.example.homework2.dataclasses.SelectViewTypeClass
 
 class DiffCallback : DiffUtil.ItemCallback<SelectViewTypeClass>() {
     override fun areItemsTheSame(

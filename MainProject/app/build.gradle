@@ -2,7 +2,6 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id "kotlin-parcelize"
-
 }
 
 android {
@@ -52,8 +51,7 @@ dependencies {
     implementation"androidx.viewpager2:viewpager2:$viewPager2Version"
     implementation"androidx.fragment:fragment-ktx:$fragmentVersion"
 
-    implementation"androidx.navigation:navigation-fragment-ktx:$navVersion"
-    implementation"androidx.navigation:navigation-ui-ktx:$navVersion"
+
 
 
 

@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.databinding.ProfileLayoutBinding
+import com.example.homework2.dataclasses.Profile
 
 class PeopleAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

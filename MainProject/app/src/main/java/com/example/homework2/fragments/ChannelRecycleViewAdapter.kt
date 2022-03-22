@@ -3,13 +3,16 @@ package com.example.homework2.fragments
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginBottom
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.Channel
+import com.example.homework2.dataclasses.Channel
 import com.example.homework2.R
+import com.example.homework2.customviews.dpToPx
 import com.example.homework2.databinding.ChannelItemBinding
-
 
 class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -71,12 +74,10 @@ class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
                             "mess ${it.newMessageCount}"
                         setOnClickListener {
                             openFrag()
-                            println("AAA topic clicked")
                         }
                     }
                 binding.topicList.addView(view)
             }
-
 
             binding.iconOpenStreams.setOnClickListener {
                 when (binding.topicList.visibility) {
@@ -89,8 +90,9 @@ class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
                 }
             }
         }
+
         private fun openStreamsTopic(isOpen: Boolean) {
-            if (isOpen){
+            if (isOpen) {
                 binding.topicList.visibility = View.VISIBLE
                 binding.iconOpenStreams.rotation = 0f
             } else {
@@ -110,6 +112,4 @@ class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
         channelList = list.toMutableList()
         notifyDataSetChanged()
     }
-
-
 }

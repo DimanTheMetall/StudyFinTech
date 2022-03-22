@@ -31,7 +31,6 @@ class CustomTextView @JvmOverloads constructor(
     private var sumWidth = 0
     private var sumHeight = 0
 
-
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CustomTextView)
 
@@ -42,8 +41,6 @@ class CustomTextView @JvmOverloads constructor(
 
         typedArray.recycle()
     }
-
-
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         text = "$emoji $emojiNumber"
@@ -87,13 +84,6 @@ class CustomTextView @JvmOverloads constructor(
 
     fun setEmojiNumberOnView(number: Int) {
         emojiNumber = number
-        requestLayout()
-    }
-
-    fun onCLickOnEmoji(isSelected: Boolean) {
-        if (isSelected) {
-            emojiNumber++
-        } else emojiNumber--
         requestLayout()
     }
 

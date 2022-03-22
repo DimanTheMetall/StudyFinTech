@@ -1,20 +1,14 @@
 package com.example.homework2.fragments
 
-import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.fragment.app.viewModels
 import com.example.homework2.Constance
-import com.example.homework2.PeopleAdapter
-import com.example.homework2.Profile
-import com.example.homework2.R
+import com.example.homework2.dataclasses.Profile
 import com.example.homework2.databinding.FragmentProfileBinding
-import com.example.homework2.viewmodels.ProfileViewModel
 
 class ProfileFragment : Fragment() {
 lateinit var binding: FragmentProfileBinding

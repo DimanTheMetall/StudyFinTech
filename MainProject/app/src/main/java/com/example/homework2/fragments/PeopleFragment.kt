@@ -11,9 +11,7 @@ import com.example.homework2.PeopleAdapter
 import com.example.homework2.databinding.FragmentPeopleBinding
 import com.example.homework2.viewmodels.ProfileViewModel
 
-
 class PeopleFragment : Fragment() {
-
 
     lateinit var binding: FragmentPeopleBinding
     private val viewModel: ProfileViewModel by viewModels()

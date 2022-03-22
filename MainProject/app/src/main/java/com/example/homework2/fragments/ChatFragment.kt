@@ -9,17 +9,15 @@ import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
+import com.example.homework2.MessageAdapter
 import com.example.homework2.R
 import com.example.homework2.customviews.*
 import com.example.homework2.databinding.FragmentChatBinding
 import com.example.homework2.viewmodels.ChatViewModel
 import org.joda.time.DateTime
 
-
 class ChatFragment() : Fragment() {
 
-
-    private var index = 0
     private var position = -1
     private lateinit var binding: FragmentChatBinding
     private lateinit var messageAdapter: MessageAdapter
@@ -48,26 +46,17 @@ class ChatFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentChatBinding.inflate(inflater)
-        messageAdapter = MessageAdapter { position ->
+        messageAdapter = MessageAdapter({ position ->
             this.position = position
             bottomSheetDialog?.show()
-        }
+        }, { position, reaction -> viewModel.updateEmoji(position, reaction) })
 
         viewModel.chatList.observe(viewLifecycleOwner) {
             messageAdapter.updateChatList(it)
         }
 
         bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emoji ->
-            val newList = viewModel.chatList.value
-            (newList as List<SelectViewTypeClass.Message>)[position].emojiList.add(
-                Reaction(
-                    emoji,
-                    1
-                )
-            )
-
-            viewModel.updateListData(newList)
-            messageAdapter.notifyItemChanged(position)
+            viewModel.onEmojiClick(emoji, position)
             bottomSheetDialog?.hide()
         }
 
@@ -77,29 +66,30 @@ class ChatFragment() : Fragment() {
             rcView.addItemDecoration(itemDivider)
 
             messageTranslateImage.setOnClickListener {
-                if (messageField.text.toString() != "") {
-                    nextMessage(messageField.text.toString())
+                if (!messageField.text.isNullOrEmpty()) {
+                    viewModel.onNextMassageClick(messageField.text.toString())
                 }
             }
 
             messageField.doOnTextChanged { text, start, before, count ->
                 if (text.isNullOrEmpty()) {
-                    binding.messageTranslateImage.setImageResource(R.drawable.ic_add_circle_no_text)
-                    binding.messageTranslateImage.setBackgroundResource(R.drawable.send_message_circle_background_no_text)
+                    binding.messageTranslateImage.setImageResource(
+                        R.drawable.ic_add_circle_no_text
+                    )
+                    binding.messageTranslateImage.setBackgroundResource(
+                        R.drawable.send_message_circle_background_no_text
+                    )
                 } else {
-                    binding.messageTranslateImage.setImageResource(R.drawable.ic_add_circle_yes_text)
-                    binding.messageTranslateImage.setBackgroundResource(R.drawable.send_message_circle_background_text)
+                    binding.messageTranslateImage.setImageResource(
+                        R.drawable.ic_add_circle_yes_text
+                    )
+                    binding.messageTranslateImage.setBackgroundResource(
+                        R.drawable.send_message_circle_background_text
+                    )
                 }
             }
         }
         return binding.root
-    }
-
-    private fun nextMessage(message: String) {
-        messageAdapter.addMessage(message){
-            viewModel.updateListData(it)
-        }
-
     }
 
 

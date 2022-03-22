@@ -42,7 +42,6 @@ class ChannelFragment : Fragment() {
                 }
             }
         }.attach()
-
     }
 
     companion object {
@@ -50,6 +49,5 @@ class ChannelFragment : Fragment() {
         fun newInstance(): ChannelFragment {
             return ChannelFragment()
         }
-
     }
 }

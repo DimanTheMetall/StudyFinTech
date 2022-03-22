@@ -17,5 +17,4 @@ class PagerChannelsAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
         val fragment = RecycleChannelsFragment.newInstance(isSubscribed)
         return fragment
     }
-
 }

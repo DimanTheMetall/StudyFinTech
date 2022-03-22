@@ -1,4 +1,4 @@
-package com.example.homework2
+package com.example.homework2.dataclasses
 
 data class Channel(
     val name: String,
