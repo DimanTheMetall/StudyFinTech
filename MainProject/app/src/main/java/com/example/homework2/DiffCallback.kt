@@ -8,8 +8,16 @@ class DiffCallback : DiffUtil.ItemCallback<SelectViewTypeClass>() {
         oldItem: SelectViewTypeClass,
         newItem: SelectViewTypeClass
     ): Boolean {
-        return (oldItem as SelectViewTypeClass.Message).emoji.last().userId ==
-                (newItem as SelectViewTypeClass.Message).emoji.last().userId
+
+        if ((oldItem is SelectViewTypeClass.Message) && (newItem is SelectViewTypeClass.Message)
+        ) {
+            return oldItem.id == newItem.id
+        } else {
+            if ((oldItem is SelectViewTypeClass.Date) && (newItem is SelectViewTypeClass.Date)) {
+                return oldItem.time == newItem.time
+            }
+        }
+        return false
     }
 
     override fun areContentsTheSame(

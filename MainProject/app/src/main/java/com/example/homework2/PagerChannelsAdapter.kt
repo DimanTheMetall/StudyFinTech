@@ -10,7 +10,11 @@ class PagerChannelsAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
     override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment {
-        val fragment = RecycleChannelsFragment.newInstance()
+        val isSubscribed: Boolean = when (position) {
+            0 -> true
+            else -> false
+        }
+        val fragment = RecycleChannelsFragment.newInstance(isSubscribed)
         return fragment
     }
 

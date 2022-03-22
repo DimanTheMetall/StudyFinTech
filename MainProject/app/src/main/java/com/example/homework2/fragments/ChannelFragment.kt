@@ -17,10 +17,6 @@ class ChannelFragment : Fragment() {
     lateinit var viewPager: ViewPager2
     lateinit var binding: FragmentChannelBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,7 +27,6 @@ class ChannelFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        println("AAA View Created")
 
         adapter = PagerChannelsAdapter(this)
         viewPager = binding.channelPager

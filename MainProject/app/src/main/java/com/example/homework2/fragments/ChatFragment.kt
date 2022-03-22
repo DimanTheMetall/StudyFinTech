@@ -7,30 +7,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.R
 import com.example.homework2.customviews.*
-import com.example.homework2.databinding.ActivityMainBinding
 import com.example.homework2.databinding.FragmentChatBinding
+import com.example.homework2.viewmodels.ChatViewModel
 import org.joda.time.DateTime
 
 
-class ChatFragment : Fragment() {
+class ChatFragment() : Fragment() {
 
 
     private var index = 0
     private var position = -1
     private lateinit var binding: FragmentChatBinding
-    private val messageAdapter = MessageAdapter { position ->
-        this.position = position
-        bottomSheetDialog?.show()
-    }
-
+    private lateinit var messageAdapter: MessageAdapter
     private var dateTime: DateTime = DateTime()
+
+    private val viewModel: ChatViewModel by viewModels()
+
     private var bottomSheetDialog: CustomBottomSheetDialog? = null
 
-    private var itemDivider = object : RecyclerView.ItemDecoration() {
+    private val itemDivider = object : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(
             outRect: Rect,
             view: View,
@@ -44,84 +43,60 @@ class ChatFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        bottomSheetDialog = CustomBottomSheetDialog(requireContext())
-        { emoji ->
-            messageAdapter.addEmojiReaction(Reaction(emoji, 3), position)
-            bottomSheetDialog?.hide()
-
-            binding.apply {
-                rcView.adapter = messageAdapter
-                rcView.layoutManager =
-                    LinearLayoutManager(
-                        requireContext(),
-                        LinearLayoutManager.VERTICAL, false
-                    )
-                rcView.addItemDecoration(itemDivider)
-
-                messageTranslateImage.setOnClickListener { nextMessage() }
-
-                messageField.doOnTextChanged { text, start, before, count ->
-                    if (text.isNullOrEmpty()) {
-                        binding.messageTranslateImage.setImageResource(R.drawable.ic_add_circle_no_text)
-                        binding.messageTranslateImage.setBackgroundResource(R.drawable.send_message_circle_background_no_text)
-                    } else {
-                        binding.messageTranslateImage.setImageResource(R.drawable.ic_add_circle_yes_text)
-                        binding.messageTranslateImage.setBackgroundResource(R.drawable.send_message_circle_background_text)
-                    }
-                }
-
-            }
-
+    ): View {
+        binding = FragmentChatBinding.inflate(inflater)
+        messageAdapter = MessageAdapter { position ->
+            this.position = position
+            bottomSheetDialog?.show()
         }
 
-        return inflater.inflate(R.layout.fragment_chat, container, false)
+        viewModel.chatList.observe(viewLifecycleOwner) {
+            messageAdapter.updateChatList(it)
+        }
+
+        bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emoji ->
+            val newList = viewModel.chatList.value
+            (newList as List<SelectViewTypeClass.Message>)[position].emojiList.add(
+                Reaction(
+                    emoji,
+                    1
+                )
+            )
+
+            viewModel.updateListData(newList)
+            messageAdapter.notifyItemChanged(position)
+            bottomSheetDialog?.hide()
+        }
+
+        binding.apply {
+            rcView.adapter = messageAdapter
+
+            rcView.addItemDecoration(itemDivider)
+
+            messageTranslateImage.setOnClickListener {
+                if (messageField.text.toString() != "") {
+                    nextMessage(messageField.text.toString())
+                }
+            }
+
+            messageField.doOnTextChanged { text, start, before, count ->
+                if (text.isNullOrEmpty()) {
+                    binding.messageTranslateImage.setImageResource(R.drawable.ic_add_circle_no_text)
+                    binding.messageTranslateImage.setBackgroundResource(R.drawable.send_message_circle_background_no_text)
+                } else {
+                    binding.messageTranslateImage.setImageResource(R.drawable.ic_add_circle_yes_text)
+                    binding.messageTranslateImage.setBackgroundResource(R.drawable.send_message_circle_background_text)
+                }
+            }
+        }
+        return binding.root
     }
 
-    //Test function
-    private fun nextMessage() {
-
-        val firstMessage =
-            SelectViewTypeClass.Message(
-                binding.messageField.text.toString(),
-                "Title Message 1",
-                R.mipmap.ic_launcher
-            )
-
-        val secondMessage =
-            SelectViewTypeClass.Message(
-                binding.messageField.text.toString(),
-                "text title 2",
-                R.mipmap.ic_launcher,
-                false
-            )
-        val thirdMessage = SelectViewTypeClass.Data(
-            dateTime.toString("MMM") + " " + dateTime.dayOfMonth
-        )
-        when (index) {
-            0 -> {
-                messageAdapter.addMessage(firstMessage)
-                index++
-            }
-            1 -> {
-                messageAdapter.addMessage(secondMessage)
-                index++
-            }
-
-            2 -> {
-                messageAdapter.addMessage(thirdMessage)
-                index = 0
-            }
-        }
+    private fun nextMessage(message: String) {
+        messageAdapter.addMessage(message)
     }
 
 

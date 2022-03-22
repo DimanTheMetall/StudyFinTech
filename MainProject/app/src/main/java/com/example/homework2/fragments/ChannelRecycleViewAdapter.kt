@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.Channel
 import com.example.homework2.R
 import com.example.homework2.databinding.ChannelItemBinding
-import com.example.homework2.databinding.StreamsTopicBinding
+
 
 class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -32,17 +32,43 @@ class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
 
     inner class ChannelHolder(item: View) : RecyclerView.ViewHolder(item) {
         private val binding = ChannelItemBinding.bind(item)
-
+        var index = 0
         fun bind(channel: Channel) {
             binding.channelName.text = channel.name
             binding.topicList.removeAllViews()
+            openStreamsTopic(false)
+
             channel.topicList.forEach {
+                if (index == 3) index = 0
+
                 val view = LayoutInflater.from(itemView.context)
                     .inflate(R.layout.streams_topic, null, false)
                     .apply {
+                        when (index) {
+                            0 -> setBackgroundColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.first_stream
+                                )
+                            )
+                            1 -> setBackgroundColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.second_stream
+                                )
+                            )
+                            2 -> setBackgroundColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.third_stream
+                                )
+                            )
+                        }
+                        index++
+
                         findViewById<TextView>(R.id.stream_name).text = it.topicName
                         findViewById<TextView>(R.id.message_count).text =
-                            it.newMessageCount.toString()
+                            "mess ${it.newMessageCount}"
                         setOnClickListener {
                             openFrag()
                             println("AAA topic clicked")
@@ -51,19 +77,26 @@ class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
                 binding.topicList.addView(view)
             }
 
+
             binding.iconOpenStreams.setOnClickListener {
                 when (binding.topicList.visibility) {
                     View.VISIBLE -> {
-                        binding.topicList.visibility = View.GONE
-                        binding.iconOpenStreams.rotation = 180f
+                        openStreamsTopic(false)
                     }
                     else -> {
-                        binding.topicList.visibility = View.VISIBLE
-                        binding.iconOpenStreams.rotation = 0f
+                        openStreamsTopic(true)
                     }
                 }
             }
-
+        }
+        private fun openStreamsTopic(isOpen: Boolean) {
+            if (isOpen){
+                binding.topicList.visibility = View.VISIBLE
+                binding.iconOpenStreams.rotation = 0f
+            } else {
+                binding.topicList.visibility = View.GONE
+                binding.iconOpenStreams.rotation = 180f
+            }
         }
     }
 

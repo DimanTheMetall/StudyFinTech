@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val yourProfile = Profile("My Name", 2, "myemailemail@email.email", true)
         replaceFrag(ChannelFragment.newInstance())
 
         supportFragmentManager.addOnBackStackChangedListener {
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             when(it.itemId){
                 R.id.item_channels -> replaceFrag(ChannelFragment.newInstance())
                 R.id.item_people -> replaceFrag(PeopleFragment.newInstance())
-                R.id.item_profile -> replaceFrag(ProfileFragment.newInstance())
+                R.id.item_profile -> replaceFrag(ProfileFragment.newInstance(yourProfile))
             }
             true
         }

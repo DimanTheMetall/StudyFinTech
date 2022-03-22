@@ -1,18 +1,18 @@
 package com.example.homework2.fragments
 
+import android.graphics.Rect
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.homework2.Channel
-import com.example.homework2.ChannelTopic
-import com.example.homework2.ChannelViewModel
+import androidx.recyclerview.widget.RecyclerView
+import com.example.homework2.Constance
+import com.example.homework2.viewmodels.ChannelViewModel
 import com.example.homework2.R
+import com.example.homework2.customviews.dpToPx
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
 
 class RecycleChannelsFragment : Fragment() {
@@ -20,12 +20,23 @@ class RecycleChannelsFragment : Fragment() {
     lateinit var binding: FragmentRecycleChannelsBinding
     private var recycleAdapter = ChannelRecycleViewAdapter() {
         openFrag(ChatFragment.newInstance(), ChatFragment.TAG)
-        println("AAA OpenChat")
     }
 
+    private var itemDivider = object : RecyclerView.ItemDecoration() {
+        override fun getItemOffsets(
+            outRect: Rect,
+            view: View,
+            parent: RecyclerView,
+            state: RecyclerView.State
+        ) {
+            outRect.apply {
+                top += requireContext().dpToPx(2)
+                bottom += requireContext().dpToPx(2)
+            }
+        }
+    }
 
     private val viewModel: ChannelViewModel by viewModels()
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,22 +49,19 @@ class RecycleChannelsFragment : Fragment() {
             requireContext(),
             LinearLayoutManager.VERTICAL, false
         )
+        binding.recycleChannel.addItemDecoration(itemDivider)
 
-        viewModel.channelList.observe(viewLifecycleOwner) {
-            recycleAdapter.updateList(it)
-        }
-        binding.textButton.setOnClickListener {
-            viewModel.updateData(
-                mutableListOf(
-                    Channel(
-                        "NameChannel",
-                        mutableListOf(
-                            ChannelTopic("topikName1", 1),
-                            ChannelTopic("topikName2", 2)
-                        )
-                    )
-                )
-            )
+        when (requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)) {
+            true -> {
+                viewModel.subscribedList.observe(viewLifecycleOwner){
+                    recycleAdapter.updateList(it)
+                }
+            }
+            else -> {
+                viewModel.allChannelList.observe(viewLifecycleOwner) {
+                    recycleAdapter.updateList(it)
+                }
+            }
         }
         return binding.root
     }
@@ -63,14 +71,18 @@ class RecycleChannelsFragment : Fragment() {
             .replace(R.id.fragment_holder, fragment, tag)
             .addToBackStack(null)
             .commit()
-
-        println("AAA Open chat fragment")
     }
 
     companion object {
 
-        fun newInstance(): RecycleChannelsFragment {
-            return RecycleChannelsFragment()
+        fun newInstance(isSubscribed: Boolean): RecycleChannelsFragment {
+
+            val fragment = RecycleChannelsFragment()
+            val arguments = Bundle()
+            arguments.putBoolean(Constance.ALL_OR_SUBSCRIBED_KEY, isSubscribed)
+            fragment.arguments = arguments
+
+            return fragment
         }
     }
 }

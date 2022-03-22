@@ -2,15 +2,16 @@ package com.example.homework2.customviews
 
 sealed class SelectViewTypeClass {
 
-    data class Data(
+    data class Date(
         val time: String
     ) : SelectViewTypeClass()
 
     data class Message(
+        val id: Int,
         val textMessage: String,
         val titleMessage: String,
-        val imageId: Int,
+        val imageURL: Int,
         val isYou: Boolean = true,
-        val emoji: MutableList<Reaction> = mutableListOf()
+        val emojiList: MutableList<Reaction> = mutableListOf()
     ) : SelectViewTypeClass()
 }

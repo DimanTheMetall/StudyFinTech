@@ -97,8 +97,6 @@ class CustomTextView @JvmOverloads constructor(
         requestLayout()
     }
 
-    fun getEmojiCountFromTextView(): Int = emojiNumber
-
     companion object {
         private val SUPPORTED_DRAWABLE_STATE = intArrayOf(android.R.attr.state_selected)
     }

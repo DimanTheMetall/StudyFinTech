@@ -8,9 +8,16 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="selected">#4D4D57</color>
+    <color name="gray">#545455</color>
     <color name="background_1">#3F3F47</color>
     <color name="unselected">#2F2F33</color>
     <color name="bg_main">#141417</color>
     <color name="green">#4CAF50</color>
+    <color name="red">#B61212</color>
+
+    <color name="first_stream">#19658E</color>
+    <color name="second_stream">#AF8722</color>
+    <color name="third_stream">#83268E</color>
+
 
 </resources>

@@ -5,28 +5,40 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.homework2.R
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.homework2.PeopleAdapter
+import com.example.homework2.databinding.FragmentPeopleBinding
+import com.example.homework2.viewmodels.ProfileViewModel
 
 
 class PeopleFragment : Fragment() {
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
+    lateinit var binding: FragmentPeopleBinding
+    private val viewModel: ProfileViewModel by viewModels()
+    private val recycleAdapter = PeopleAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_people, container, false)
+    ): View {
+
+        binding = FragmentPeopleBinding.inflate(inflater)
+        binding.recyclePeople.adapter = recycleAdapter
+        binding.recyclePeople.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.VERTICAL, false
+        )
+
+        viewModel.profileList.observe(viewLifecycleOwner) {
+            recycleAdapter.updateProfileList(it.toMutableList())
+        }
+        return binding.root
     }
 
     companion object {
 
-        @JvmStatic
         fun newInstance(): PeopleFragment {
             return PeopleFragment()
         }

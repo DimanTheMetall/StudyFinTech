@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="@color/teal_700">
+    android:background="@color/teal_700"
+    >
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/stream_name"
@@ -19,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:textColor="@color/white"
+        android:textColor="@color/gray"
         android:text="message count"
         />
 

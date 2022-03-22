@@ -15,15 +15,26 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val differ = AsyncListDiffer(this, DiffCallback())
-    private var messageList: MutableList<SelectViewTypeClass> = mutableListOf()
+    private var currentId = 0
+
+    init {
+        for (index in differ.currentList.lastIndex downTo 0) {
+            if (differ.currentList[index] is SelectViewTypeClass.Message) {
+                currentId = (differ.currentList[index] as SelectViewTypeClass.Message).id
+                continue
+            }
+        }
+
+
+    }
 
     private enum class MessageType {
         MESSAGE, DATA
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (messageList[position]) {
-            is SelectViewTypeClass.Data -> MessageType.DATA.ordinal
+        return when (differ.currentList[position]) {
+            is SelectViewTypeClass.Date -> MessageType.DATA.ordinal
             is SelectViewTypeClass.Message -> MessageType.MESSAGE.ordinal
         }
     }
@@ -42,7 +53,7 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
         fun bind(item: SelectViewTypeClass.Message) = with(binding) {
             messageTextView.text = item.textMessage
             messageTitleTextView.text = item.titleMessage
-            avatarImageView.setImageResource(item.imageId)
+
 
             customFlexBox.getChildAt(customFlexBox.childCount - 1)
                 .setOnClickListener {
@@ -51,7 +62,7 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
 
             customViewGroup.clearEmoji()
 
-            item.emoji.forEach {
+            item.emojiList.forEach {
                 if (it.count != 0) customViewGroup.addEmoji(it)
             }
 
@@ -64,20 +75,16 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
                 true -> {
                     customViewGroup.setRectangleColor(R.color.teal_700)
                     customViewGroup.setYoursMessage(true)
+                    avatarImageView.isVisible = false
+                    messageTitleTextView.layoutParams.height = 0
+                    messageTitleTextView.text = ""
                 }
-                false -> {
+                else -> {
                     customViewGroup.setRectangleColor(R.color.unselected)
                     customViewGroup.setYoursMessage(false)
+                    avatarImageView.isVisible = true
+                    messageTitleTextView.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
                 }
-            }
-
-            if (item.isYou) {
-                avatarImageView.isVisible = false
-                messageTitleTextView.layoutParams.height = 0
-                messageTitleTextView.text = ""
-            } else {
-                avatarImageView.isVisible = true
-                messageTitleTextView.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
             }
         }
     }
@@ -103,8 +110,8 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (val inform = messageList[position]) {
-            is SelectViewTypeClass.Data -> (holder as DataHolder).bind(inform.time)
+        when (val inform = differ.currentList[position]) {
+            is SelectViewTypeClass.Date -> (holder as DataHolder).bind(inform.time)
             is SelectViewTypeClass.Message -> {
                 (holder as MessageHolder).bind(inform)
             }
@@ -112,21 +119,37 @@ class MessageAdapter(val onTab: (Int) -> Unit) :
     }
 
     override fun getItemCount(): Int {
-        return messageList.size
+        return differ.currentList.size
     }
 
-    fun addMessage(message: SelectViewTypeClass) {
-        messageList.add(message)
-        notifyDataSetChanged()
+    fun updateChatList(chatList: List<SelectViewTypeClass>) {
+        differ.submitList(chatList)
+    }
+
+    fun addMessage(messageText: String) {
+
+        val list = differ.currentList.toMutableList()
+        list.add(
+            SelectViewTypeClass.Message(
+                currentId,
+                messageText,
+                "You Name",
+                2,
+                true
+            )
+        )
+        differ.submitList(list)
+        currentId++
     }
 
     fun addEmojiReaction(reaction: Reaction, position: Int) {
-        (messageList[position] as? SelectViewTypeClass.Message)?.emoji?.add(reaction)
+        (differ.currentList[position] as? SelectViewTypeClass.Message)?.emojiList?.add(reaction)
+        differ.submitList(differ.currentList)
         notifyItemChanged(position)
     }
 
     fun removeEmoji(position: Int) {
-        (messageList[position] as? SelectViewTypeClass.Message)?.emoji?.removeLast()
-        notifyItemChanged(position)
+        (differ.currentList[position] as? SelectViewTypeClass.Message)?.emojiList?.removeLast()
+        differ.submitList(differ.currentList)
     }
 }
