@@ -51,6 +51,12 @@ dependencies {
     implementation"androidx.viewpager2:viewpager2:$viewPager2Version"
     implementation"androidx.fragment:fragment-ktx:$fragmentVersion"
 
+    // RxJava2 Dependencies
+    implementation "io.reactivex.rxjava2:rxjava:$rxJava"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroid"
+
+
+
 
 
 

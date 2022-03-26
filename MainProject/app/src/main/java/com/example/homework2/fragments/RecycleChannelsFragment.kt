@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +16,11 @@ import com.example.homework2.viewmodels.ChannelViewModel
 import com.example.homework2.R
 import com.example.homework2.customviews.dpToPx
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class RecycleChannelsFragment : Fragment() {
 
@@ -21,6 +28,8 @@ class RecycleChannelsFragment : Fragment() {
     private var recycleAdapter = ChannelRecycleViewAdapter() {
         openFrag(ChatFragment.newInstance(), ChatFragment.TAG)
     }
+
+    private val compositeDisposable = CompositeDisposable()
 
     private var itemDivider = object : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(
@@ -51,20 +60,40 @@ class RecycleChannelsFragment : Fragment() {
         )
         binding.recycleChannel.addItemDecoration(itemDivider)
 
+        //Не нужно фильтровать пустую строку для возврата исходного результата
+        val searchDisposable = (parentFragment as ChannelFragment).searchObservable
+            .debounce(1, TimeUnit.SECONDS)
+            .distinctUntilChanged()
+            .subscribe {
+                viewModel.onSearchChanged(it)
+            }
+
+        compositeDisposable.add(searchDisposable)
+
         when (requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)) {
             true -> {
-                viewModel.subscribedList.observe(viewLifecycleOwner){
+                viewModel.subscribedList.observe(viewLifecycleOwner) {
                     recycleAdapter.updateList(it)
                 }
             }
             else -> {
-                viewModel.allChannelList.observe(viewLifecycleOwner) {
-                    recycleAdapter.updateList(it)
-                }
+                val allChannelsDisposable = viewModel.allChannelsObservable
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        { recycleAdapter.updateList(it) },
+                        { Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show() }
+                    )
+                compositeDisposable.add(allChannelsDisposable)
             }
         }
         return binding.root
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        compositeDisposable.clear()
+    }
+
 
     private fun openFrag(fragment: Fragment, tag: String? = null) {
         requireActivity().supportFragmentManager.beginTransaction()
