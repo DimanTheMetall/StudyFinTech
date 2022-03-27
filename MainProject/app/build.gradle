@@ -50,6 +50,7 @@ dependencies {
     implementation "net.danlew:android.joda:$jodaTime"
     implementation"androidx.viewpager2:viewpager2:$viewPager2Version"
     implementation"androidx.fragment:fragment-ktx:$fragmentVersion"
+    implementation "com.facebook.shimmer:shimmer:$shimmerVersion"
 
     // RxJava2 Dependencies
     implementation "io.reactivex.rxjava2:rxjava:$rxJava"

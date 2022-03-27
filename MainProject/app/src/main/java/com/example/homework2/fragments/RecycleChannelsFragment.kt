@@ -16,9 +16,11 @@ import com.example.homework2.viewmodels.ChannelViewModel
 import com.example.homework2.R
 import com.example.homework2.customviews.dpToPx
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
+import com.example.homework2.dataclasses.Result
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
@@ -59,6 +61,7 @@ class RecycleChannelsFragment : Fragment() {
             LinearLayoutManager.VERTICAL, false
         )
         binding.recycleChannel.addItemDecoration(itemDivider)
+        val shimmer = binding.channelShimmer
 
         //Не нужно фильтровать пустую строку для возврата исходного результата
         val searchDisposable = (parentFragment as ChannelFragment).searchObservable
@@ -72,17 +75,32 @@ class RecycleChannelsFragment : Fragment() {
 
         when (requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)) {
             true -> {
-                viewModel.subscribedList.observe(viewLifecycleOwner) {
-                    recycleAdapter.updateList(it)
-                }
+                val subscribedChannelsDisposable = viewModel.subscribedChannelsObservable
+                    .subscribe { recycleAdapter.updateList(it) }
+                shimmer.hideShimmer()
+                compositeDisposable.add(subscribedChannelsDisposable)
             }
             else -> {
                 val allChannelsDisposable = viewModel.allChannelsObservable
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        { recycleAdapter.updateList(it) },
-                        { Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show() }
-                    )
+                    .subscribe {
+                        when (it) {
+                            is Result.Success-> {
+                                recycleAdapter.updateList(it.channelList)
+                                shimmer.hideShimmer()
+                            }
+                            is Result.Error -> {
+                                Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG)
+                                    .show()
+                                shimmer.hideShimmer()
+                            }
+                            is Result.Progress -> {
+                                Toast.makeText(requireContext(), "Progress", Toast.LENGTH_LONG)
+                                    .show()
+                                shimmer.showShimmer(true)
+                            }
+                        }
+                    }
                 compositeDisposable.add(allChannelsDisposable)
             }
         }
@@ -94,7 +112,6 @@ class RecycleChannelsFragment : Fragment() {
         compositeDisposable.clear()
     }
 
-
     private fun openFrag(fragment: Fragment, tag: String? = null) {
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_holder, fragment, tag)
@@ -105,7 +122,6 @@ class RecycleChannelsFragment : Fragment() {
     companion object {
 
         fun newInstance(isSubscribed: Boolean): RecycleChannelsFragment {
-
             val fragment = RecycleChannelsFragment()
             val arguments = Bundle()
             arguments.putBoolean(Constance.ALL_OR_SUBSCRIBED_KEY, isSubscribed)

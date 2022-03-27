@@ -38,11 +38,8 @@ class ChatViewModel() : ViewModel() {
             list.filterIsInstance<SelectViewTypeClass.Message>().lastOrNull()?.id?.let {
                 currentId = it+1
             }
-
         }
-
     }
-
 
     fun onEmojiClick(emoji: String, position: Int) {
         val newList = _chatList.value?.toMutableList() ?: return
@@ -80,7 +77,6 @@ class ChatViewModel() : ViewModel() {
             this[position] = it
         }
     }
-
 
     fun onNextMassageClick(messageText: String) {
         val list = chatList.value?.toMutableList() ?: return
