@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,12 +15,9 @@ import com.example.homework2.viewmodels.ChannelViewModel
 import com.example.homework2.R
 import com.example.homework2.customviews.dpToPx
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
-import com.example.homework2.dataclasses.Result
-import io.reactivex.Scheduler
+import com.example.homework2.dataclasses.ResultChannel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Function
-import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class RecycleChannelsFragment : Fragment() {
@@ -62,22 +58,45 @@ class RecycleChannelsFragment : Fragment() {
         )
         binding.recycleChannel.addItemDecoration(itemDivider)
         val shimmer = binding.channelShimmer
+        val isSubscribed = requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)
 
         //Не нужно фильтровать пустую строку для возврата исходного результата
         val searchDisposable = (parentFragment as ChannelFragment).searchObservable
             .debounce(1, TimeUnit.SECONDS)
             .distinctUntilChanged()
             .subscribe {
-                viewModel.onSearchChanged(it)
+                when (isSubscribed) {
+                    true -> {
+                        viewModel.onSearchChangedSubscribedChannel(it)
+                    }
+                    false -> {
+                        viewModel.onSearchChangedAllChannel(it)
+                    }
+                }
             }
-
         compositeDisposable.add(searchDisposable)
 
-        when (requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)) {
+
+        when (isSubscribed) {
             true -> {
                 val subscribedChannelsDisposable = viewModel.subscribedChannelsObservable
-                    .subscribe { recycleAdapter.updateList(it) }
-                shimmer.hideShimmer()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        when (it) {
+                            is ResultChannel.Success -> {
+                                recycleAdapter.updateList(it.channelList)
+                                shimmer.hideShimmer()
+                            }
+                            is ResultChannel.Progress -> {
+                                shimmer.showShimmer(true)
+                            }
+                            is ResultChannel.Error -> {
+                                Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG)
+                                    .show()
+                                shimmer.hideShimmer()
+                            }
+                        }
+                    }
                 compositeDisposable.add(subscribedChannelsDisposable)
             }
             else -> {
@@ -85,18 +104,16 @@ class RecycleChannelsFragment : Fragment() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         when (it) {
-                            is Result.Success-> {
+                            is ResultChannel.Success -> {
                                 recycleAdapter.updateList(it.channelList)
                                 shimmer.hideShimmer()
                             }
-                            is Result.Error -> {
+                            is ResultChannel.Error -> {
                                 Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG)
                                     .show()
                                 shimmer.hideShimmer()
                             }
-                            is Result.Progress -> {
-                                Toast.makeText(requireContext(), "Progress", Toast.LENGTH_LONG)
-                                    .show()
+                            is ResultChannel.Progress -> {
                                 shimmer.showShimmer(true)
                             }
                         }

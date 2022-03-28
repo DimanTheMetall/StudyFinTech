@@ -3,7 +3,7 @@ package com.example.homework2.viewmodels
 import androidx.lifecycle.ViewModel
 import com.example.homework2.dataclasses.Channel
 import com.example.homework2.dataclasses.ChannelTopic
-import com.example.homework2.dataclasses.Result
+import com.example.homework2.dataclasses.ResultChannel
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -67,32 +67,59 @@ class ChannelViewModel() : ViewModel() {
                 )
             ))
 
-    val allChannelsObservable: Observable<com.example.homework2.dataclasses.Result> get() = allChannelsSubject
-    private val allChannelsSubject = BehaviorSubject.create<com.example.homework2.dataclasses.Result>().apply {
-        onNext(Result.Success(allChannelList)) //Затычка
-    }
+    val allChannelsObservable: Observable<com.example.homework2.dataclasses.ResultChannel> get() = allChannelsSubject
+    private val allChannelsSubject =
+        BehaviorSubject.create<com.example.homework2.dataclasses.ResultChannel>().apply {
+            onNext(ResultChannel.Success(allChannelList)) //Затычка
+        }
 
-    val subscribedChannelsObservable: Observable<List<Channel>>
+    val subscribedChannelsObservable: Observable<ResultChannel>
         get() = subscribedChannelsSubject
-    private val subscribedChannelsSubject = BehaviorSubject.create<List<Channel>>().apply {
+    private val subscribedChannelsSubject = BehaviorSubject.create<ResultChannel>().apply {
 
-        onNext(subscribedList) //Затычка
+        onNext(ResultChannel.Success(subscribedList)) //Затычка
     }
 
-    fun onSearchChanged(searchText: String) {
-        allChannelsSubject.onNext(com.example.homework2.dataclasses.Result.Progress)
-        val d = Observable.timer(3, TimeUnit.SECONDS)
+    fun onSearchChangedSubscribedChannel(searchText: String) {
+        subscribedChannelsSubject.onNext(com.example.homework2.dataclasses.ResultChannel.Progress)
+        val d = Observable.timer(3, TimeUnit.SECONDS) //Эмуляция запроса в сеть
+            .subscribeOn(Schedulers.io())
+            .subscribe {
+                val error = Random.nextBoolean() //Эмуляция ошибки
+                if (!error) {
+                    subscribedChannelsSubject.onNext(
+                        com.example.homework2.dataclasses.ResultChannel.Success(
+                            subscribedList.filter {
+                                it.name.contains(
+                                    searchText
+                                )
+                            })
+                    )
+                } else {
+                    allChannelsSubject.onNext(com.example.homework2.dataclasses.ResultChannel.Error)
+                }
+            }
+        compositeDisposable.add(d)
+    }
+
+
+    fun onSearchChangedAllChannel(searchText: String) {
+        allChannelsSubject.onNext(com.example.homework2.dataclasses.ResultChannel.Progress)
+        val d = Observable.timer(2, TimeUnit.SECONDS) //Эмуляция запроса в сеть
             .subscribeOn(Schedulers.io())
             .subscribe {
                 val error = Random.nextBoolean()
                 if (!error) {
-                    allChannelsSubject.onNext(com.example.homework2.dataclasses.Result.Success(allChannelList.filter {
-                        it.name.contains(
-                            searchText
-                        )
-                    }))
+                    allChannelsSubject.onNext(
+                        com.example.homework2.dataclasses.ResultChannel.Success(
+                            allChannelList.filter {
+                                it.name.contains(
+                                    searchText
+                                )
+                            })
+                    )
                 } else {
-                    allChannelsSubject.onNext(com.example.homework2.dataclasses.Result.Error)
+                    allChannelsSubject.onNext(com.example.homework2.dataclasses.ResultChannel.Error)
                 }
             }
         compositeDisposable.add(d)

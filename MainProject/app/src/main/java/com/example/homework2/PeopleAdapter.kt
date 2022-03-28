@@ -44,8 +44,8 @@ class PeopleAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemCount(): Int = peopleList.size
 
-    fun updateProfileList(list: MutableList<Profile>){
-        peopleList = list
+    fun updateProfileList(list: List<Profile>){
+        peopleList = list.toMutableList()
         notifyDataSetChanged()
     }
 
