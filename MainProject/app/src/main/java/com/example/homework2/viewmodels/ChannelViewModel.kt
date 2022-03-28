@@ -67,7 +67,8 @@ class ChannelViewModel() : ViewModel() {
                 )
             ))
 
-    val allChannelsObservable: Observable<com.example.homework2.dataclasses.ResultChannel> get() = allChannelsSubject
+    val allChannelsObservable: Observable<com.example.homework2.dataclasses.ResultChannel>
+        get() = allChannelsSubject
     private val allChannelsSubject =
         BehaviorSubject.create<com.example.homework2.dataclasses.ResultChannel>().apply {
             onNext(ResultChannel.Success(allChannelList)) //Затычка
@@ -76,13 +77,12 @@ class ChannelViewModel() : ViewModel() {
     val subscribedChannelsObservable: Observable<ResultChannel>
         get() = subscribedChannelsSubject
     private val subscribedChannelsSubject = BehaviorSubject.create<ResultChannel>().apply {
-
         onNext(ResultChannel.Success(subscribedList)) //Затычка
     }
 
     fun onSearchChangedSubscribedChannel(searchText: String) {
         subscribedChannelsSubject.onNext(com.example.homework2.dataclasses.ResultChannel.Progress)
-        val d = Observable.timer(3, TimeUnit.SECONDS) //Эмуляция запроса в сеть
+        val d = Observable.timer(1, TimeUnit.SECONDS) //Эмуляция запроса в сеть
             .subscribeOn(Schedulers.io())
             .subscribe {
                 val error = Random.nextBoolean() //Эмуляция ошибки
@@ -102,10 +102,9 @@ class ChannelViewModel() : ViewModel() {
         compositeDisposable.add(d)
     }
 
-
     fun onSearchChangedAllChannel(searchText: String) {
         allChannelsSubject.onNext(com.example.homework2.dataclasses.ResultChannel.Progress)
-        val d = Observable.timer(2, TimeUnit.SECONDS) //Эмуляция запроса в сеть
+        val d = Observable.timer(1, TimeUnit.SECONDS) //Эмуляция запроса в сеть
             .subscribeOn(Schedulers.io())
             .subscribe {
                 val error = Random.nextBoolean()

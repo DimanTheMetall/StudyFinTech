@@ -32,18 +32,21 @@ class ProfileViewModel() : ViewModel() {
         onNext(ResultProfile.Success(profileList)) //Затычка
     }
 
-    fun onSearchProfile(searchText: String){
-    profileSubject.onNext(ResultProfile.Progress)
+    fun onSearchProfile(searchText: String) {
+        profileSubject.onNext(ResultProfile.Progress)
         val d = Observable.timer(2, TimeUnit.SECONDS) //Эмуляция запроса в сеть
             .subscribeOn(Schedulers.io())
-            .subscribe{
+            .subscribe {
                 val error = Random.nextBoolean() //Эмуляция ошибки
                 if (!error) {
-                    profileSubject.onNext(com.example.homework2.dataclasses.ResultProfile.Success(profileList.filter {
-                        it.name.contains(
-                            searchText
-                        )
-                    }))
+                    profileSubject.onNext(
+                        com.example.homework2.dataclasses.ResultProfile.Success(
+                            profileList.filter {
+                                it.name.contains(
+                                    searchText
+                                )
+                            })
+                    )
                 } else {
                     profileSubject.onNext(com.example.homework2.dataclasses.ResultProfile.Error)
                 }

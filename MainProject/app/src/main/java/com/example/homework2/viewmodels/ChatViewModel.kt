@@ -5,55 +5,54 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.homework2.dataclasses.Reaction
 import com.example.homework2.dataclasses.SelectViewTypeClass
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.BehaviorSubject
 
-class ChatViewModel() : ViewModel() {
+class ChatViewModel : ViewModel() {
+
     private var currentId = 0
 
+    private var chatListList = listOf<SelectViewTypeClass>(
+        SelectViewTypeClass.Message(
+            1,
+            "textMessage",
+            "titleMessage",
+            2,
+            false,
+            emptyList<Reaction>().toMutableList()
+        ),
+        SelectViewTypeClass.Message(
+            2,
+            "textMessage",
+            "titleMessage",
+            2,
+            true,
+            emptyList<Reaction>().toMutableList()
+        ),
+        SelectViewTypeClass.Date("time 02")
+    )
 
-    private val _chatList = MutableLiveData<List<SelectViewTypeClass>>().apply {
-        value = listOf(
-            SelectViewTypeClass.Message(
-                1,
-                "textMessage",
-                "titleMessage",
-                2,
-                false,
-                emptyList<Reaction>().toMutableList()
-            ),
-            SelectViewTypeClass.Message(
-                2,
-                "textMessage",
-                "titleMessage",
-                2,
-                true,
-                emptyList<Reaction>().toMutableList()
-            ),
-            SelectViewTypeClass.Date("time 02")
-        )
-    }
-    val chatList: LiveData<List<SelectViewTypeClass>> = _chatList
+    private val compositeDisposable = CompositeDisposable()
 
-    init {
-        _chatList.observeForever { list ->
-            list.filterIsInstance<SelectViewTypeClass.Message>().lastOrNull()?.id?.let {
-                currentId = it+1
-            }
-        }
+    val chatObservable: Observable<List<SelectViewTypeClass>> get() = chatSubject
+    private val chatSubject = BehaviorSubject.create<List<SelectViewTypeClass>>().apply {
+        onNext(chatListList)
     }
 
     fun onEmojiClick(emoji: String, position: Int) {
-        val newList = _chatList.value?.toMutableList() ?: return
+        val newList = chatListList.toMutableList() ?: return
         val emojiList =
             (newList[position] as? SelectViewTypeClass.Message)?.emojiList?.toMutableSet()
                 ?: return
         emojiList.add(Reaction(emoji, 1))
-
         newList.updateEmoji(emojiList.toList(), position)
-        _chatList.value = newList
+        chatListList = newList
+        updateChatList()
     }
 
     fun updateEmoji(position: Int, reaction: Reaction) {
-        val chatListMutable = _chatList.value?.toMutableList() ?: return
+        val chatListMutable = chatListList.toMutableList() ?: return
         val emojiList =
             (chatListMutable[position] as? SelectViewTypeClass.Message)?.emojiList?.toMutableSet()
                 ?: return
@@ -66,7 +65,8 @@ class ChatViewModel() : ViewModel() {
         }
 
         chatListMutable.updateEmoji(emojiList.toList(), position)
-        _chatList.value = chatListMutable
+        chatListList = chatListMutable
+        updateChatList()
     }
 
     private fun MutableList<SelectViewTypeClass>.updateEmoji(
@@ -79,7 +79,7 @@ class ChatViewModel() : ViewModel() {
     }
 
     fun onNextMassageClick(messageText: String) {
-        val list = chatList.value?.toMutableList() ?: return
+        val list = chatListList.toMutableList() ?: return
         list.add(
             SelectViewTypeClass.Message(
                 currentId,
@@ -90,6 +90,16 @@ class ChatViewModel() : ViewModel() {
             )
         )
         currentId++
-        _chatList.value = list
+        chatListList = list
+        updateChatList()
+    }
+
+    private fun updateChatList() {
+        chatSubject.onNext(chatListList)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
     }
 }

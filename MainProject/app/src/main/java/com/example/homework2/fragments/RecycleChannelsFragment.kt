@@ -99,7 +99,7 @@ class RecycleChannelsFragment : Fragment() {
                     }
                 compositeDisposable.add(subscribedChannelsDisposable)
             }
-            else -> {
+            false -> {
                 val allChannelsDisposable = viewModel.allChannelsObservable
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {

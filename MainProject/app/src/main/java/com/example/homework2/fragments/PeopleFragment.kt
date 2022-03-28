@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 
 class PeopleFragment : Fragment() {
 
-    lateinit var binding: FragmentPeopleBinding
+    private lateinit var binding: FragmentPeopleBinding
     private val viewModel: ProfileViewModel by viewModels()
     private val recycleAdapter = PeopleAdapter()
     private val compositeDisposable = CompositeDisposable()
@@ -64,7 +64,6 @@ class PeopleFragment : Fragment() {
                         shimmer.hideShimmer()
                     }
                 }
-
             }
         compositeDisposable.add(searchDisposable)
         compositeDisposable.add(profileDisposable)
@@ -75,6 +74,7 @@ class PeopleFragment : Fragment() {
         super.onDestroyView()
         compositeDisposable.clear()
     }
+
 
     companion object {
 

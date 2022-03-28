@@ -14,6 +14,7 @@ import com.example.homework2.R
 import com.example.homework2.customviews.*
 import com.example.homework2.databinding.FragmentChatBinding
 import com.example.homework2.viewmodels.ChatViewModel
+import io.reactivex.disposables.CompositeDisposable
 import org.joda.time.DateTime
 
 class ChatFragment() : Fragment() {
@@ -22,6 +23,7 @@ class ChatFragment() : Fragment() {
     private lateinit var binding: FragmentChatBinding
     private lateinit var messageAdapter: MessageAdapter
     private var dateTime: DateTime = DateTime()
+    private val compositeDisposable = CompositeDisposable()
 
     private val viewModel: ChatViewModel by viewModels()
 
@@ -51,9 +53,10 @@ class ChatFragment() : Fragment() {
             bottomSheetDialog?.show()
         }, { position, reaction -> viewModel.updateEmoji(position, reaction) })
 
-        viewModel.chatList.observe(viewLifecycleOwner) {
+        val chatDisposable = viewModel.chatObservable.subscribe {
             messageAdapter.updateChatList(it)
         }
+        val shimmer = binding.chatShimmer
 
         bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emoji ->
             viewModel.onEmojiClick(emoji, position)
@@ -73,25 +76,42 @@ class ChatFragment() : Fragment() {
 
             messageField.doOnTextChanged { text, start, before, count ->
                 if (text.isNullOrEmpty()) {
-                    binding.messageTranslateImage.setImageResource(
-                        R.drawable.ic_add_circle_no_text
-                    )
-                    binding.messageTranslateImage.setBackgroundResource(
-                        R.drawable.send_message_circle_background_no_text
-                    )
+                    switchImageOnTextChanged(true)
                 } else {
-                    binding.messageTranslateImage.setImageResource(
-                        R.drawable.ic_add_circle_yes_text
-                    )
-                    binding.messageTranslateImage.setBackgroundResource(
-                        R.drawable.send_message_circle_background_text
-                    )
+                    switchImageOnTextChanged(false)
                 }
             }
         }
+        compositeDisposable.add(chatDisposable)
+
         return binding.root
     }
 
+    private fun switchImageOnTextChanged(isTextEmpty: Boolean) {
+        when (isTextEmpty) {
+            true -> {
+                binding.messageTranslateImage.setImageResource(
+                    R.drawable.ic_add_circle_no_text
+                )
+                binding.messageTranslateImage.setBackgroundResource(
+                    R.drawable.send_message_circle_background_no_text
+                )
+            }
+            false -> {
+                binding.messageTranslateImage.setImageResource(
+                    R.drawable.ic_add_circle_yes_text
+                )
+                binding.messageTranslateImage.setBackgroundResource(
+                    R.drawable.send_message_circle_background_text
+                )
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        compositeDisposable.clear()
+    }
 
     companion object {
         const val TAG = "ChatFragment"
