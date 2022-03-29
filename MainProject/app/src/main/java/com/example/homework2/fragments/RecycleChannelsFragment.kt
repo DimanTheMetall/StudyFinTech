@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.homework2.ChannelRecycleViewAdapter
 import com.example.homework2.Constance
 import com.example.homework2.viewmodels.ChannelViewModel
 import com.example.homework2.R
@@ -22,7 +23,9 @@ import java.util.concurrent.TimeUnit
 
 class RecycleChannelsFragment : Fragment() {
 
-    lateinit var binding: FragmentRecycleChannelsBinding
+    private var _binding: FragmentRecycleChannelsBinding? = null
+    private val binding get() = _binding!!
+
     private var recycleAdapter = ChannelRecycleViewAdapter() {
         openFrag(ChatFragment.newInstance(), ChatFragment.TAG)
     }
@@ -50,7 +53,7 @@ class RecycleChannelsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentRecycleChannelsBinding.inflate(inflater)
+        _binding = FragmentRecycleChannelsBinding.inflate(inflater)
         binding.recycleChannel.adapter = recycleAdapter
         binding.recycleChannel.layoutManager = LinearLayoutManager(
             requireContext(),
@@ -76,26 +79,29 @@ class RecycleChannelsFragment : Fragment() {
             }
         compositeDisposable.add(searchDisposable)
 
+        fun updateChannelResult(result: ResultChannel){
+            when(result){
+                is ResultChannel.Success -> {
+                    recycleAdapter.updateList(result.channelList)
+                    shimmer.hideShimmer()
+                }
+                is ResultChannel.Error -> {
+                    shimmer.hideShimmer()
+                }
+                is ResultChannel.Progress -> {
+                    Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG)
+                        .show()
+                    shimmer.showShimmer(true)
+                }
+            }
+        }
 
         when (isSubscribed) {
             true -> {
                 val subscribedChannelsDisposable = viewModel.subscribedChannelsObservable
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
-                        when (it) {
-                            is ResultChannel.Success -> {
-                                recycleAdapter.updateList(it.channelList)
-                                shimmer.hideShimmer()
-                            }
-                            is ResultChannel.Progress -> {
-                                shimmer.showShimmer(true)
-                            }
-                            is ResultChannel.Error -> {
-                                Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG)
-                                    .show()
-                                shimmer.hideShimmer()
-                            }
-                        }
+                        updateChannelResult(it)
                     }
                 compositeDisposable.add(subscribedChannelsDisposable)
             }
@@ -103,20 +109,7 @@ class RecycleChannelsFragment : Fragment() {
                 val allChannelsDisposable = viewModel.allChannelsObservable
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
-                        when (it) {
-                            is ResultChannel.Success -> {
-                                recycleAdapter.updateList(it.channelList)
-                                shimmer.hideShimmer()
-                            }
-                            is ResultChannel.Error -> {
-                                Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG)
-                                    .show()
-                                shimmer.hideShimmer()
-                            }
-                            is ResultChannel.Progress -> {
-                                shimmer.showShimmer(true)
-                            }
-                        }
+                        updateChannelResult(it)
                     }
                 compositeDisposable.add(allChannelsDisposable)
             }
@@ -127,6 +120,7 @@ class RecycleChannelsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         compositeDisposable.clear()
+        _binding = null
     }
 
     private fun openFrag(fragment: Fragment, tag: String? = null) {

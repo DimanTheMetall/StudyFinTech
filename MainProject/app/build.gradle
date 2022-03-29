@@ -7,8 +7,6 @@ plugins {
 android {
     compileSdk rootProject.compileSdkVersion
 
-
-
     defaultConfig {
         applicationId "com.example.homework2"
         minSdk rootProject.minSdkVersion
@@ -26,11 +24,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
     buildFeatures {
         viewBinding true
@@ -43,10 +41,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appCompatVersion"
     implementation "com.google.android.material:material:$materialVersion"
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayoutVersion"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    testImplementation "junit:junit:$junitVersion"
-    androidTestImplementation "androidx.test.ext:junit-ktx:$androidXTestExtKotlinRunnerVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    implementation "androidx.legacy:legacy-support-v4:$legacySupport"
     implementation "net.danlew:android.joda:$jodaTime"
     implementation"androidx.viewpager2:viewpager2:$viewPager2Version"
     implementation"androidx.fragment:fragment-ktx:$fragmentVersion"
@@ -55,11 +50,5 @@ dependencies {
     // RxJava2 Dependencies
     implementation "io.reactivex.rxjava2:rxjava:$rxJava"
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroid"
-
-
-
-
-
-
 
 }

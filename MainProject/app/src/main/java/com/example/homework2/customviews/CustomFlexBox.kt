@@ -20,7 +20,6 @@ class CustomFlexBox @JvmOverloads constructor(
 
         maxWidth = MeasureSpec.getSize(widthMeasureSpec)
 
-
         for (i in 0 until childCount) {
             val child = getChildAt(i)
 
@@ -78,14 +77,14 @@ class CustomFlexBox @JvmOverloads constructor(
     }
 
     override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
-        return ViewGroup.MarginLayoutParams(context, attrs)
+        return MarginLayoutParams(context, attrs)
     }
 
     override fun checkLayoutParams(p: LayoutParams?): Boolean {
-        return p is ViewGroup.MarginLayoutParams
+        return p is MarginLayoutParams
     }
 
     override fun generateLayoutParams(p: LayoutParams?): LayoutParams {
-        return ViewGroup.MarginLayoutParams(p)
+        return MarginLayoutParams(p)
     }
 }

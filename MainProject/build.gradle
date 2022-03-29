@@ -29,5 +29,6 @@ ext {
     rxJava = "2.2.2"
     rxAndroid = "2.1.0"
     shimmerVersion = "0.5.0"
+    legacySupport = "1.0.0"
 
 }

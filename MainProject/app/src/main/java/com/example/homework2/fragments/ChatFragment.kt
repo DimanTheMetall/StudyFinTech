@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@ import com.example.homework2.MessageAdapter
 import com.example.homework2.R
 import com.example.homework2.customviews.*
 import com.example.homework2.databinding.FragmentChatBinding
+import com.example.homework2.dataclasses.ChatResult
 import com.example.homework2.viewmodels.ChatViewModel
 import io.reactivex.disposables.CompositeDisposable
 import org.joda.time.DateTime
@@ -20,7 +22,10 @@ import org.joda.time.DateTime
 class ChatFragment() : Fragment() {
 
     private var position = -1
-    private lateinit var binding: FragmentChatBinding
+
+    private var _binding: FragmentChatBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var messageAdapter: MessageAdapter
     private var dateTime: DateTime = DateTime()
     private val compositeDisposable = CompositeDisposable()
@@ -47,16 +52,26 @@ class ChatFragment() : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentChatBinding.inflate(inflater)
+        _binding = FragmentChatBinding.inflate(inflater)
         messageAdapter = MessageAdapter({ position ->
             this.position = position
             bottomSheetDialog?.show()
         }, { position, reaction -> viewModel.updateEmoji(position, reaction) })
 
-        val chatDisposable = viewModel.chatObservable.subscribe {
-            messageAdapter.updateChatList(it)
-        }
         val shimmer = binding.chatShimmer
+        val chatDisposable = viewModel.chatObservable.subscribe {
+            when(it){
+                is ChatResult.Success -> {
+                    messageAdapter.updateChatList(it.chatList)
+                    shimmer.hideShimmer()
+                }
+                is ChatResult.Error -> {
+                    Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG).show()
+                    shimmer.hideShimmer()
+                }
+                is ChatResult.Progress -> {shimmer.showShimmer(true)}
+            }
+        }
 
         bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emoji ->
             viewModel.onEmojiClick(emoji, position)
@@ -110,6 +125,7 @@ class ChatFragment() : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
         compositeDisposable.clear()
     }
 

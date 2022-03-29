@@ -25,13 +25,14 @@ class ChannelFragment : Fragment() {
 
     private lateinit var adapter: PagerChannelsAdapter
     private lateinit var viewPager: ViewPager2
-    private lateinit var binding: FragmentChannelBinding
+    private var _binding: FragmentChannelBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentChannelBinding.inflate(layoutInflater)
+        _binding = FragmentChannelBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -56,6 +57,11 @@ class ChannelFragment : Fragment() {
                 }
             }
         }.attach()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

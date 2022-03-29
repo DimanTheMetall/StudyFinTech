@@ -20,7 +20,8 @@ import java.util.concurrent.TimeUnit
 
 class PeopleFragment : Fragment() {
 
-    private lateinit var binding: FragmentPeopleBinding
+    private var _binding: FragmentPeopleBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: ProfileViewModel by viewModels()
     private val recycleAdapter = PeopleAdapter()
     private val compositeDisposable = CompositeDisposable()
@@ -31,7 +32,7 @@ class PeopleFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentPeopleBinding.inflate(inflater)
+        _binding = FragmentPeopleBinding.inflate(inflater)
         binding.recyclePeople.adapter = recycleAdapter
         binding.recyclePeople.layoutManager = LinearLayoutManager(
             requireContext(),
@@ -72,6 +73,7 @@ class PeopleFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
         compositeDisposable.clear()
     }
 

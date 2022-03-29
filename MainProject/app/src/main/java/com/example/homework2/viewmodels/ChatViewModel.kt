@@ -3,6 +3,7 @@ package com.example.homework2.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.homework2.dataclasses.ChatResult
 import com.example.homework2.dataclasses.Reaction
 import com.example.homework2.dataclasses.SelectViewTypeClass
 import io.reactivex.Observable
@@ -35,13 +36,13 @@ class ChatViewModel : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
-    val chatObservable: Observable<List<SelectViewTypeClass>> get() = chatSubject
-    private val chatSubject = BehaviorSubject.create<List<SelectViewTypeClass>>().apply {
-        onNext(chatListList)
+    val chatObservable: Observable<ChatResult> get() = chatSubject
+    private val chatSubject = BehaviorSubject.create<ChatResult>().apply {
+        onNext(ChatResult.Success(chatListList))
     }
 
     fun onEmojiClick(emoji: String, position: Int) {
-        val newList = chatListList.toMutableList() ?: return
+        val newList = chatListList.toMutableList()
         val emojiList =
             (newList[position] as? SelectViewTypeClass.Message)?.emojiList?.toMutableSet()
                 ?: return
@@ -52,7 +53,7 @@ class ChatViewModel : ViewModel() {
     }
 
     fun updateEmoji(position: Int, reaction: Reaction) {
-        val chatListMutable = chatListList.toMutableList() ?: return
+        val chatListMutable = chatListList.toMutableList()
         val emojiList =
             (chatListMutable[position] as? SelectViewTypeClass.Message)?.emojiList?.toMutableSet()
                 ?: return
@@ -79,7 +80,7 @@ class ChatViewModel : ViewModel() {
     }
 
     fun onNextMassageClick(messageText: String) {
-        val list = chatListList.toMutableList() ?: return
+        val list = chatListList.toMutableList()
         list.add(
             SelectViewTypeClass.Message(
                 currentId,
@@ -95,7 +96,7 @@ class ChatViewModel : ViewModel() {
     }
 
     private fun updateChatList() {
-        chatSubject.onNext(chatListList)
+        chatSubject.onNext(ChatResult.Success(chatListList))
     }
 
     override fun onCleared() {

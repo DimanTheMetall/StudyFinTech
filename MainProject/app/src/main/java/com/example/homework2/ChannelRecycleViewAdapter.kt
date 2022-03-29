@@ -1,17 +1,12 @@
-package com.example.homework2.fragments
+package com.example.homework2
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginBottom
-import androidx.core.view.marginTop
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.dataclasses.Channel
-import com.example.homework2.R
-import com.example.homework2.customviews.dpToPx
 import com.example.homework2.databinding.ChannelItemBinding
 
 class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
@@ -105,7 +100,7 @@ class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
     override fun getItemCount(): Int = channelList.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ChannelRecycleViewAdapter.ChannelHolder).bind(channelList[position])
+        (holder as ChannelHolder).bind(channelList[position])
     }
 
     fun updateList(list: List<Channel>) {

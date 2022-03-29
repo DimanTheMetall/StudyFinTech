@@ -67,10 +67,10 @@ class ChannelViewModel() : ViewModel() {
                 )
             ))
 
-    val allChannelsObservable: Observable<com.example.homework2.dataclasses.ResultChannel>
+    val allChannelsObservable: Observable<ResultChannel>
         get() = allChannelsSubject
     private val allChannelsSubject =
-        BehaviorSubject.create<com.example.homework2.dataclasses.ResultChannel>().apply {
+        BehaviorSubject.create<ResultChannel>().apply {
             onNext(ResultChannel.Success(allChannelList)) //Затычка
         }
 
@@ -81,14 +81,14 @@ class ChannelViewModel() : ViewModel() {
     }
 
     fun onSearchChangedSubscribedChannel(searchText: String) {
-        subscribedChannelsSubject.onNext(com.example.homework2.dataclasses.ResultChannel.Progress)
-        val d = Observable.timer(1, TimeUnit.SECONDS) //Эмуляция запроса в сеть
+        subscribedChannelsSubject.onNext(ResultChannel.Progress)
+        val disposableSub = Observable.timer(1, TimeUnit.SECONDS) //Эмуляция запроса в сеть
             .subscribeOn(Schedulers.io())
             .subscribe {
                 val error = Random.nextBoolean() //Эмуляция ошибки
                 if (!error) {
                     subscribedChannelsSubject.onNext(
-                        com.example.homework2.dataclasses.ResultChannel.Success(
+                        ResultChannel.Success(
                             subscribedList.filter {
                                 it.name.contains(
                                     searchText
@@ -96,21 +96,21 @@ class ChannelViewModel() : ViewModel() {
                             })
                     )
                 } else {
-                    allChannelsSubject.onNext(com.example.homework2.dataclasses.ResultChannel.Error)
+                    subscribedChannelsSubject.onNext(ResultChannel.Error)
                 }
             }
-        compositeDisposable.add(d)
+        compositeDisposable.add(disposableSub)
     }
 
     fun onSearchChangedAllChannel(searchText: String) {
-        allChannelsSubject.onNext(com.example.homework2.dataclasses.ResultChannel.Progress)
-        val d = Observable.timer(1, TimeUnit.SECONDS) //Эмуляция запроса в сеть
+        allChannelsSubject.onNext(ResultChannel.Progress)
+        val disposableAll = Observable.timer(1, TimeUnit.SECONDS) //Эмуляция запроса в сеть
             .subscribeOn(Schedulers.io())
             .subscribe {
                 val error = Random.nextBoolean()
                 if (!error) {
                     allChannelsSubject.onNext(
-                        com.example.homework2.dataclasses.ResultChannel.Success(
+                        ResultChannel.Success(
                             allChannelList.filter {
                                 it.name.contains(
                                     searchText
@@ -118,16 +118,15 @@ class ChannelViewModel() : ViewModel() {
                             })
                     )
                 } else {
-                    allChannelsSubject.onNext(com.example.homework2.dataclasses.ResultChannel.Error)
+                    allChannelsSubject.onNext(ResultChannel.Error)
                 }
             }
-        compositeDisposable.add(d)
+        compositeDisposable.add(disposableAll)
     }
 
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.clear()
     }
-
 
 }
