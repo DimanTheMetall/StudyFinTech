@@ -6,19 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doOnTextChanged
 import androidx.viewpager2.widget.ViewPager2
 import com.example.homework2.R
 import com.example.homework2.PagerChannelsAdapter
 import com.example.homework2.databinding.FragmentChannelBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
-import java.util.*
-import java.util.concurrent.TimeUnit
 
-class ChannelFragment : Fragment() {
+class StreamFragment : Fragment() {
 
     val searchObservable: Observable<String> get() = searchSubject
     private val searchSubject = PublishSubject.create<String>()
@@ -65,8 +61,8 @@ class ChannelFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(): ChannelFragment {
-            return ChannelFragment()
+        fun newInstance(): StreamFragment {
+            return StreamFragment()
         }
     }
 }

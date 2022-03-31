@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.dataclasses.Channel
+import com.example.homework2.dataclasses.Stream
 import com.example.homework2.databinding.ChannelItemBinding
 
-class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
+class StreamRecycleViewAdapter(val openFrag: () -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var channelList: MutableList<Channel> = mutableListOf()
+    private var streamList: MutableList<Stream> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
@@ -31,12 +31,14 @@ class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
     inner class ChannelHolder(item: View) : RecyclerView.ViewHolder(item) {
         private val binding = ChannelItemBinding.bind(item)
         var index = 0
-        fun bind(channel: Channel) {
-            binding.channelName.text = channel.name
+
+        fun bind(stream: Stream) {
+
+            binding.channelName.text = stream.name
             binding.topicList.removeAllViews()
             openStreamsTopic(false)
 
-            channel.topicList.forEach {
+            stream.topicList.forEach {
                 if (index == 3) index = 0
 
                 val view = LayoutInflater.from(itemView.context)
@@ -64,9 +66,9 @@ class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
                         }
                         index++
 
-                        findViewById<TextView>(R.id.stream_name).text = it.topicName
+                        findViewById<TextView>(R.id.stream_name).text = it.name
                         findViewById<TextView>(R.id.message_count).text =
-                            "mess ${it.newMessageCount}"
+                            "mess ${it.max_id}"
                         setOnClickListener {
                             openFrag()
                         }
@@ -97,14 +99,14 @@ class ChannelRecycleViewAdapter(val openFrag: () -> Unit) :
         }
     }
 
-    override fun getItemCount(): Int = channelList.size
+    override fun getItemCount(): Int = streamList.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ChannelHolder).bind(channelList[position])
+        (holder as ChannelHolder).bind(streamList[position])
     }
 
-    fun updateList(list: List<Channel>) {
-        channelList = list.toMutableList()
+    fun updateList(list: List<Stream>) {
+        streamList = list.toMutableList()
         notifyDataSetChanged()
     }
 }

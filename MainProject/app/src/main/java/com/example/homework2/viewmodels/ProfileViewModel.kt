@@ -1,10 +1,7 @@
 package com.example.homework2.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.homework2.dataclasses.Profile
-import com.example.homework2.dataclasses.ResultChannel
 import com.example.homework2.dataclasses.ResultProfile
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable

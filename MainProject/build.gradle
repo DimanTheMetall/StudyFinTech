@@ -26,9 +26,18 @@ ext {
     viewPager2Version = "1.0.0"
     fragmentVersion = "1.4.1"
     navVersion = "2.4.1"
-    rxJava = "2.2.2"
-    rxAndroid = "2.1.0"
     shimmerVersion = "0.5.0"
     legacySupport = "1.0.0"
+
+    //RX
+    rxJava = "2.2.2"
+    rxAndroid = "2.1.0"
+
+    //Internet
+    retrofitVersion = "2.9.0"
+    Gson = "2.8.8"
+    okHttp3Version = "4.8.0"
+
+
 
 }

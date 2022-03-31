@@ -10,13 +10,14 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.ChannelRecycleViewAdapter
+import com.example.homework2.StreamRecycleViewAdapter
 import com.example.homework2.Constance
-import com.example.homework2.viewmodels.ChannelViewModel
+import com.example.homework2.viewmodels.StreamViewModel
 import com.example.homework2.R
+import com.example.homework2.ZulipApp
 import com.example.homework2.customviews.dpToPx
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
-import com.example.homework2.dataclasses.ResultChannel
+import com.example.homework2.dataclasses.ResultStream
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
@@ -26,7 +27,7 @@ class RecycleChannelsFragment : Fragment() {
     private var _binding: FragmentRecycleChannelsBinding? = null
     private val binding get() = _binding!!
 
-    private var recycleAdapter = ChannelRecycleViewAdapter() {
+    private var recycleAdapter = StreamRecycleViewAdapter {
         openFrag(ChatFragment.newInstance(), ChatFragment.TAG)
     }
 
@@ -46,7 +47,7 @@ class RecycleChannelsFragment : Fragment() {
         }
     }
 
-    private val viewModel: ChannelViewModel by viewModels()
+    private val viewModel: StreamViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,8 +64,13 @@ class RecycleChannelsFragment : Fragment() {
         val shimmer = binding.channelShimmer
         val isSubscribed = requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)
 
+        binding.textButtom.setOnClickListener {
+//            viewModel.loadAllStreams((requireActivity().application as ZulipApp).retrofitService)
+            viewModel.loadSubscribedStreams((requireActivity().application as ZulipApp).retrofitService)
+        }
+
         //Не нужно фильтровать пустую строку для возврата исходного результата
-        val searchDisposable = (parentFragment as ChannelFragment).searchObservable
+        val searchDisposable = (parentFragment as StreamFragment).searchObservable
             .debounce(1, TimeUnit.SECONDS)
             .distinctUntilChanged()
             .subscribe {
@@ -79,16 +85,16 @@ class RecycleChannelsFragment : Fragment() {
             }
         compositeDisposable.add(searchDisposable)
 
-        fun updateChannelResult(result: ResultChannel){
+        fun updateChannelResult(result: ResultStream){
             when(result){
-                is ResultChannel.Success -> {
-                    recycleAdapter.updateList(result.channelList)
+                is ResultStream.Success -> {
+                    recycleAdapter.updateList(result.streamList)
                     shimmer.hideShimmer()
                 }
-                is ResultChannel.Error -> {
+                is ResultStream.Error -> {
                     shimmer.hideShimmer()
                 }
-                is ResultChannel.Progress -> {
+                is ResultStream.Progress -> {
                     Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG)
                         .show()
                     shimmer.showShimmer(true)
