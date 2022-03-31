@@ -1,7 +1,6 @@
 package com.example.homework2.retrofit
 
 import com.example.homework2.dataclasses.JsonStreams
-import com.example.homework2.dataclasses.JsonSubscribesStreams
 import com.example.homework2.dataclasses.JsonTopic
 import io.reactivex.Single
 import retrofit2.http.GET
@@ -16,6 +15,6 @@ interface RetrofitService {
     fun getTopicList(@Path("stream_id") streamId: Int): Single<JsonTopic>
 
     @GET("/api/v1/users/me/subscriptions")
-    fun getSubscribedStreams(): Single<JsonSubscribesStreams>
+    fun getSubscribedStreams(): Single<JsonStreams>
 
 }

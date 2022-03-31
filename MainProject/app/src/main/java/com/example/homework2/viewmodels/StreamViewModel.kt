@@ -15,8 +15,6 @@ import kotlin.random.Random
 class StreamViewModel : ViewModel() {
 
 
-
-
     private val compositeDisposable = CompositeDisposable()
     private val allChannelList = mutableListOf<Stream>()
     private var subscribedList = mutableListOf<Stream>()
@@ -79,14 +77,25 @@ class StreamViewModel : ViewModel() {
         compositeDisposable.add(disposableAll)
     }
 
-    fun loadSubscribedStreams(retrofitService: RetrofitService){
+    fun loadSubscribedStreams(retrofitService: RetrofitService) {
         subscribedChannelsSubject.onNext(ResultStream.Progress)
-        val streamDisposable = retrofitService.getSubscribedStreams()
+        val streamsDisposable = retrofitService.getSubscribedStreams()
             .subscribeOn(Schedulers.io())
+            .flatMapObservable { Observable.fromIterable(it.streams) }
+            .flatMap { stream ->
+                retrofitService.getTopicList(stream.stream_id)
+                    .flatMapObservable { Observable.just(stream.copy(topicList = it.topics.toMutableList())) }
+            }
+            .toList()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({},{})
+            .subscribe({
+                subscribedChannelsSubject.onNext(ResultStream.Success(it))
+            }, {
+                println(it)
+                subscribedChannelsSubject.onNext(ResultStream.Error)
+            })
 
-
+        compositeDisposable.add(streamsDisposable)
     }
 
     fun loadAllStreams(retrofitService: RetrofitService) {
@@ -103,8 +112,10 @@ class StreamViewModel : ViewModel() {
             .subscribe({
                 allChannelsSubject.onNext(ResultStream.Success(it))
             }, {
-
+                println(it)
+                allChannelsSubject.onNext(ResultStream.Error)
             })
+
         compositeDisposable.add(streamsDisposable)
     }
 

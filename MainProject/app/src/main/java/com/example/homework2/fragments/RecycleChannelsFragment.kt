@@ -64,10 +64,7 @@ class RecycleChannelsFragment : Fragment() {
         val shimmer = binding.channelShimmer
         val isSubscribed = requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)
 
-        binding.textButtom.setOnClickListener {
-//            viewModel.loadAllStreams((requireActivity().application as ZulipApp).retrofitService)
-            viewModel.loadSubscribedStreams((requireActivity().application as ZulipApp).retrofitService)
-        }
+
 
         //Не нужно фильтровать пустую строку для возврата исходного результата
         val searchDisposable = (parentFragment as StreamFragment).searchObservable
@@ -85,8 +82,8 @@ class RecycleChannelsFragment : Fragment() {
             }
         compositeDisposable.add(searchDisposable)
 
-        fun updateChannelResult(result: ResultStream){
-            when(result){
+        fun updateChannelResult(result: ResultStream) {
+            when (result) {
                 is ResultStream.Success -> {
                     recycleAdapter.updateList(result.streamList)
                     shimmer.hideShimmer()
@@ -95,8 +92,6 @@ class RecycleChannelsFragment : Fragment() {
                     shimmer.hideShimmer()
                 }
                 is ResultStream.Progress -> {
-                    Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG)
-                        .show()
                     shimmer.showShimmer(true)
                 }
             }
@@ -110,6 +105,10 @@ class RecycleChannelsFragment : Fragment() {
                         updateChannelResult(it)
                     }
                 compositeDisposable.add(subscribedChannelsDisposable)
+
+                binding.textButtom.setOnClickListener {
+                    viewModel.loadSubscribedStreams((requireActivity().application as ZulipApp).retrofitService)
+                }
             }
             false -> {
                 val allChannelsDisposable = viewModel.allChannelsObservable
@@ -118,6 +117,10 @@ class RecycleChannelsFragment : Fragment() {
                         updateChannelResult(it)
                     }
                 compositeDisposable.add(allChannelsDisposable)
+
+                binding.textButtom.setOnClickListener {
+                    viewModel.loadAllStreams((requireActivity().application as ZulipApp).retrofitService)
+                }
             }
         }
         return binding.root
