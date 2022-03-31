@@ -1,14 +1,15 @@
 package com.example.homework2
 
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.homework2.databinding.ActivityMainBinding
-import com.example.homework2.dataclasses.Profile
+import com.example.homework2.dataclasses.Member
 import com.example.homework2.fragments.StreamFragment
 import com.example.homework2.fragments.ChatFragment
-import com.example.homework2.fragments.PeopleFragment
+import com.example.homework2.fragments.PeoplesFragment
 import com.example.homework2.fragments.ProfileFragment
 
 class MainActivity : AppCompatActivity() {
@@ -21,12 +22,7 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val yourProfile = Profile(
-            "My Name",
-            2,
-            "myemailemail@email.email",
-            true
-        )
+
         replaceFrag(StreamFragment.newInstance())
 
         supportFragmentManager.addOnBackStackChangedListener {
@@ -42,8 +38,8 @@ class MainActivity : AppCompatActivity() {
         binding.bNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.item_channels -> replaceFrag(StreamFragment.newInstance())
-                R.id.item_people -> replaceFrag(PeopleFragment.newInstance())
-                R.id.item_profile -> replaceFrag(ProfileFragment.newInstance(yourProfile))
+                R.id.item_people -> replaceFrag(PeoplesFragment.newInstance())
+                R.id.item_profile -> replaceFrag(ProfileFragment.newInstance())
             }
             true
         }

@@ -10,18 +10,20 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homework2.PeopleAdapter
+import com.example.homework2.ZulipApp
 import com.example.homework2.databinding.FragmentPeopleBinding
-import com.example.homework2.dataclasses.ResultProfile
+import com.example.homework2.dataclasses.ResultMember
 import com.example.homework2.viewmodels.ProfileViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
-class PeopleFragment : Fragment() {
+class PeoplesFragment : Fragment() {
 
     private var _binding: FragmentPeopleBinding? = null
     private val binding get() = _binding!!
+
     private val viewModel: ProfileViewModel by viewModels()
     private val recycleAdapter = PeopleAdapter()
     private val compositeDisposable = CompositeDisposable()
@@ -49,23 +51,26 @@ class PeopleFragment : Fragment() {
             .subscribe{ viewModel.onSearchProfile(it) }
 
         val shimmer = binding.shimmerPeople
-        val profileDisposable = viewModel.profileObservable
+        val profileDisposable = viewModel.memberObservable
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 when (it) {
-                    is ResultProfile.Error -> {
+                    is ResultMember.Error -> {
                         Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG).show()
                         shimmer.hideShimmer()
                     }
-                    is ResultProfile.Progress -> {
+                    is ResultMember.Progress -> {
                         shimmer.showShimmer(true)
                     }
-                    is ResultProfile.Success -> {
+                    is ResultMember.Success -> {
                         recycleAdapter.updateProfileList(it.profileList)
                         shimmer.hideShimmer()
                     }
                 }
             }
+        binding.searchImage.setOnClickListener {
+            viewModel.loadAllUsers((requireActivity().application as ZulipApp).retrofitService)
+        }
         compositeDisposable.add(searchDisposable)
         compositeDisposable.add(profileDisposable)
         return binding.root
@@ -80,8 +85,8 @@ class PeopleFragment : Fragment() {
 
     companion object {
 
-        fun newInstance(): PeopleFragment {
-            return PeopleFragment()
+        fun newInstance(): PeoplesFragment {
+            return PeoplesFragment()
         }
     }
 }
