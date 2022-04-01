@@ -20,5 +20,6 @@ data class Member(
 //    val profile_data: ProfileData,
     val role: Int,
     val timezone: String,
-    val user_id: Int
+    val user_id: Int,
+    val msg: String = ""
 ) : Parcelable

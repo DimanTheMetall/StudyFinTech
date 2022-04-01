@@ -13,16 +13,6 @@
         android:layout_height="match_parent"
         app:shimmer_repeat_mode="reverse">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/text_buttom"
-            android:layout_width="150dp"
-            android:layout_height="60dp"
-            android:background="@color/red"
-            android:textSize="22sp"
-            android:text="test"
-            android:textColor="@color/black"
-            />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycle_channel"
             android:layout_width="match_parent"

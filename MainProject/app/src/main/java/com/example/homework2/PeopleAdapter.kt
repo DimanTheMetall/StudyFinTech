@@ -8,8 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.homework2.databinding.ProfileLayoutBinding
 import com.example.homework2.dataclasses.Member
+import com.example.homework2.fragments.OtherProfileFragment
 
-class PeopleAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PeopleAdapter(val openFrag: (Member) -> Unit) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var peopleList = mutableListOf<Member>()
 
@@ -23,14 +25,16 @@ class PeopleAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return ProfileHolder(view)
     }
 
-    class ProfileHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ProfileHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val binding = ProfileLayoutBinding.bind(view)
 
         fun bind(item: Member) {
-            when(item.avatar_url!=null){
-                true -> {Glide.with(itemView.context)
-                    .load(item.avatar_url)
-                    .into(binding.profileImage)}
+            when (item.avatar_url != null) {
+                true -> {
+                    Glide.with(itemView.context)
+                        .load(item.avatar_url)
+                        .into(binding.profileImage)
+                }
             }
 
 
@@ -42,7 +46,7 @@ class PeopleAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     else -> onlineImage.visibility = View.INVISIBLE
                 }
                 root.setOnClickListener {
-                    //Need or not go on profile clicker?
+                    openFrag.invoke(item)
                 }
             }
         }
@@ -54,9 +58,10 @@ class PeopleAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemCount(): Int = peopleList.size
 
-    fun updateProfileList(list: List<Member>){
+    fun updateProfileList(list: List<Member>) {
         peopleList = list.toMutableList()
         notifyDataSetChanged()
     }
+
 
 }

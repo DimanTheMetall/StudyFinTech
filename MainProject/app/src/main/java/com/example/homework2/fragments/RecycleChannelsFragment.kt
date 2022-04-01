@@ -65,7 +65,6 @@ class RecycleChannelsFragment : Fragment() {
         val isSubscribed = requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)
 
 
-
         //Не нужно фильтровать пустую строку для возврата исходного результата
         val searchDisposable = (parentFragment as StreamFragment).searchObservable
             .debounce(1, TimeUnit.SECONDS)
@@ -73,10 +72,16 @@ class RecycleChannelsFragment : Fragment() {
             .subscribe {
                 when (isSubscribed) {
                     true -> {
-                        viewModel.onSearchChangedSubscribedChannel(it)
+                        viewModel.onSearchChangedSubscribedChannel(
+                            it,
+                            (requireActivity().application as ZulipApp).retrofitService
+                        )
                     }
                     false -> {
-                        viewModel.onSearchChangedAllChannel(it)
+                        viewModel.onSearchChangedAllChannel(
+                            it,
+                            (requireActivity().application as ZulipApp).retrofitService
+                        )
                     }
                 }
             }
@@ -104,11 +109,8 @@ class RecycleChannelsFragment : Fragment() {
                     .subscribe {
                         updateChannelResult(it)
                     }
-                compositeDisposable.add(subscribedChannelsDisposable)
 
-                binding.textButtom.setOnClickListener {
-                    viewModel.loadSubscribedStreams((requireActivity().application as ZulipApp).retrofitService)
-                }
+                compositeDisposable.add(subscribedChannelsDisposable)
             }
             false -> {
                 val allChannelsDisposable = viewModel.allChannelsObservable
@@ -117,10 +119,6 @@ class RecycleChannelsFragment : Fragment() {
                         updateChannelResult(it)
                     }
                 compositeDisposable.add(allChannelsDisposable)
-
-                binding.textButtom.setOnClickListener {
-                    viewModel.loadAllStreams((requireActivity().application as ZulipApp).retrofitService)
-                }
             }
         }
         return binding.root

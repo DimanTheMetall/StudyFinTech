@@ -33,47 +33,45 @@ class StreamViewModel : ViewModel() {
         onNext(ResultStream.Success(subscribedList)) //Затычка
     }
 
-    fun onSearchChangedSubscribedChannel(searchText: String) {
+    fun onSearchChangedSubscribedChannel(searchText: String, retrofitService: RetrofitService) {
         subscribedChannelsSubject.onNext(ResultStream.Progress)
-        val disposableSub = Observable.timer(1, TimeUnit.SECONDS) //Эмуляция запроса в сеть
+        val disposableSub = retrofitService.getAllStreams()
             .subscribeOn(Schedulers.io())
-            .subscribe {
-                val error = Random.nextBoolean() //Эмуляция ошибки
-                if (!error) {
-                    subscribedChannelsSubject.onNext(
-                        ResultStream.Success(
-                            subscribedList.filter {
-                                it.name.contains(
-                                    searchText
-                                )
-                            })
-                    )
-                } else {
-                    subscribedChannelsSubject.onNext(ResultStream.Error)
-                }
+            .flatMapObservable { Observable.fromIterable(it.streams) }
+            .flatMap { stream ->
+                retrofitService.getTopicList(stream.stream_id)
+                    .flatMapObservable { Observable.just(stream.copy(topicList = it.topics.toMutableList())) }
             }
+            .toList()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ stream ->
+                subscribedChannelsSubject.onNext(ResultStream.Success(
+                    stream.filter { it.name.contains(searchText) }
+                ))
+            }, {
+                subscribedChannelsSubject.onNext(ResultStream.Error)
+            })
         compositeDisposable.add(disposableSub)
     }
 
-    fun onSearchChangedAllChannel(searchText: String) {
+    fun onSearchChangedAllChannel(searchText: String, retrofitService: RetrofitService) {
         allChannelsSubject.onNext(ResultStream.Progress)
-        val disposableAll = Observable.timer(1, TimeUnit.SECONDS) //Эмуляция запроса в сеть
+        val disposableAll = retrofitService.getAllStreams()
             .subscribeOn(Schedulers.io())
-            .subscribe {
-                val error = Random.nextBoolean()
-                if (!error) {
-                    allChannelsSubject.onNext(
-                        ResultStream.Success(
-                            allChannelList.filter {
-                                it.name.contains(
-                                    searchText
-                                )
-                            })
-                    )
-                } else {
-                    allChannelsSubject.onNext(ResultStream.Error)
-                }
+            .flatMapObservable { Observable.fromIterable(it.streams) }
+            .flatMap { stream ->
+                retrofitService.getTopicList(stream.stream_id)
+                    .flatMapObservable { Observable.just(stream.copy(topicList = it.topics.toMutableList())) }
             }
+            .toList()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ stream ->
+                allChannelsSubject.onNext(ResultStream.Success(
+                    stream.filter { it.name.contains(searchText) }
+                ))
+            }, {
+                allChannelsSubject.onNext(ResultStream.Error)
+            })
         compositeDisposable.add(disposableAll)
     }
 
