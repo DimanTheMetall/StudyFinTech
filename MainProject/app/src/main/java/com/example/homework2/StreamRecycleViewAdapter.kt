@@ -8,8 +8,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.dataclasses.Stream
 import com.example.homework2.databinding.ChannelItemBinding
+import com.example.homework2.dataclasses.Topic
 
-class StreamRecycleViewAdapter(val openFrag: () -> Unit) :
+class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var streamList: MutableList<Stream> = mutableListOf()
@@ -25,6 +26,7 @@ class StreamRecycleViewAdapter(val openFrag: () -> Unit) :
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }
+
         return ChannelHolder(view)
     }
 
@@ -36,9 +38,9 @@ class StreamRecycleViewAdapter(val openFrag: () -> Unit) :
 
             binding.channelName.text = stream.name
             binding.topicList.removeAllViews()
-            openStreamsTopic(false)
+            openStreamTopics(false)
 
-            stream.topicList.forEach {
+            stream.topicList.forEach { topik ->
                 if (index == 3) index = 0
 
                 val view = LayoutInflater.from(itemView.context)
@@ -66,11 +68,12 @@ class StreamRecycleViewAdapter(val openFrag: () -> Unit) :
                         }
                         index++
 
-                        findViewById<TextView>(R.id.stream_name).text = it.name
+                        findViewById<TextView>(R.id.stream_name).text = topik.name
                         findViewById<TextView>(R.id.message_count).text =
-                            "mess ${it.max_id}"
+                            "mess ${topik.max_id}"
+
                         setOnClickListener {
-                            openFrag()
+                            openFrag.invoke(topik, stream)
                         }
                     }
                 binding.topicList.addView(view)
@@ -79,16 +82,16 @@ class StreamRecycleViewAdapter(val openFrag: () -> Unit) :
             binding.iconOpenStreams.setOnClickListener {
                 when (binding.topicList.visibility) {
                     View.VISIBLE -> {
-                        openStreamsTopic(false)
+                        openStreamTopics(false)
                     }
                     else -> {
-                        openStreamsTopic(true)
+                        openStreamTopics(true)
                     }
                 }
             }
         }
 
-        private fun openStreamsTopic(isOpen: Boolean) {
+        private fun openStreamTopics(isOpen: Boolean) {
             if (isOpen) {
                 binding.topicList.visibility = View.VISIBLE
                 binding.iconOpenStreams.rotation = 0f

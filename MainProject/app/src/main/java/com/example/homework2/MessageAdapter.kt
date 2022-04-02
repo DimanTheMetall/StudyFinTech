@@ -7,7 +7,7 @@ import androidx.core.view.*
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.customviews.CustomViewGroup
-import com.example.homework2.dataclasses.SelectViewTypeClass
+import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.databinding.CustomViewGroupLayoutBinding
 import com.example.homework2.databinding.TimeTvBinding
 import com.example.homework2.dataclasses.Reaction
@@ -26,8 +26,8 @@ class MessageAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (differ.currentList[position]) {
-            is SelectViewTypeClass.Date -> MessageType.DATA.ordinal
-            is SelectViewTypeClass.Message -> MessageType.MESSAGE.ordinal
+            is SelectViewTypeClass.Chat.Date -> MessageType.DATA.ordinal
+            is SelectViewTypeClass.Chat.Message -> MessageType.MESSAGE.ordinal
         }
     }
 
@@ -42,30 +42,30 @@ class MessageAdapter(
         RecyclerView.ViewHolder(customViewGroup) {
         private val binding = CustomViewGroupLayoutBinding.bind(customViewGroup)
 
-        fun bind(item: SelectViewTypeClass.Message) = with(binding) {
-            messageTextView.text = item.textMessage
-            messageTitleTextView.text = item.titleMessage
+        fun bind(item: SelectViewTypeClass.Chat.Message) = with(binding) {
+            messageTextView.text = item.content
+            messageTitleTextView.text = item.sender_full_name
 
-            customFlexBox.getChildAt(customFlexBox.childCount - 1)
-                .setOnClickListener {
-                    onTab.invoke(adapterPosition)
-                }
+//            customFlexBox.getChildAt(customFlexBox.childCount - 1)
+//                .setOnClickListener {
+//                    onTab.invoke(adapterPosition)
+//                }
+//
+//            customViewGroup.clearEmoji()
+//            item.emojiList.forEach {
+//                if (it.count != 0) customViewGroup.addEmoji(it)
+//            }
+//
+//            binding.root.setOnLongClickListener {
+//                onTab.invoke(adapterPosition)
+//                true
+//            }
+//
+//            (binding.root as CustomViewGroup).setOnEmojiClickListener {
+//                onEmoji.invoke(adapterPosition, it)
+//            }
 
-            customViewGroup.clearEmoji()
-            item.emojiList.forEach {
-                if (it.count != 0) customViewGroup.addEmoji(it)
-            }
-
-            binding.root.setOnLongClickListener {
-                onTab.invoke(adapterPosition)
-                true
-            }
-
-            (binding.root as CustomViewGroup).setOnEmojiClickListener {
-                onEmoji.invoke(adapterPosition, it)
-            }
-
-            when (item.isYou) {
+            when (item.is_me_message) {
                 true -> {
                     customViewGroup.setRectangleColor(R.color.teal_700)
                     customViewGroup.setYoursMessage(true)
@@ -107,8 +107,8 @@ class MessageAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val inform = differ.currentList[position]) {
-            is SelectViewTypeClass.Date -> (holder as MessageAdapter.DataHolder).bind(inform.time)
-            is SelectViewTypeClass.Message -> {
+            is SelectViewTypeClass.Chat.Date -> (holder as MessageAdapter.DataHolder).bind(inform.time)
+            is SelectViewTypeClass.Chat.Message -> {
                 (holder as MessageAdapter.MessageHolder).bind(inform)
             }
         }
@@ -118,7 +118,7 @@ class MessageAdapter(
         return differ.currentList.size
     }
 
-    fun updateChatList(chatList: List<SelectViewTypeClass>) {
+    fun updateChatList(chatList: List<SelectViewTypeClass.Chat>) {
         differ.submitList(chatList)
     }
 }

@@ -49,6 +49,7 @@ class MyProfileFragment : Fragment() {
     private fun updateMyProfile(member: Member) {
         Glide.with(this@MyProfileFragment.requireContext())
             .load(member.avatar_url)
+            .circleCrop()
             .into(binding.profileImage)
 
         binding.profileName.text = member.full_name

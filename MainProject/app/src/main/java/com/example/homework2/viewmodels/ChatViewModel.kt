@@ -1,61 +1,71 @@
 package com.example.homework2.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.homework2.dataclasses.ChatResult
 import com.example.homework2.dataclasses.Reaction
-import com.example.homework2.dataclasses.SelectViewTypeClass
+import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
+import com.example.homework2.dataclasses.chatdataclasses.Filter
+import com.example.homework2.dataclasses.chatdataclasses.Narrow
+import com.example.homework2.dataclasses.chatdataclasses.toJson
+import com.example.homework2.retrofit.RetrofitService
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 
 class ChatViewModel : ViewModel() {
 
     private var currentId = 0
 
-    private var chatListList = listOf<SelectViewTypeClass>(
-        SelectViewTypeClass.Message(
-            1,
-            "textMessage",
-            "titleMessage",
-            2,
-            false,
-            emptyList<Reaction>().toMutableList()
-        ),
-        SelectViewTypeClass.Message(
-            2,
-            "textMessage",
-            "titleMessage",
-            2,
-            true,
-            emptyList<Reaction>().toMutableList()
-        ),
-        SelectViewTypeClass.Date("time 02")
-    )
+    private var chatListList = emptyList<SelectViewTypeClass.Chat.Message>()
 
     private val compositeDisposable = CompositeDisposable()
 
-    val chatObservable: Observable<ChatResult> get() = chatSubject
-    private val chatSubject = BehaviorSubject.create<ChatResult>().apply {
-        onNext(ChatResult.Success(chatListList))
+    val chatObservable: Observable<SelectViewTypeClass> get() = chatSubject
+    private val chatSubject = BehaviorSubject.create<SelectViewTypeClass>().apply {
+        onNext(SelectViewTypeClass.Progress)
     }
 
-    fun onEmojiClick(emoji: String, position: Int) {
-        val newList = chatListList.toMutableList()
-        val emojiList =
-            (newList[position] as? SelectViewTypeClass.Message)?.emojiList?.toMutableSet()
-                ?: return
-        emojiList.add(Reaction(emoji, 1))
-        newList.updateEmoji(emojiList.toList(), position)
-        chatListList = newList
-        updateChatList()
+    fun loadTopicMessage(retrofitService: RetrofitService, topic: String, stream: String) {
+        val messagesDisposable =
+            retrofitService.getMessages(
+                Narrow(
+                    listOf(
+                        Filter("stream", stream),
+                        Filter("topic", topic),
+                    )
+                ).toJson(),
+                "oldest",
+                1000,
+                1000,
+                false
+            )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ chatSubject.onNext(SelectViewTypeClass.Success(it.messages)) }, {
+                    SelectViewTypeClass.Error
+                })
+
+
+
+        compositeDisposable.add(messagesDisposable)
     }
+
+//    fun onEmojiClick(emoji: String, position: Int) {
+//        val newList = chatListList.toMutableList()
+//        val emojiList =
+//            (newList[position] as? SelectViewTypeClass.Message)?.emojiList?.toMutableSet()
+//                ?: return
+//        emojiList.add(Reaction(emoji, 1))
+//        newList.updateEmoji(emojiList.toList(), position)
+//        chatListList = newList
+//        updateChatList()
+//    }
 
     fun updateEmoji(position: Int, reaction: Reaction) {
         val chatListMutable = chatListList.toMutableList()
         val emojiList =
-            (chatListMutable[position] as? SelectViewTypeClass.Message)?.emojiList?.toMutableSet()
+            (chatListMutable[position] as? SelectViewTypeClass.Chat.Message)?.emojiList?.toMutableSet()
                 ?: return
         val hasReaction = emojiList.contains(reaction)
 
@@ -70,33 +80,33 @@ class ChatViewModel : ViewModel() {
         updateChatList()
     }
 
-    private fun MutableList<SelectViewTypeClass>.updateEmoji(
+    private fun MutableList<SelectViewTypeClass.Chat.Message>.updateEmoji(
         emojiList: List<Reaction>,
         position: Int
     ) {
-        (this[position] as? SelectViewTypeClass.Message)?.copy(emojiList = emojiList)?.let {
+        (this[position] as? SelectViewTypeClass.Chat.Message)?.copy(emojiList = emojiList)?.let {
             this[position] = it
         }
     }
 
-    fun onNextMassageClick(messageText: String) {
-        val list = chatListList.toMutableList()
-        list.add(
-            SelectViewTypeClass.Message(
-                currentId,
-                messageText,
-                "You Name",
-                2,
-                true
-            )
-        )
-        currentId++
-        chatListList = list
-        updateChatList()
-    }
+//    fun onNextMassageClick(messageText: String) {
+//        val list = chatListList.toMutableList()
+//        list.add(
+//            SelectViewTypeClass.Message(
+//                currentId,
+//                messageText,
+//                "You Name",
+//                2,
+//                true
+//            )
+//        )
+//        currentId++
+//        chatListList = list
+//        updateChatList()
+//    }
 
     private fun updateChatList() {
-        chatSubject.onNext(ChatResult.Success(chatListList))
+        chatSubject.onNext(SelectViewTypeClass.Success(chatListList))
     }
 
     override fun onCleared() {

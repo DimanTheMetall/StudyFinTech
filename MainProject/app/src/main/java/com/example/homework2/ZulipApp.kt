@@ -1,6 +1,8 @@
 package com.example.homework2
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import com.example.homework2.retrofit.AuthInterceptor
 import com.example.homework2.retrofit.RetrofitService
 import okhttp3.OkHttpClient
@@ -9,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ZulipApp: Application() {
+class ZulipApp : Application() {
 
     lateinit var retrofitService: RetrofitService
 
@@ -37,4 +39,8 @@ class ZulipApp: Application() {
 
         retrofitService = retrofit.create(RetrofitService::class.java)
     }
+}
+
+fun FragmentActivity.zulipApp(): ZulipApp{
+    return this.application as ZulipApp
 }

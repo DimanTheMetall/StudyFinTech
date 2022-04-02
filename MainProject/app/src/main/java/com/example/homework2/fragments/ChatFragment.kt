@@ -10,30 +10,32 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
+import com.example.homework2.Constance
 import com.example.homework2.MessageAdapter
 import com.example.homework2.R
+import com.example.homework2.ZulipApp
 import com.example.homework2.customviews.*
 import com.example.homework2.databinding.FragmentChatBinding
-import com.example.homework2.dataclasses.ChatResult
+import com.example.homework2.dataclasses.Stream
+import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
+import com.example.homework2.dataclasses.Topic
 import com.example.homework2.viewmodels.ChatViewModel
 import io.reactivex.disposables.CompositeDisposable
 import org.joda.time.DateTime
 
 class ChatFragment() : Fragment() {
 
-    private var position = -1
+    private lateinit var messageAdapter: MessageAdapter
+    private lateinit var topic: Topic
+    private lateinit var stream: Stream
 
+    private var position = -1
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var messageAdapter: MessageAdapter
     private var dateTime: DateTime = DateTime()
     private val compositeDisposable = CompositeDisposable()
-
     private val viewModel: ChatViewModel by viewModels()
-
     private var bottomSheetDialog: CustomBottomSheetDialog? = null
-
     private val itemDivider = object : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(
             outRect: Rect,
@@ -53,40 +55,52 @@ class ChatFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentChatBinding.inflate(inflater)
+
         messageAdapter = MessageAdapter({ position ->
             this.position = position
             bottomSheetDialog?.show()
         }, { position, reaction -> viewModel.updateEmoji(position, reaction) })
 
+        topic = requireArguments().getParcelable<Topic>(Constance.TOPIC_KEY)!!
+        stream = requireArguments().getParcelable<Stream>(Constance.STREAM_KEY)!!
+
         val shimmer = binding.chatShimmer
         val chatDisposable = viewModel.chatObservable.subscribe {
-            when(it){
-                is ChatResult.Success -> {
-                    messageAdapter.updateChatList(it.chatList)
+            when (it) {
+                is SelectViewTypeClass.Success -> {
+                    messageAdapter.updateChatList(it.messagesList)
                     shimmer.hideShimmer()
                 }
-                is ChatResult.Error -> {
+                is SelectViewTypeClass.Error -> {
                     Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG).show()
                     shimmer.hideShimmer()
                 }
-                is ChatResult.Progress -> {shimmer.showShimmer(true)}
+                is SelectViewTypeClass.Progress -> {
+                    shimmer.showShimmer(true)
+                }
             }
         }
 
-        bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emoji ->
-            viewModel.onEmojiClick(emoji, position)
-            bottomSheetDialog?.hide()
-        }
+
+//        bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emoji ->
+//            viewModel.onEmojiClick(emoji, position)
+//            bottomSheetDialog?.hide()
+//        }
 
         binding.apply {
             rcView.adapter = messageAdapter
-
+            streamName.text = "Topik #${topic.name}"
             rcView.addItemDecoration(itemDivider)
 
             messageTranslateImage.setOnClickListener {
-                if (!messageField.text.isNullOrEmpty()) {
-                    viewModel.onNextMassageClick(messageField.text.toString())
-                }
+                viewModel.loadTopicMessage(
+                    (requireActivity().application as ZulipApp).retrofitService,
+                    topic.name,
+                    stream.name
+                )
+//                if (!messageField.text.isNullOrEmpty()) {
+//                    viewModel.onNextMassageClick(messageField.text.toString())
+//                }
             }
 
             messageField.doOnTextChanged { text, start, before, count ->
@@ -132,8 +146,13 @@ class ChatFragment() : Fragment() {
     companion object {
         const val TAG = "ChatFragment"
 
-        fun newInstance(): ChatFragment {
-            return ChatFragment()
+        fun newInstance(topic: Topic, stream: Stream): ChatFragment {
+            val fragment = ChatFragment()
+            val argument = Bundle()
+            argument.putParcelable(Constance.TOPIC_KEY, topic)
+            argument.putParcelable(Constance.STREAM_KEY, stream)
+            fragment.arguments = argument
+            return fragment
         }
     }
 }

@@ -1,19 +1,19 @@
 package com.example.homework2
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.homework2.dataclasses.SelectViewTypeClass
+import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 
-class DiffCallback : DiffUtil.ItemCallback<SelectViewTypeClass>() {
+class DiffCallback : DiffUtil.ItemCallback<SelectViewTypeClass.Chat>() {
     override fun areItemsTheSame(
-        oldItem: SelectViewTypeClass,
-        newItem: SelectViewTypeClass
+        oldItem: SelectViewTypeClass.Chat,
+        newItem: SelectViewTypeClass.Chat
     ): Boolean {
 
-        if ((oldItem is SelectViewTypeClass.Message) && (newItem is SelectViewTypeClass.Message)
+        if ((oldItem is SelectViewTypeClass.Chat.Message) && (newItem is SelectViewTypeClass.Chat.Message)
         ) {
             return oldItem.id == newItem.id
         } else {
-            if ((oldItem is SelectViewTypeClass.Date) && (newItem is SelectViewTypeClass.Date)) {
+            if ((oldItem is SelectViewTypeClass.Chat.Date) && (newItem is SelectViewTypeClass.Chat.Date)) {
                 return oldItem.time == newItem.time
             }
         }
@@ -21,8 +21,8 @@ class DiffCallback : DiffUtil.ItemCallback<SelectViewTypeClass>() {
     }
 
     override fun areContentsTheSame(
-        oldItem: SelectViewTypeClass,
-        newItem: SelectViewTypeClass
+        oldItem: SelectViewTypeClass.Chat,
+        newItem: SelectViewTypeClass.Chat
     ): Boolean {
         return oldItem == newItem
     }

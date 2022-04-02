@@ -33,6 +33,7 @@ class StreamViewModel : ViewModel() {
         onNext(ResultStream.Success(subscribedList)) //Затычка
     }
 
+
     fun onSearchChangedSubscribedChannel(searchText: String, retrofitService: RetrofitService) {
         subscribedChannelsSubject.onNext(ResultStream.Progress)
         val disposableSub = retrofitService.getAllStreams()
