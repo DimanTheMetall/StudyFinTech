@@ -15,7 +15,7 @@ class CustomBottomSheetDialog(context: Context, val getEmoji: (String, String) -
     BottomSheetDialog(context) {
 
     private val emojiTriple = listOf<Triple<String, String, String>>(
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
+        Triple(context.getString(R.string.emoji_1), "grinning", "U+1F600"),
         Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
         Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
         Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),

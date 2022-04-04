@@ -16,7 +16,7 @@ import com.example.homework2.dataclasses.Reaction
 
 class CustomViewGroup @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : ViewGroup(context, attrs) {
 
     private val imageView by lazy { getChildAt(0) }
@@ -24,7 +24,7 @@ class CustomViewGroup @JvmOverloads constructor(
     private val message by lazy { getChildAt(2) }
     private val flexBox by lazy { getChildAt(3) as CustomFlexBox }
     private var isYours: Boolean = true
-    private var onAddEmojiCLick: (Reaction ) -> Unit = {}
+
 
     init {
         inflate(context, R.layout.custom_view_group_layout, this)
@@ -141,6 +141,8 @@ class CustomViewGroup @JvmOverloads constructor(
         requestLayout()
     }
 
+
+
     override fun dispatchDraw(canvas: Canvas?) {
         if (!isYours) {
             canvas?.drawRoundRect(
@@ -164,8 +166,7 @@ class CustomViewGroup @JvmOverloads constructor(
         super.dispatchDraw(canvas)
     }
 
-    fun addEmoji(reaction: Reaction, count: Int) {
-
+    fun addEmoji(reaction: Reaction, count: Int, onAddEmojiCLick: (Reaction, isSelected: Boolean) -> Unit) {
         flexBox.addView(
             CustomTextView(ContextThemeWrapper(context, R.style.CustomTextView))
                 .apply {
@@ -184,17 +185,14 @@ class CustomViewGroup @JvmOverloads constructor(
 
                     setOnClickListener { view ->
                         view.isSelected = !view.isSelected
-                        onAddEmojiCLick.invoke(reaction)
+                        onAddEmojiCLick.invoke(reaction, view.isSelected)
+
                     }
 
                     setEmojiNumberOnView(count)
                     setEmojiOnView(String(Character.toChars(reaction.emoji_code.toInt(16))))
                 }, flexBox.childCount - 1
         )
-    }
-
-    fun setOnEmojiClickListener(l: (Reaction) -> Unit) {
-        onAddEmojiCLick = l
     }
 
     override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {

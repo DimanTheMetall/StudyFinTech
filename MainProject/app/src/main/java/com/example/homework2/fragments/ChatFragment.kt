@@ -56,7 +56,12 @@ class ChatFragment() : Fragment() {
         messageAdapter = MessageAdapter({ messageId ->
             this.messageId = messageId
             bottomSheetDialog?.show()
-        }, { position, reaction -> viewModel.updateEmoji(position, reaction) })
+        }, { reaction, isSelected, messageId ->
+            viewModel.deleteReactionOrAdd(
+                requireActivity().zulipApp().retrofitService,
+                messageId, reaction.emoji_name, "unicode_emoji", isSelected = isSelected
+            )
+        })
 
         topic = requireArguments().getParcelable<Topic>(Constance.TOPIC_KEY)!!
         stream = requireArguments().getParcelable<Stream>(Constance.STREAM_KEY)!!
@@ -79,8 +84,14 @@ class ChatFragment() : Fragment() {
         }
 
 
-        bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emojiName, emojiCode  ->
-            viewModel.uploadNewReaction(requireActivity().zulipApp().retrofitService, messageId, emojiName, "unicode_emoji", emojiCode)
+        bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emojiName, emojiCode ->
+            viewModel.uploadNewReaction(
+                requireActivity().zulipApp().retrofitService,
+                messageId,
+                emojiName,
+                "unicode_emoji",
+                emojiCode
+            )
             bottomSheetDialog?.hide()
         }
 

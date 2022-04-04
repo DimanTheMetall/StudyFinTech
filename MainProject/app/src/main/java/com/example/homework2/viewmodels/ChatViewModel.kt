@@ -23,8 +23,14 @@ class ChatViewModel : ViewModel() {
         onNext(SelectViewTypeClass.Progress)
     }
 
-    fun uploadNewReaction(retrofitService: RetrofitService, messageId: Int, emojiName: String, reactionType: String, emojiCode: String? ){
-        val reactionDisposable = retrofitService.addEmoji(messageId, "grinning", reactionType, null)
+    fun uploadNewReaction(
+        retrofitService: RetrofitService,
+        messageId: Int,
+        emojiName: String,
+        reactionType: String,
+        emojiCode: String?
+    ) {
+        val reactionDisposable = retrofitService.addEmoji(messageId, emojiName, reactionType, null)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
@@ -32,13 +38,30 @@ class ChatViewModel : ViewModel() {
         compositeDisposable.add(reactionDisposable)
     }
 
-    fun deleteReaction(retrofitService: RetrofitService, messageId: Int, emojiName: String, reactionType: String, emojiCode: String? ){
-        val reactionDisposable = retrofitService.deleteEmoji(messageId, emojiName, reactionType)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+    fun deleteReactionOrAdd(
+        retrofitService: RetrofitService,
+        messageId: Int,
+        emojiName: String,
+        reactionType: String,
+        isSelected: Boolean
+    ) {
+        println("AAA $emojiName")
+        if (isSelected) {
+            val reactionDisposable = retrofitService.deleteEmoji(messageId, emojiName, reactionType)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({}, {})
 
-        compositeDisposable.add(reactionDisposable)
+            compositeDisposable.add(reactionDisposable)
+        } else {
+            val reactionDisposable =
+                retrofitService.addEmoji(messageId, emojiName, reactionType, null)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe()
+
+            compositeDisposable.add(reactionDisposable)
+        }
     }
 
     fun getPresense(retrofitService: RetrofitService, userEmail: String): String {
@@ -146,9 +169,10 @@ class ChatViewModel : ViewModel() {
         emojiList: List<Reaction>,
         position: Int
     ) {
-        (this[position] as? SelectViewTypeClass.Chat.Message)?.copy(reactions = emojiList)?.let {
-            this[position] = it
-        }
+        (this[position] as? SelectViewTypeClass.Chat.Message)?.copy(reactions = emojiList)
+            ?.let {
+                this[position] = it
+            }
     }
 
 //    fun onNextMassageClick(messageText: String) {

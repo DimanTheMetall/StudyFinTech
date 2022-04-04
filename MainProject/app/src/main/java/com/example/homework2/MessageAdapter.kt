@@ -15,7 +15,7 @@ import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 
 class MessageAdapter(
     val onTab: (Int) -> Unit,
-    val onEmoji: (Int, Reaction) -> Unit
+    val onEmoji: (Reaction, Boolean, Int) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -47,7 +47,6 @@ class MessageAdapter(
             messageTextView.text = item.content
             messageTitleTextView.text = item.sender_full_name
 
-
             if (!item.avatar_url.isNullOrEmpty()) {
                 Glide.with(customViewGroup.context)
                     .load(item.avatar_url)
@@ -67,42 +66,46 @@ class MessageAdapter(
                 true
             }
 
+
             customViewGroup.clearEmoji()
 
             with(item) {
 
                 var isAdded = false
                 for (currentReaction in reactions.indices) {
-                    if (reactions[currentReaction].user_id == 490112){
+                    if (reactions[currentReaction].user_id == 490112) {
 
                     }
 
-                        if (reactions[currentReaction].reaction_type == "unicode_emoji") {
+                    if (reactions[currentReaction].reaction_type == "unicode_emoji") {
 
-                            for (pastEmojis in 0 until currentReaction - 1) {
-                                if (reactions[currentReaction].emoji_code == reactions[pastEmojis].emoji_code) {
-                                    isAdded = true
-                                }
-                            }
-
-                            var emojiCount = 1
-                            for (i in currentReaction + 1 until reactions.lastIndex) {
-                                if (reactions[currentReaction].emoji_code == reactions[i].emoji_code) {
-                                    emojiCount++
-                                }
-                            }
-                            if (!isAdded) {
-                                customViewGroup.addEmoji(reactions[currentReaction], emojiCount)
+                        for (pastEmojis in 0 until currentReaction - 1) {
+                            if (reactions[currentReaction].emoji_code == reactions[pastEmojis].emoji_code) {
+                                isAdded = true
                             }
                         }
+
+                        var emojiCount = 1
+                        for (i in currentReaction + 1 until reactions.lastIndex) {
+                            if (reactions[currentReaction].emoji_code == reactions[i].emoji_code) {
+                                emojiCount++
+                            }
+                        }
+                        if (!isAdded) {
+                            customViewGroup.addEmoji(
+                                reactions[currentReaction],
+                                emojiCount
+                            ) { reaction, isSelected ->
+                                onEmoji.invoke(
+                                    reaction,
+                                    isSelected,
+                                    item.id
+                                )
+                            }
+                        }
+                    }
                 }
             }
-//
-
-//
-//            (binding.root as CustomViewGroup).setOnEmojiClickListener {
-//                onEmoji.invoke(adapterPosition, it)
-//            }
 
             //После регистрации проработать логику
             when (item.sender_email) {
