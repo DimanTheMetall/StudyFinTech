@@ -5,13 +5,9 @@ import com.example.homework2.dataclasses.JsonStreams
 import com.example.homework2.dataclasses.JsonTopic
 import com.example.homework2.dataclasses.JsonUsers
 import com.example.homework2.dataclasses.Member
-import com.example.homework2.dataclasses.chatdataclasses.Filter
-import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
-import com.example.homework2.dataclasses.chatdataclasses.Narrow
+import com.example.homework2.dataclasses.chatdataclasses.*
 import io.reactivex.Single
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface RetrofitService {
 
@@ -40,5 +36,14 @@ interface RetrofitService {
         @Query("num_after") numAfter: Int,
         @Query("apply_markdown") apply_markdown: Boolean
     ): Single<JsonMessages>
+
+    @POST("/api/v1/messages")
+    fun sendMessage(@Query ("type") type: String,
+    @Query("to") to: String,
+    @Query("content") content: String,
+    @Query("topic") topic : String): Single<ResponseFromSendMessage>
+
+    @GET("/api/v1/users/{user_id_or_email}/presence")
+    fun getPresense(@Path("user_id_or_email") user_id_or_email: Any): Single<JsonPresense>
 
 }

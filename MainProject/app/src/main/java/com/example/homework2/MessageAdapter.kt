@@ -1,11 +1,13 @@
 package com.example.homework2
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.*
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.homework2.customviews.CustomViewGroup
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.databinding.CustomViewGroupLayoutBinding
@@ -45,6 +47,15 @@ class MessageAdapter(
         fun bind(item: SelectViewTypeClass.Chat.Message) = with(binding) {
             messageTextView.text = item.content
             messageTitleTextView.text = item.sender_full_name
+
+            if (!item.avatar_url.isNullOrEmpty()) {
+                Glide.with(customViewGroup.context)
+                    .load(item.avatar_url)
+                    .circleCrop()
+                    .into(binding.avatarImageView)
+            } else {
+                binding.avatarImageView.setImageResource(R.mipmap.ic_launcher)
+            }
 
 //            customFlexBox.getChildAt(customFlexBox.childCount - 1)
 //                .setOnClickListener {

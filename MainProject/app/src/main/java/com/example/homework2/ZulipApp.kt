@@ -1,5 +1,6 @@
 package com.example.homework2
 
+import android.app.Activity
 import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
@@ -42,5 +43,9 @@ class ZulipApp : Application() {
 }
 
 fun FragmentActivity.zulipApp(): ZulipApp{
+    return this.application as ZulipApp
+}
+
+fun Activity.zulipApp(): ZulipApp{
     return this.application as ZulipApp
 }

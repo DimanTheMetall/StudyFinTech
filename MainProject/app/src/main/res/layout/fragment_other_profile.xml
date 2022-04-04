@@ -34,7 +34,7 @@
         android:id="@+id/profile_status_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/in_a_meeting"
+        android:text="@string/status"
         android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@id/profile_status_online"

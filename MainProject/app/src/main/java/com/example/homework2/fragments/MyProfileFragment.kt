@@ -8,13 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
-import com.example.homework2.Constance
 import com.example.homework2.R
 import com.example.homework2.ZulipApp
 import com.example.homework2.databinding.FragmentProfileBinding
 import com.example.homework2.dataclasses.Member
+import com.example.homework2.dataclasses.chatdataclasses.Website
 import com.example.homework2.viewmodels.MyProfileViewModel
+import com.example.homework2.zulipApp
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 class MyProfileFragment : Fragment() {
 
@@ -47,26 +50,46 @@ class MyProfileFragment : Fragment() {
     }
 
     private fun updateMyProfile(member: Member) {
-        Glide.with(this@MyProfileFragment.requireContext())
+
+        requireActivity().zulipApp().retrofitService
+            .getPresense(member.email)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                renderProfile(member, it.presence.website)
+            },{
+                //обработать ошибку
+            })
+    }
+    private fun renderProfile(member: Member, website: Website){
+        Glide.with(requireContext())
             .load(member.avatar_url)
+            .placeholder(R.mipmap.ic_launcher)
             .circleCrop()
             .into(binding.profileImage)
 
-        binding.profileName.text = member.full_name
+        with(binding){
+            profileName.text = member.full_name
 
-        when (member.is_active) {
-            true -> {
-                binding.profileStatusOnline.setText(R.string.online)
-                binding.profileStatusOnline.setTextColor(Color.GREEN)
+            if (website.timestamp>10){
+                profileStatusOnline.text = "offline"
+                profileStatusOnline.setTextColor(Color.RED)
             }
-            else -> {
-                binding.profileStatusOnline.setText(R.string.offline)
-                binding.profileStatusOnline.setTextColor(Color.RED)
+
+            when(website.status){
+                "active" -> {
+                    profileStatusOnline.text = website.status
+                    profileStatusOnline.setTextColor(Color.GREEN)
+                }
+                "idle" -> {
+                    profileStatusOnline.text = website.status
+                    profileStatusOnline.setTextColor(Color.YELLOW)
+                }
             }
+
         }
-
-
     }
+
 
     companion object {
 

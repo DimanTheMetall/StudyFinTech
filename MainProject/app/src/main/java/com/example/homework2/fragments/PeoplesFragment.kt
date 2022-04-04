@@ -16,6 +16,7 @@ import com.example.homework2.databinding.FragmentPeopleBinding
 import com.example.homework2.dataclasses.Member
 import com.example.homework2.dataclasses.ResultMember
 import com.example.homework2.viewmodels.PeoplesViewModel
+import com.example.homework2.zulipApp
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
@@ -52,8 +53,7 @@ class PeoplesFragment : Fragment() {
             .distinctUntilChanged()
             .subscribe {
                 viewModel.onSearchProfile(
-                    it, (requireActivity().application as ZulipApp).retrofitService
-                )
+                    it, requireActivity().zulipApp().retrofitService)
             }
 
         val shimmer = binding.shimmerPeople

@@ -10,17 +10,17 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.Constance
-import com.example.homework2.MessageAdapter
-import com.example.homework2.R
-import com.example.homework2.ZulipApp
+import com.example.homework2.*
 import com.example.homework2.customviews.*
 import com.example.homework2.databinding.FragmentChatBinding
 import com.example.homework2.dataclasses.Stream
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.Topic
+import com.example.homework2.dataclasses.chatdataclasses.SendMessage
 import com.example.homework2.viewmodels.ChatViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import org.joda.time.DateTime
 
 class ChatFragment() : Fragment() {
@@ -93,11 +93,14 @@ class ChatFragment() : Fragment() {
             rcView.addItemDecoration(itemDivider)
 
             messageTranslateImage.setOnClickListener {
-                viewModel.loadTopicMessage(
-                    (requireActivity().application as ZulipApp).retrofitService,
-                    topic.name,
-                    stream.name
+                viewModel.sendMessage(
+                    messageField.text.toString(),
+                    topic,
+                    stream,
+                    requireActivity().zulipApp().retrofitService
                 )
+
+
 //                if (!messageField.text.isNullOrEmpty()) {
 //                    viewModel.onNextMassageClick(messageField.text.toString())
 //                }
@@ -114,6 +117,15 @@ class ChatFragment() : Fragment() {
         compositeDisposable.add(chatDisposable)
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.loadTopicMessage(
+            (requireActivity().application as ZulipApp).retrofitService,
+            topic.name,
+            stream.name
+        )
     }
 
     private fun switchImageOnTextChanged(isTextEmpty: Boolean) {
@@ -136,6 +148,7 @@ class ChatFragment() : Fragment() {
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -51,6 +51,7 @@ class PeoplesViewModel() : ViewModel() {
         compositeDisposable.add(d)
     }
 
+
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.clear()
