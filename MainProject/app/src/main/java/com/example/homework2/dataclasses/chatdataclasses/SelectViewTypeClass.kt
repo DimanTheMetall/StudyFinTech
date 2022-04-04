@@ -8,6 +8,8 @@ sealed class SelectViewTypeClass {
 
     object Progress : SelectViewTypeClass()
 
+    object UploadSuccess: SelectViewTypeClass()
+
     data class Success(val messagesList: List<SelectViewTypeClass.Chat.Message>) : SelectViewTypeClass()
 
     sealed class Chat {

@@ -166,7 +166,7 @@ class CustomViewGroup @JvmOverloads constructor(
         super.dispatchDraw(canvas)
     }
 
-    fun addEmoji(reaction: Reaction, count: Int, onAddEmojiCLick: (Reaction, isSelected: Boolean) -> Unit) {
+    fun addEmoji(reaction: Reaction, count: Int, meIsAdded: Boolean,  onAddEmojiCLick: (Reaction, isSelected: Boolean) -> Unit) {
         flexBox.addView(
             CustomTextView(ContextThemeWrapper(context, R.style.CustomTextView))
                 .apply {
@@ -182,6 +182,8 @@ class CustomViewGroup @JvmOverloads constructor(
                                 context.dpToPx(0)
                             )
                         }
+
+                    this.isSelected = meIsAdded
 
                     setOnClickListener { view ->
                         view.isSelected = !view.isSelected

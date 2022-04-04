@@ -57,7 +57,7 @@ class ChatFragment() : Fragment() {
             this.messageId = messageId
             bottomSheetDialog?.show()
         }, { reaction, isSelected, messageId ->
-            viewModel.deleteReactionOrAdd(
+            viewModel.deleteOrAddReaction(
                 requireActivity().zulipApp().retrofitService,
                 messageId, reaction.emoji_name, "unicode_emoji", isSelected = isSelected
             )
@@ -79,6 +79,9 @@ class ChatFragment() : Fragment() {
                 }
                 is SelectViewTypeClass.Progress -> {
                     shimmer.showShimmer(true)
+                }
+                is SelectViewTypeClass.UploadSuccess -> {
+                    loadTopicMessage()
                 }
             }
         }
@@ -108,10 +111,6 @@ class ChatFragment() : Fragment() {
                     requireActivity().zulipApp().retrofitService
                 )
 
-
-//                if (!messageField.text.isNullOrEmpty()) {
-//                    viewModel.onNextMassageClick(messageField.text.toString())
-//                }
             }
 
             messageField.doOnTextChanged { text, start, before, count ->
@@ -129,11 +128,7 @@ class ChatFragment() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadTopicMessage(
-            (requireActivity().application as ZulipApp).retrofitService,
-            topic.name,
-            stream.name
-        )
+        loadTopicMessage()
     }
 
     private fun switchImageOnTextChanged(isTextEmpty: Boolean) {
@@ -155,6 +150,14 @@ class ChatFragment() : Fragment() {
                 )
             }
         }
+    }
+
+    private fun loadTopicMessage(){
+        viewModel.loadTopicMessage(
+            (requireActivity().application as ZulipApp).retrofitService,
+            topic.name,
+            stream.name
+        )
     }
 
 

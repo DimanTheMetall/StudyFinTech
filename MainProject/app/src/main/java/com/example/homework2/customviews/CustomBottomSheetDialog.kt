@@ -16,19 +16,19 @@ class CustomBottomSheetDialog(context: Context, val getEmoji: (String, String) -
 
     private val emojiTriple = listOf<Triple<String, String, String>>(
         Triple(context.getString(R.string.emoji_1), "grinning", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "grinning face", "U+1F600")
+        Triple(context.getString(R.string.emoji_2), "grinning_face_with_smiling_eyes", "U+1F601"),
+        Triple(context.getString(R.string.emoji_3), "laughing", "U+1F606"),
+        Triple(context.getString(R.string.emoji_4), "upside_down", "U+1F643"),
+        Triple(context.getString(R.string.emoji_5), "innocent", "U+1F607"),
+        Triple(context.getString(R.string.emoji_6), "heart_eyes", "U+1F60D"),
+        Triple(context.getString(R.string.emoji_7), "smiling_face", "U+263A"),
+        Triple(context.getString(R.string.emoji_8), "heart_kiss", "U+1F618"),
+        Triple(context.getString(R.string.emoji_9), "heart", "U+2764"),
+        Triple(context.getString(R.string.emoji_10), "money_face", "U+1F911"),
+        Triple(context.getString(R.string.emoji_11), "neutral", "U+1F610"),
+        Triple(context.getString(R.string.emoji_12), "sleeping", "U+1F634"),
+        Triple(context.getString(R.string.emoji_13), "stuck_out_tongue_closed_eyes", "U+1F600"),
+        Triple(context.getString(R.string.emoji_1), "+1", "U+1F44D")
     )
 
     init {

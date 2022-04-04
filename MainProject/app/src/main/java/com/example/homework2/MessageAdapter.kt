@@ -57,55 +57,56 @@ class MessageAdapter(
                 binding.avatarImageView.setImageResource(R.mipmap.ic_launcher)
             }
 
+            //Кликер на "+"
             customFlexBox.getChildAt(customFlexBox.childCount - 1)
                 .setOnClickListener {
                     onTab.invoke(item.id)
                 }
+
             binding.root.setOnLongClickListener {
                 onTab.invoke(item.id)
                 true
             }
 
-
             customViewGroup.clearEmoji()
 
             with(item) {
-
-                var isAdded = false
                 for (currentReaction in reactions.indices) {
-                    if (reactions[currentReaction].user_id == 490112) {
+                    var isAdded = false
+                    var meIsAdded = false
+                    var emojiCount = 1
 
+                    if (reactions[currentReaction].user_id == 490112) {
+                        meIsAdded = true
                     }
 
-                    if (reactions[currentReaction].reaction_type == "unicode_emoji") {
-
-                        for (pastEmojis in 0 until currentReaction - 1) {
-                            if (reactions[currentReaction].emoji_code == reactions[pastEmojis].emoji_code) {
-                                isAdded = true
-                            }
+                    for (pastEmojis in 0 until currentReaction - 1) {
+                        if (reactions[currentReaction].emoji_name == reactions[pastEmojis].emoji_name) {
+                            isAdded = true
                         }
+                    }
 
-                        var emojiCount = 1
-                        for (i in currentReaction + 1 until reactions.lastIndex) {
-                            if (reactions[currentReaction].emoji_code == reactions[i].emoji_code) {
-                                emojiCount++
-                            }
+                    for (i in currentReaction + 1 until reactions.lastIndex) {
+                        if (reactions[currentReaction].emoji_name == reactions[i].emoji_name) {
+                            emojiCount++
                         }
-                        if (!isAdded) {
-                            customViewGroup.addEmoji(
-                                reactions[currentReaction],
-                                emojiCount
-                            ) { reaction, isSelected ->
-                                onEmoji.invoke(
-                                    reaction,
-                                    isSelected,
-                                    item.id
-                                )
-                            }
+                    }
+
+                    if (!isAdded) {
+                        customViewGroup.addEmoji(
+                            reactions[currentReaction],
+                            emojiCount, meIsAdded
+                        ) { reaction, isSelected ->
+                            onEmoji.invoke(
+                                reaction,
+                                isSelected,
+                                item.id
+                            )
                         }
                     }
                 }
             }
+
 
             //После регистрации проработать логику
             when (item.sender_email) {
@@ -144,7 +145,7 @@ class MessageAdapter(
                         parent,
                         false
                     )
-                DataHolder(view)
+                MessageAdapter.DataHolder(view)
             }
         }
     }

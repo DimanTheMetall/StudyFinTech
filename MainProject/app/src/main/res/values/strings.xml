@@ -2,19 +2,19 @@
     <string name="app_name">HomeWork2</string>
 
     <string name="emoji_1">😀</string>
-    <string name="emoji_2">😍</string>
-    <string name="emoji_3">🤩</string>
-    <string name="emoji_4">😘</string>
-    <string name="emoji_5">😗</string>
-    <string name="emoji_6">☺</string>
-    <string name="emoji_7">😚</string>
-    <string name="emoji_8">😙</string>
-    <string name="emoji_9">😀</string>
-    <string name="emoji_10">😁</string>
-    <string name="emoji_11">😆</string>
-    <string name="emoji_12">😅</string>
-    <string name="emoji_13">🤣</string>
-    <string name="emoji_14">🤑</string>
+    <string name="emoji_2">😃</string>
+    <string name="emoji_3">😆</string>
+    <string name="emoji_4">🙃</string>
+    <string name="emoji_5">😇</string>
+    <string name="emoji_6">😍</string>
+    <string name="emoji_7">☺</string>
+    <string name="emoji_8">😘</string>
+    <string name="emoji_9">❤</string>
+    <string name="emoji_10">🤑</string>
+    <string name="emoji_11">😐</string>
+    <string name="emoji_12">😴</string>
+    <string name="emoji_13">😝</string>
+    <string name="emoji_14">👍</string>
 
     <string name="message_field_hint">Write something…</string>
 
