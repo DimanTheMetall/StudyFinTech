@@ -1,18 +1,17 @@
 package com.example.homework2
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.*
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.homework2.customviews.CustomViewGroup
-import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.databinding.CustomViewGroupLayoutBinding
 import com.example.homework2.databinding.TimeTvBinding
 import com.example.homework2.dataclasses.Reaction
+import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 
 class MessageAdapter(
     val onTab: (Int) -> Unit,
@@ -59,39 +58,47 @@ class MessageAdapter(
                 binding.avatarImageView.setImageResource(R.mipmap.ic_launcher)
             }
 
-//            customFlexBox.getChildAt(customFlexBox.childCount - 1)
-//                .setOnClickListener {
-//                    onTab.invoke(adapterPosition)
-//                }
-//
+            customFlexBox.getChildAt(customFlexBox.childCount - 1)
+                .setOnClickListener {
+                    onTab.invoke(item.id)
+                }
+            binding.root.setOnLongClickListener {
+                onTab.invoke(item.id)
+                true
+            }
+
             customViewGroup.clearEmoji()
 
             with(item) {
+
                 var isAdded = false
                 for (currentReaction in reactions.indices) {
-                    for (pastIndex in 0 until currentReaction) {
-                        if (reactions[currentReaction].emoji_code == reactions[pastIndex].emoji_code) {
-                            isAdded = true
-                        }
+                    if (reactions[currentReaction].user_id == 490112){
+
                     }
 
-                    var emojiCount = 1
+                        if (reactions[currentReaction].reaction_type == "unicode_emoji") {
 
-                    for (i in currentReaction until reactions.lastIndex) {
-                        if (reactions[currentReaction].emoji_code == reactions[i].emoji_code) {
-                            emojiCount++
+                            for (pastEmojis in 0 until currentReaction - 1) {
+                                if (reactions[currentReaction].emoji_code == reactions[pastEmojis].emoji_code) {
+                                    isAdded = true
+                                }
+                            }
+
+                            var emojiCount = 1
+                            for (i in currentReaction + 1 until reactions.lastIndex) {
+                                if (reactions[currentReaction].emoji_code == reactions[i].emoji_code) {
+                                    emojiCount++
+                                }
+                            }
+                            if (!isAdded) {
+                                customViewGroup.addEmoji(reactions[currentReaction], emojiCount)
+                            }
                         }
-                    }
-                    if (!isAdded) {
-                        customViewGroup.addEmoji(reactions[currentReaction], emojiCount)
-                    }
                 }
             }
 //
-//            binding.root.setOnLongClickListener {
-//                onTab.invoke(adapterPosition)
-//                true
-//            }
+
 //
 //            (binding.root as CustomViewGroup).setOnEmojiClickListener {
 //                onEmoji.invoke(adapterPosition, it)

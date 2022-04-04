@@ -14,8 +14,6 @@ import io.reactivex.subjects.BehaviorSubject
 
 class ChatViewModel : ViewModel() {
 
-    private var currentId = 0
-
     private var chatListList = emptyList<SelectViewTypeClass.Chat.Message>()
 
     private val compositeDisposable = CompositeDisposable()
@@ -23,6 +21,24 @@ class ChatViewModel : ViewModel() {
     val chatObservable: Observable<SelectViewTypeClass> get() = chatSubject
     private val chatSubject = BehaviorSubject.create<SelectViewTypeClass>().apply {
         onNext(SelectViewTypeClass.Progress)
+    }
+
+    fun uploadNewReaction(retrofitService: RetrofitService, messageId: Int, emojiName: String, reactionType: String, emojiCode: String? ){
+        val reactionDisposable = retrofitService.addEmoji(messageId, "grinning", reactionType, null)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        compositeDisposable.add(reactionDisposable)
+    }
+
+    fun deleteReaction(retrofitService: RetrofitService, messageId: Int, emojiName: String, reactionType: String, emojiCode: String? ){
+        val reactionDisposable = retrofitService.deleteEmoji(messageId, emojiName, reactionType)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        compositeDisposable.add(reactionDisposable)
     }
 
     fun getPresense(retrofitService: RetrofitService, userEmail: String): String {
@@ -70,7 +86,7 @@ class ChatViewModel : ViewModel() {
                     {},
                     {})
 
-        sendMessageDisposable.dispose()
+        compositeDisposable.add(compositeDisposable)
     }
 
     fun loadTopicMessage(retrofitService: RetrofitService, topic: String, stream: String) {
@@ -92,13 +108,12 @@ class ChatViewModel : ViewModel() {
                 .subscribe({ chatSubject.onNext(SelectViewTypeClass.Success(it.messages)) }, {
                     SelectViewTypeClass.Error
                 })
-
-
-
         compositeDisposable.add(messagesDisposable)
     }
 
-//    fun onEmojiClick(emoji: String, position: Int) {
+    fun onEmojiClick(emoji: String, position: Int) {
+
+
 //        val newList = chatListList.toMutableList()
 //        val emojiList =
 //            (newList[position] as? SelectViewTypeClass.Message)?.emojiList?.toMutableSet()
@@ -107,7 +122,7 @@ class ChatViewModel : ViewModel() {
 //        newList.updateEmoji(emojiList.toList(), position)
 //        chatListList = newList
 //        updateChatList()
-//    }
+    }
 
     fun updateEmoji(position: Int, reaction: Reaction) {
         val chatListMutable = chatListList.toMutableList()

@@ -16,11 +16,8 @@ import com.example.homework2.databinding.FragmentChatBinding
 import com.example.homework2.dataclasses.Stream
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.Topic
-import com.example.homework2.dataclasses.chatdataclasses.SendMessage
 import com.example.homework2.viewmodels.ChatViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import org.joda.time.DateTime
 
 class ChatFragment() : Fragment() {
@@ -29,7 +26,7 @@ class ChatFragment() : Fragment() {
     private lateinit var topic: Topic
     private lateinit var stream: Stream
 
-    private var position = -1
+    private var messageId = -1
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
     private var dateTime: DateTime = DateTime()
@@ -56,8 +53,8 @@ class ChatFragment() : Fragment() {
     ): View {
         _binding = FragmentChatBinding.inflate(inflater)
 
-        messageAdapter = MessageAdapter({ position ->
-            this.position = position
+        messageAdapter = MessageAdapter({ messageId ->
+            this.messageId = messageId
             bottomSheetDialog?.show()
         }, { position, reaction -> viewModel.updateEmoji(position, reaction) })
 
@@ -82,10 +79,10 @@ class ChatFragment() : Fragment() {
         }
 
 
-//        bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emoji ->
-//            viewModel.onEmojiClick(emoji, position)
-//            bottomSheetDialog?.hide()
-//        }
+        bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emojiName, emojiCode  ->
+            viewModel.uploadNewReaction(requireActivity().zulipApp().retrofitService, messageId, emojiName, "unicode_emoji", emojiCode)
+            bottomSheetDialog?.hide()
+        }
 
         binding.apply {
             rcView.adapter = messageAdapter

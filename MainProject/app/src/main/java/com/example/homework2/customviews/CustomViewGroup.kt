@@ -24,7 +24,7 @@ class CustomViewGroup @JvmOverloads constructor(
     private val message by lazy { getChildAt(2) }
     private val flexBox by lazy { getChildAt(3) as CustomFlexBox }
     private var isYours: Boolean = true
-    private var onAddEmojiCLick: (Reaction) -> Unit = {}
+    private var onAddEmojiCLick: (Reaction ) -> Unit = {}
 
     init {
         inflate(context, R.layout.custom_view_group_layout, this)
@@ -165,7 +165,6 @@ class CustomViewGroup @JvmOverloads constructor(
     }
 
     fun addEmoji(reaction: Reaction, count: Int) {
-
 
         flexBox.addView(
             CustomTextView(ContextThemeWrapper(context, R.style.CustomTextView))
