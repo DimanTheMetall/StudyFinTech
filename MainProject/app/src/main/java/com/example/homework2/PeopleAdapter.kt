@@ -29,12 +29,12 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
         private val binding = ProfileLayoutBinding.bind(view)
 
         fun bind(item: Member) {
-            when (item.avatar_url != null) {
-                true -> {
-                    Glide.with(itemView.context)
-                        .load(item.avatar_url)
-                        .into(binding.profileImage)
-                }
+            if (!item.avatar_url.isNullOrBlank()){
+                Glide.with(itemView.context)
+                    .load(item.avatar_url)
+                    .into(binding.profileImage)
+            } else {
+                binding.profileImage.setImageResource(R.mipmap.ic_launcher)
             }
 
 

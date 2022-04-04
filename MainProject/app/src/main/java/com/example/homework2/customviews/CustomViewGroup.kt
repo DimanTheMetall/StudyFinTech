@@ -164,7 +164,9 @@ class CustomViewGroup @JvmOverloads constructor(
         super.dispatchDraw(canvas)
     }
 
-    fun addEmoji(reaction: Reaction) {
+    fun addEmoji(reaction: Reaction, count: Int) {
+
+
         flexBox.addView(
             CustomTextView(ContextThemeWrapper(context, R.style.CustomTextView))
                 .apply {
@@ -185,13 +187,14 @@ class CustomViewGroup @JvmOverloads constructor(
                         view.isSelected = !view.isSelected
                         onAddEmojiCLick.invoke(reaction)
                     }
-                    setEmojiNumberOnView(reaction.count)
-                    setEmojiOnView(reaction.emoji)
+
+                    setEmojiNumberOnView(count)
+                    setEmojiOnView(String(Character.toChars(reaction.emoji_code.toInt(16))))
                 }, flexBox.childCount - 1
         )
     }
 
-    fun setOnEmojiClickListener(l: (Reaction) -> Unit){
+    fun setOnEmojiClickListener(l: (Reaction) -> Unit) {
         onAddEmojiCLick = l
     }
 

@@ -25,7 +25,6 @@ sealed class SelectViewTypeClass {
             val flags: List<String>,
             val id: Int,
             val is_me_message: Boolean,
-            val reactions: List<Any>,
             val recipient_id: Int,
             val sender_email: String,
             val sender_full_name: String,
@@ -37,7 +36,7 @@ sealed class SelectViewTypeClass {
             val timestamp: Int,
             val topic_links: List<Any>,
             val type: String,
-            val emojiList: List<Reaction> = listOf()
+            val reactions: List<Reaction>
 
         ): SelectViewTypeClass.Chat()
     }

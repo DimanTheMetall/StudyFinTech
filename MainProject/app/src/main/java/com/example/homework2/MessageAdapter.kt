@@ -48,9 +48,11 @@ class MessageAdapter(
             messageTextView.text = item.content
             messageTitleTextView.text = item.sender_full_name
 
+
             if (!item.avatar_url.isNullOrEmpty()) {
                 Glide.with(customViewGroup.context)
                     .load(item.avatar_url)
+                    .placeholder(R.mipmap.ic_launcher)
                     .circleCrop()
                     .into(binding.avatarImageView)
             } else {
@@ -62,10 +64,29 @@ class MessageAdapter(
 //                    onTab.invoke(adapterPosition)
 //                }
 //
-//            customViewGroup.clearEmoji()
-//            item.emojiList.forEach {
-//                if (it.count != 0) customViewGroup.addEmoji(it)
-//            }
+            customViewGroup.clearEmoji()
+
+            with(item) {
+                var isAdded = false
+                for (currentReaction in reactions.indices) {
+                    for (pastIndex in 0 until currentReaction) {
+                        if (reactions[currentReaction].emoji_code == reactions[pastIndex].emoji_code) {
+                            isAdded = true
+                        }
+                    }
+
+                    var emojiCount = 1
+
+                    for (i in currentReaction until reactions.lastIndex) {
+                        if (reactions[currentReaction].emoji_code == reactions[i].emoji_code) {
+                            emojiCount++
+                        }
+                    }
+                    if (!isAdded) {
+                        customViewGroup.addEmoji(reactions[currentReaction], emojiCount)
+                    }
+                }
+            }
 //
 //            binding.root.setOnLongClickListener {
 //                onTab.invoke(adapterPosition)
@@ -76,8 +97,9 @@ class MessageAdapter(
 //                onEmoji.invoke(adapterPosition, it)
 //            }
 
-            when (item.is_me_message) {
-                true -> {
+            //После регистрации проработать логику
+            when (item.sender_email) {
+                "kozlovdiman_je@yahoo.com" -> {
                     customViewGroup.setRectangleColor(R.color.teal_700)
                     customViewGroup.setYoursMessage(true)
                     avatarImageView.isVisible = false
@@ -110,7 +132,8 @@ class MessageAdapter(
                     LayoutInflater.from(parent.context).inflate(
                         R.layout.time_tv,
                         parent,
-                        false)
+                        false
+                    )
                 DataHolder(view)
             }
         }

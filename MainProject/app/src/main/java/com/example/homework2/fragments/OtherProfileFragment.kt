@@ -41,7 +41,6 @@ class OtherProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val member: Member? = requireArguments().getParcelable(Constance.PROFILE_KEY)
         renderStatus(requireActivity().zulipApp().retrofitService, member!!)
-
     }
 
     private fun setStatus(member: Member, status: String) {

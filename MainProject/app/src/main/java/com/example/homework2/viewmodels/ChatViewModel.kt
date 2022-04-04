@@ -1,14 +1,11 @@
 package com.example.homework2.viewmodels
 
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
-import com.example.homework2.R
 import com.example.homework2.dataclasses.Reaction
 import com.example.homework2.dataclasses.Stream
 import com.example.homework2.dataclasses.Topic
 import com.example.homework2.dataclasses.chatdataclasses.*
 import com.example.homework2.retrofit.RetrofitService
-import com.example.homework2.zulipApp
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -115,7 +112,7 @@ class ChatViewModel : ViewModel() {
     fun updateEmoji(position: Int, reaction: Reaction) {
         val chatListMutable = chatListList.toMutableList()
         val emojiList =
-            (chatListMutable[position] as? SelectViewTypeClass.Chat.Message)?.emojiList?.toMutableSet()
+            (chatListMutable[position] as? SelectViewTypeClass.Chat.Message)?.reactions?.toMutableSet()
                 ?: return
         val hasReaction = emojiList.contains(reaction)
 
@@ -134,7 +131,7 @@ class ChatViewModel : ViewModel() {
         emojiList: List<Reaction>,
         position: Int
     ) {
-        (this[position] as? SelectViewTypeClass.Chat.Message)?.copy(emojiList = emojiList)?.let {
+        (this[position] as? SelectViewTypeClass.Chat.Message)?.copy(reactions = emojiList)?.let {
             this[position] = it
         }
     }
