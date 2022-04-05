@@ -8,24 +8,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.example.homework2.R
 import com.example.homework2.ZulipApp
 import com.example.homework2.databinding.FragmentProfileBinding
 import com.example.homework2.dataclasses.Member
-import com.example.homework2.dataclasses.ResultMember
-import com.example.homework2.dataclasses.chatdataclasses.Website
-import com.example.homework2.viewmodels.MyProfileViewModel
-import com.example.homework2.zulipApp
-import io.reactivex.android.schedulers.AndroidSchedulers
+import com.example.homework2.viewmodels.ProfileViewModel
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 
 class MyProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: MyProfileViewModel by viewModels()
+    private val viewModel: ProfileViewModel by viewModels()
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreateView(
@@ -35,7 +33,7 @@ class MyProfileFragment : Fragment() {
 
         _binding = FragmentProfileBinding.inflate(inflater)
 
-        val myProfileDisposable = viewModel.subjectProfile
+        val myProfileDisposable = viewModel.myProfileObservable
             .subscribe({ renderProfile(member = it)}, {})
 
         viewModel.loadMyProfile((requireActivity().application as ZulipApp).retrofitService)
@@ -51,17 +49,21 @@ class MyProfileFragment : Fragment() {
     }
 
     private fun renderProfile(member: Member) {
+
+        var requestOptions = RequestOptions()
+        requestOptions = requestOptions.transform(CenterCrop(), RoundedCorners(32))
+
         Glide.with(requireContext())
             .load(member.avatar_url)
             .placeholder(R.mipmap.ic_launcher)
-            .circleCrop()
+            .apply(requestOptions)
             .into(binding.profileImage)
 
         with(binding) {
             profileName.text = member.full_name
 
             if (member.website != null && member.website.timestamp > 10) {
-                profileStatusOnline.text = "offline"
+                profileStatusOnline.text = getText(R.string.offline)
                 profileStatusOnline.setTextColor(Color.RED)
             }
 
@@ -75,7 +77,6 @@ class MyProfileFragment : Fragment() {
                     profileStatusOnline.setTextColor(Color.YELLOW)
                 }
             }
-
         }
     }
 

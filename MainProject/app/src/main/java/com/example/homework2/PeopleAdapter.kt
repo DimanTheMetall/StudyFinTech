@@ -20,7 +20,6 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
             R.layout.profile_layout,
             null,
             false
-
         )
         return ProfileHolder(view)
     }
@@ -32,6 +31,7 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
             if (!item.avatar_url.isNullOrBlank()){
                 Glide.with(itemView.context)
                     .load(item.avatar_url)
+                    .circleCrop()
                     .into(binding.profileImage)
             } else {
                 binding.profileImage.setImageResource(R.mipmap.ic_launcher)
@@ -57,6 +57,4 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
         peopleList = list.toMutableList()
         notifyDataSetChanged()
     }
-
-
 }
