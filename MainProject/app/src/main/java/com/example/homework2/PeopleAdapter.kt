@@ -37,14 +37,9 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
                 binding.profileImage.setImageResource(R.mipmap.ic_launcher)
             }
 
-
             with(binding) {
                 profileEmail.text = item.email
                 profileName.text = item.full_name
-                when (item.is_active) {
-                    true -> onlineImage.visibility = View.VISIBLE
-                    else -> onlineImage.visibility = View.INVISIBLE
-                }
                 root.setOnClickListener {
                     openFrag.invoke(item)
                 }

@@ -20,7 +20,8 @@
         android:layout_height="24dp"
         app:layout_constraintStart_toStartOf="@id/profile_image"
         app:layout_constraintBottom_toBottomOf="@id/profile_image"
-        android:src="@drawable/ic_online"/>
+        android:src="@drawable/ic_online"
+        android:visibility="invisible"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/profile_name"
