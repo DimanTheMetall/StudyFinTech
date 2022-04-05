@@ -1,5 +1,6 @@
 package com.example.homework2.retrofit
 
+import com.example.homework2.Constance
 import okhttp3.Credentials
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -14,7 +15,7 @@ class AuthInterceptor : Interceptor {
             "kozlovdiman_je@yahoo.com",
             "8gN1Cz944LyqukGE6Uw1t9fzIbqCdRje"
         )
-        requestBuilder.header("Authorization", authorize)
+        requestBuilder.header(Constance.AUTHORIZATION_HEADER, authorize)
 
         return chain.proceed(requestBuilder.build())
     }

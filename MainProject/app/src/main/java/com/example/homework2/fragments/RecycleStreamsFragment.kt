@@ -23,8 +23,8 @@ class RecycleStreamsFragment : Fragment() {
     private var _binding: FragmentRecycleChannelsBinding? = null
     private val binding get() = _binding!!
 
-    private var recycleAdapter = StreamRecycleViewAdapter { topik, stream ->
-        openFrag(ChatFragment.newInstance(topik, stream), ChatFragment.TAG)
+    private var recycleAdapter = StreamRecycleViewAdapter { topic, stream ->
+        openFrag(ChatFragment.newInstance(topic, stream), ChatFragment.TAG)
     }
 
     private val compositeDisposable = CompositeDisposable()

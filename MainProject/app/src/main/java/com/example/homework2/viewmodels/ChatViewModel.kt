@@ -145,6 +145,7 @@ class ChatViewModel : ViewModel() {
                 .subscribe({ chatSubject.onNext(SelectViewTypeClass.Success(it.messages)) }, {
                     SelectViewTypeClass.Error
                 })
+
         compositeDisposable.add(messagesDisposable)
     }
 

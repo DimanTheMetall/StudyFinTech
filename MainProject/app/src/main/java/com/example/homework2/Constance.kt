@@ -6,6 +6,15 @@ object Constance {
     const val TOPIC_KEY = "topic key"
     const val STREAM_KEY = "stream key"
 
+    const val AUTHORIZATION_HEADER = "Authorization"
+
+    object Status {
+        const val ACTIVE = "active"
+        const val IDLE = "idle"
+        const val OFFLINE = "offline"
+
+    }
+
     //URL
     const val BASE_URL = "https://tinkoff-android-spring-2022.zulipchat.com"
 }

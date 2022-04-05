@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/black"
-    >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/black">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/channel_name"
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="Channel Name"
+        tools:text="Channel Name"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:layout_marginStart="20dp"

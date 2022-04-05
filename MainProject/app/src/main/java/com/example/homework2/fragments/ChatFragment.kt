@@ -2,20 +2,21 @@ package com.example.homework2.fragments
 
 import android.graphics.Rect
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.*
-import com.example.homework2.customviews.*
+import com.example.homework2.customviews.CustomBottomSheetDialog
+import com.example.homework2.customviews.dpToPx
 import com.example.homework2.databinding.FragmentChatBinding
 import com.example.homework2.dataclasses.Stream
-import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.Topic
+import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.viewmodels.ChatViewModel
 import io.reactivex.disposables.CompositeDisposable
 import org.joda.time.DateTime
@@ -59,12 +60,15 @@ class ChatFragment : Fragment() {
         }, { reaction, isSelected, messageId ->
             viewModel.deleteOrAddReaction(
                 requireActivity().zulipApp().retrofitService,
-                messageId, reaction.emoji_name, getString(R.string.unicodeEmoji), isSelected = isSelected
+                messageId,
+                reaction.emoji_name,
+                getString(R.string.unicodeEmoji),
+                isSelected = isSelected
             )
         })
 
-        topic = requireArguments().getParcelable<Topic>(Constance.TOPIC_KEY)!!
-        stream = requireArguments().getParcelable<Stream>(Constance.STREAM_KEY)!!
+        topic = requireArguments().getParcelable(Constance.TOPIC_KEY)!!
+        stream = requireArguments().getParcelable(Constance.STREAM_KEY)!!
 
         val shimmer = binding.chatShimmer
         val chatDisposable = viewModel.chatObservable.subscribe {
@@ -99,7 +103,7 @@ class ChatFragment : Fragment() {
 
         binding.apply {
             rcView.adapter = messageAdapter
-            streamName.text = "Topic #${topic.name}"
+            streamName.text = getString(R.string.topiclable, topic.name)
             rcView.addItemDecoration(itemDivider)
 
             messageTranslateImage.setOnClickListener {
@@ -122,11 +126,6 @@ class ChatFragment : Fragment() {
         compositeDisposable.add(chatDisposable)
 
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
     }
 
     override fun onStart() {

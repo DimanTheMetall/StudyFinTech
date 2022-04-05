@@ -1,21 +1,36 @@
 package com.example.homework2.fragments
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.example.homework2.R
 import com.example.homework2.PagerChannelsAdapter
+import com.example.homework2.R
 import com.example.homework2.databinding.FragmentChannelBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
 
 class StreamFragment : Fragment() {
+
+    enum class Tabs {
+        SUBSCRIBED {
+            override fun getText(context: Context): String {
+                return context.getString(R.string.tab_item_subscribe)
+            }
+        },
+        ALL {
+            override fun getText(context: Context): String {
+                return context.getString(R.string.tab_item_all)
+            }
+        };
+
+        abstract fun getText(context: Context): String
+    }
 
     val searchObservable: Observable<String> get() = searchSubject
     private val searchSubject = BehaviorSubject.create<String>()
@@ -45,14 +60,7 @@ class StreamFragment : Fragment() {
         viewPager.adapter = adapter
 
         TabLayoutMediator(binding.tabChannels, viewPager) { tab, pos ->
-            when (pos) {
-                0 -> {
-                    tab.text = getString(R.string.tab_item_subscribe)
-                }
-                1 -> {
-                    tab.text = getString(R.string.tab_item_all)
-                }
-            }
+            tab.text = Tabs.values()[pos].getText(requireContext())
         }.attach()
     }
 

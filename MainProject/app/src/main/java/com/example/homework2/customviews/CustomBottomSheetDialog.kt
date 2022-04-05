@@ -11,7 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 class CustomBottomSheetDialog(context: Context, val getEmoji: (String, String) -> Unit) :
     BottomSheetDialog(context) {
 
-    private val emojiTriple = listOf<Triple<String, String, String>>(
+    private val emojiTriple = listOf(
         Triple(context.getString(R.string.emoji_1), "grinning", "U+1F600"),
         Triple(context.getString(R.string.emoji_2), "grinning_face_with_smiling_eyes", "U+1F601"),
         Triple(context.getString(R.string.emoji_3), "laughing", "U+1F606"),

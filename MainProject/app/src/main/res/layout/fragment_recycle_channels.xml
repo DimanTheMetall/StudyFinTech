@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".fragments.RecycleStreamsFragment">
 
-
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/channel_shimmer"
         android:layout_width="match_parent"

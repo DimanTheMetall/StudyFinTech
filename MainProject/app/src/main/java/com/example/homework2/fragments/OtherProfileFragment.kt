@@ -2,10 +2,10 @@ package com.example.homework2.fragments
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -16,13 +16,10 @@ import com.example.homework2.R
 import com.example.homework2.databinding.FragmentOtherProfileBinding
 import com.example.homework2.dataclasses.Member
 import com.example.homework2.dataclasses.chatdataclasses.Presence
-import com.example.homework2.retrofit.RetrofitService
 import com.example.homework2.viewmodels.ProfileViewModel
 import com.example.homework2.zulipApp
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import java.lang.IllegalArgumentException
 
 class OtherProfileFragment : Fragment() {
 
@@ -76,13 +73,13 @@ class OtherProfileFragment : Fragment() {
             profileName.text = member.full_name
             profileStatusOnline.text = presence.website.status
             when (presence.website.status) {
-                "active" -> {
+                Constance.Status.ACTIVE -> {
                     profileStatusOnline.setTextColor(Color.GREEN)
                 }
-                "idle" -> {
+                Constance.Status.IDLE -> {
                     profileStatusOnline.setTextColor(Color.YELLOW)
                 }
-                "offline" -> {
+                Constance.Status.OFFLINE -> {
                     profileStatusOnline.setTextColor(Color.RED)
                 }
             }

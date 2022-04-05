@@ -10,13 +10,13 @@ sealed class SelectViewTypeClass {
 
     object UploadSuccess: SelectViewTypeClass()
 
-    data class Success(val messagesList: List<SelectViewTypeClass.Chat.Message>) : SelectViewTypeClass()
+    data class Success(val messagesList: List<Chat.Message>) : SelectViewTypeClass()
 
     sealed class Chat {
 
         data class Date(
             val time: String
-        ) : SelectViewTypeClass.Chat()
+        ) : Chat()
 
         data class Message(
             val avatar_url: String,
@@ -40,7 +40,6 @@ sealed class SelectViewTypeClass {
             val type: String,
             val reactions: List<Reaction>
 
-        ): SelectViewTypeClass.Chat()
+        ) : Chat()
     }
-
 }

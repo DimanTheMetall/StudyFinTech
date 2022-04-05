@@ -2,7 +2,6 @@ package com.example.homework2
 
 import android.app.Activity
 import android.app.Application
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.example.homework2.retrofit.AuthInterceptor
 import com.example.homework2.retrofit.RetrofitService

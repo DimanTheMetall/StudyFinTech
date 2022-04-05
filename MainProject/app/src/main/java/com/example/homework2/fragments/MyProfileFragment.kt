@@ -2,15 +2,16 @@ package com.example.homework2.fragments
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.example.homework2.Constance
 import com.example.homework2.R
 import com.example.homework2.ZulipApp
 import com.example.homework2.databinding.FragmentProfileBinding
@@ -62,17 +63,17 @@ class MyProfileFragment : Fragment() {
         with(binding) {
             profileName.text = member.full_name
 
-            if (member.website != null && member.website.timestamp > 10) {
-                profileStatusOnline.text = getText(R.string.offline)
+            if (member.website != null && member.website.timestamp > 150) {
+                profileStatusOnline.text = Constance.Status.OFFLINE
                 profileStatusOnline.setTextColor(Color.RED)
             }
 
             when (member.website?.status) {
-                "active" -> {
+                Constance.Status.ACTIVE -> {
                     profileStatusOnline.text = member.website.status
                     profileStatusOnline.setTextColor(Color.GREEN)
                 }
-                "idle" -> {
+                Constance.Status.IDLE -> {
                     profileStatusOnline.text = member.website.status
                     profileStatusOnline.setTextColor(Color.YELLOW)
                 }

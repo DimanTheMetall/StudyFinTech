@@ -30,5 +30,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="status">Status</string>
     <string name="unicodeEmoji">unicode_emoji</string>
+    <string name="topiclable">Topic # %1$s</string>
+    <string name="mess">\"mess %1$s\"</string>
+    <string name="search">Search...</string>
 
 </resources>
