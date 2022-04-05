@@ -126,7 +126,17 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadTopicMessage()
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.startObserveChat(requireActivity().zulipApp().retrofitService, stream.name, topic.name)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.stopObserveChat()
     }
 
     private fun switchImageOnTextChanged(isTextEmpty: Boolean) {

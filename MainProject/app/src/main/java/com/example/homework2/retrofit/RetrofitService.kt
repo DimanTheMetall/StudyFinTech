@@ -26,7 +26,6 @@ interface RetrofitService {
     @GET("/api/v1/users/me")
     fun getOwnUser(): Single<Member>
 
-
     @GET("/api/v1/messages")
     @JvmSuppressWildcards
     fun getMessages(
@@ -46,7 +45,7 @@ interface RetrofitService {
     ): Single<ResponseFromSendMessage>
 
     @GET("/api/v1/users/{user_id_or_email}/presence")
-    fun getPresense(@Path("user_id_or_email") user_id_or_email: Any): Single<JsonPresense>
+    fun getPresence(@Path("user_id_or_email") user_id_or_email: Any): Single<JsonPresense>
 
     @POST("/api/v1/messages/{message_id}/reactions")
     fun addEmoji(
@@ -62,6 +61,5 @@ interface RetrofitService {
         @Query("emoji_name") emoji_name: String,
         @Query("reaction_type") reaction_type: String,
     ): Single<JsonRespone>
-
 
 }

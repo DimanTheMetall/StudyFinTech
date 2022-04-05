@@ -1,14 +1,13 @@
 package com.example.homework2
 
-import android.provider.ContactsContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.homework2.databinding.ProfileLayoutBinding
 import com.example.homework2.dataclasses.Member
-import com.example.homework2.fragments.OtherProfileFragment
 
 class PeopleAdapter(val openFrag: (Member) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -28,7 +27,7 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
         private val binding = ProfileLayoutBinding.bind(view)
 
         fun bind(item: Member) {
-            if (!item.avatar_url.isNullOrBlank()){
+            if (!item.avatar_url.isNullOrBlank()) {
                 Glide.with(itemView.context)
                     .load(item.avatar_url)
                     .circleCrop()
@@ -38,6 +37,15 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
             }
 
             with(binding) {
+                when (item.website?.status) {
+                    "active" -> {
+                        onlineImage.isVisible = true
+                    }
+                    else -> {
+                        onlineImage.isVisible = false
+                    }
+                }
+
                 profileEmail.text = item.email
                 profileName.text = item.full_name
                 root.setOnClickListener {
@@ -47,14 +55,15 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
         }
     }
 
+    fun updateProfileList(list: List<Member>) {
+        peopleList = list.toMutableList()
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         (holder as ProfileHolder).bind(peopleList[position])
     }
 
     override fun getItemCount(): Int = peopleList.size
 
-    fun updateProfileList(list: List<Member>) {
-        peopleList = list.toMutableList()
-        notifyDataSetChanged()
-    }
 }

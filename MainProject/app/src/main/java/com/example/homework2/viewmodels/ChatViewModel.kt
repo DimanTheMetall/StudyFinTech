@@ -11,10 +11,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import java.util.concurrent.TimeUnit
 
 class ChatViewModel : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
+    private val observeDisposableChat = CompositeDisposable()
 
     val chatObservable: Observable<SelectViewTypeClass> get() = chatSubject
     private val chatSubject = BehaviorSubject.create<SelectViewTypeClass>().apply {
@@ -69,7 +71,7 @@ class ChatViewModel : ViewModel() {
     fun getPresense(retrofitService: RetrofitService, userEmail: String): String {
         var resultString: String = "offline"
 
-        val presenceDisposalbe = retrofitService.getPresense(userEmail)
+        val presenceDisposalbe = retrofitService.getPresence(userEmail)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -112,6 +114,16 @@ class ChatViewModel : ViewModel() {
                     { chatSubject.onNext(SelectViewTypeClass.Error) })
 
         compositeDisposable.add(sendMessageDisposable)
+    }
+
+    fun startObserveChat(retrofitService: RetrofitService, stream: String, topic: String) {
+        val d =  Observable.interval(3, TimeUnit.SECONDS)
+            .subscribe { loadTopicMessage(retrofitService, topic, stream) }
+        observeDisposableChat.add(d)
+    }
+
+    fun stopObserveChat() {
+        observeDisposableChat.clear()
     }
 
     fun loadTopicMessage(retrofitService: RetrofitService, topic: String, stream: String) {

@@ -47,16 +47,17 @@ class PeoplesFragment : Fragment() {
         binding.searchUsers.addTextChangedListener { text ->
             searchSubject.onNext(text.toString())
         }
+        val shimmer = binding.shimmerPeople
 
         val searchDisposable = searchSubject
             .debounce(1, TimeUnit.SECONDS)
             .distinctUntilChanged()
             .subscribe {
                 viewModel.onSearchProfile(
-                    it, requireActivity().zulipApp().retrofitService)
+                    it, requireActivity().zulipApp().retrofitService
+                )
             }
 
-        val shimmer = binding.shimmerPeople
         val profileDisposable = viewModel.peoplesObservable
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -83,6 +84,7 @@ class PeoplesFragment : Fragment() {
 
         compositeDisposable.add(searchDisposable)
         compositeDisposable.add(profileDisposable)
+
         return binding.root
     }
 

@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Member(
-    val avatar_url: String,
+    val avatar_url: String?,
     val bot_owner_id: Int,
 //    val bot_type: Any,
     val date_joined: String,
@@ -22,6 +22,6 @@ data class Member(
     val role: Int,
     val timezone: String,
     val user_id: Int,
-    val msg: String = "",
+    val msg: String? = "",
     val website: Website?
 ) : Parcelable

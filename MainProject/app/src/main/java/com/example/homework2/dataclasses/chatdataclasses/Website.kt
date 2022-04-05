@@ -5,6 +5,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Website(
-    val status: String,
+    var status: String,
     val timestamp: Int
 ): Parcelable

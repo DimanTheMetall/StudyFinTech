@@ -25,7 +25,7 @@ open class ProfileViewModel : ViewModel() {
         val myProfileDisposable = retrofitService.getOwnUser()
             .subscribeOn(Schedulers.io())
             .flatMap { member ->
-                retrofitService.getPresense(member.email)
+                retrofitService.getPresence(member.email)
                     .flatMap { Single.just(member.copy(website = it.presence.website)) }
             }
             .observeOn(AndroidSchedulers.mainThread())
@@ -43,7 +43,7 @@ open class ProfileViewModel : ViewModel() {
     }
 
     fun loadOtherProfile(retrofitService: RetrofitService, member: Member) {
-        val profileDisposable = retrofitService.getPresense(member.email)
+        val profileDisposable = retrofitService.getPresence(member.email)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
