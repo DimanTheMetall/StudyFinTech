@@ -12,12 +12,13 @@ import com.example.homework2.PagerChannelsAdapter
 import com.example.homework2.databinding.FragmentChannelBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
 class StreamFragment : Fragment() {
 
     val searchObservable: Observable<String> get() = searchSubject
-    private val searchSubject = PublishSubject.create<String>()
+    private val searchSubject = BehaviorSubject.create<String>()
 
     private lateinit var adapter: PagerChannelsAdapter
     private lateinit var viewPager: ViewPager2

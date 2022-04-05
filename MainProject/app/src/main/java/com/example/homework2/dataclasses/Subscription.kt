@@ -1,5 +1,6 @@
 package com.example.homework2.dataclasses
 
+//Не известно понадобиться ли это класс в дальнейшем
 data class Subscription(
     val audible_notifications: Boolean,
     val color: String,

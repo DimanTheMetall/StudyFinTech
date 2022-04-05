@@ -36,7 +36,7 @@ class StreamViewModel : ViewModel() {
 
     fun onSearchChangedSubscribedChannel(searchText: String, retrofitService: RetrofitService) {
         subscribedChannelsSubject.onNext(ResultStream.Progress)
-        val disposableSub = retrofitService.getAllStreams()
+        val disposableSub = retrofitService.getSubscribedStreams()
             .subscribeOn(Schedulers.io())
             .flatMapObservable { Observable.fromIterable(it.streams) }
             .flatMap { stream ->

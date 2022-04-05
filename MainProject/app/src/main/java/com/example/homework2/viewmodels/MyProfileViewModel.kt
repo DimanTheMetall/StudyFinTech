@@ -3,7 +3,9 @@ package com.example.homework2.viewmodels
 import android.database.Observable
 import androidx.lifecycle.ViewModel
 import com.example.homework2.dataclasses.Member
+import com.example.homework2.dataclasses.ResultMember
 import com.example.homework2.retrofit.RetrofitService
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -19,6 +21,10 @@ class MyProfileViewModel : ViewModel() {
 
         val myProfileDisposalbe = retrofitService.getOwnUser()
             .subscribeOn(Schedulers.io())
+            .flatMap { member ->
+                retrofitService.getPresense(member.email)
+                    .flatMap { Single.just(member.copy(website = it.presence.website)) }
+            }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 subjectProfile.onNext(it)
@@ -28,10 +34,9 @@ class MyProfileViewModel : ViewModel() {
         compositeDisposable.add(myProfileDisposalbe)
     }
 
+
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.clear()
     }
-
-
 }

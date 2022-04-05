@@ -25,7 +25,6 @@ class CustomViewGroup @JvmOverloads constructor(
     private val flexBox by lazy { getChildAt(3) as CustomFlexBox }
     private var isYours: Boolean = true
 
-
     init {
         inflate(context, R.layout.custom_view_group_layout, this)
     }

@@ -14,8 +14,6 @@ import io.reactivex.subjects.BehaviorSubject
 
 class ChatViewModel : ViewModel() {
 
-    private var chatListList = emptyList<SelectViewTypeClass.Chat.Message>()
-
     private val compositeDisposable = CompositeDisposable()
 
     val chatObservable: Observable<SelectViewTypeClass> get() = chatSubject
@@ -47,7 +45,6 @@ class ChatViewModel : ViewModel() {
         reactionType: String,
         isSelected: Boolean
     ) {
-        println("AAA $emojiName")
         if (!isSelected) {
             val reactionDisposable = retrofitService.deleteEmoji(messageId, emojiName, reactionType)
                 .subscribeOn(Schedulers.io())

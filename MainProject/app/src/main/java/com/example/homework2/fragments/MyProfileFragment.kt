@@ -12,6 +12,7 @@ import com.example.homework2.R
 import com.example.homework2.ZulipApp
 import com.example.homework2.databinding.FragmentProfileBinding
 import com.example.homework2.dataclasses.Member
+import com.example.homework2.dataclasses.ResultMember
 import com.example.homework2.dataclasses.chatdataclasses.Website
 import com.example.homework2.viewmodels.MyProfileViewModel
 import com.example.homework2.zulipApp
@@ -35,7 +36,7 @@ class MyProfileFragment : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater)
 
         val myProfileDisposable = viewModel.subjectProfile
-            .subscribe { updateMyProfile(it) }
+            .subscribe({ renderProfile(member = it)}, {})
 
         viewModel.loadMyProfile((requireActivity().application as ZulipApp).retrofitService)
 
@@ -49,47 +50,34 @@ class MyProfileFragment : Fragment() {
         compositeDisposable.clear()
     }
 
-    private fun updateMyProfile(member: Member) {
-
-        requireActivity().zulipApp().retrofitService
-            .getPresense(member.email)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                renderProfile(member, it.presence.website)
-            },{
-                //обработать ошибку
-            })
-    }
-    private fun renderProfile(member: Member, website: Website){
+    private fun renderProfile(member: Member) {
         Glide.with(requireContext())
             .load(member.avatar_url)
             .placeholder(R.mipmap.ic_launcher)
             .circleCrop()
             .into(binding.profileImage)
 
-        with(binding){
+        with(binding) {
             profileName.text = member.full_name
 
-            if (website.timestamp>10){
+            if (member.website != null && member.website.timestamp > 10) {
                 profileStatusOnline.text = "offline"
                 profileStatusOnline.setTextColor(Color.RED)
             }
 
-            when(website.status){
+            when (member.website?.status) {
                 "active" -> {
-                    profileStatusOnline.text = website.status
+                    profileStatusOnline.text = member.website.status
                     profileStatusOnline.setTextColor(Color.GREEN)
                 }
                 "idle" -> {
-                    profileStatusOnline.text = website.status
+                    profileStatusOnline.text = member.website.status
                     profileStatusOnline.setTextColor(Color.YELLOW)
                 }
             }
 
         }
     }
-
 
     companion object {
 

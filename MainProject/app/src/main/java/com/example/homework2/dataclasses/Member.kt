@@ -1,6 +1,7 @@
 package com.example.homework2.dataclasses
 
 import android.os.Parcelable
+import com.example.homework2.dataclasses.chatdataclasses.Website
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -21,5 +22,6 @@ data class Member(
     val role: Int,
     val timezone: String,
     val user_id: Int,
-    val msg: String = ""
+    val msg: String = "",
+    val website: Website?
 ) : Parcelable

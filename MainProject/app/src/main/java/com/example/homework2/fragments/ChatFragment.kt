@@ -20,7 +20,7 @@ import com.example.homework2.viewmodels.ChatViewModel
 import io.reactivex.disposables.CompositeDisposable
 import org.joda.time.DateTime
 
-class ChatFragment() : Fragment() {
+class ChatFragment : Fragment() {
 
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var topic: Topic
@@ -59,7 +59,7 @@ class ChatFragment() : Fragment() {
         }, { reaction, isSelected, messageId ->
             viewModel.deleteOrAddReaction(
                 requireActivity().zulipApp().retrofitService,
-                messageId, reaction.emoji_name, "unicode_emoji", isSelected = isSelected
+                messageId, reaction.emoji_name, getString(R.string.unicodeEmoji), isSelected = isSelected
             )
         })
 
@@ -86,13 +86,12 @@ class ChatFragment() : Fragment() {
             }
         }
 
-
         bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emojiName, emojiCode ->
             viewModel.uploadNewReaction(
                 requireActivity().zulipApp().retrofitService,
                 messageId,
                 emojiName,
-                "unicode_emoji",
+                getString(R.string.unicodeEmoji),
                 emojiCode
             )
             bottomSheetDialog?.hide()
@@ -100,7 +99,7 @@ class ChatFragment() : Fragment() {
 
         binding.apply {
             rcView.adapter = messageAdapter
-            streamName.text = "Topik #${topic.name}"
+            streamName.text = "Topic #${topic.name}"
             rcView.addItemDecoration(itemDivider)
 
             messageTranslateImage.setOnClickListener {
@@ -110,7 +109,6 @@ class ChatFragment() : Fragment() {
                     stream,
                     requireActivity().zulipApp().retrofitService
                 )
-
             }
 
             messageField.doOnTextChanged { text, start, before, count ->
@@ -159,7 +157,6 @@ class ChatFragment() : Fragment() {
             stream.name
         )
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

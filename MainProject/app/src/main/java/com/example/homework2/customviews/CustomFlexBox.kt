@@ -72,7 +72,6 @@ class CustomFlexBox @JvmOverloads constructor(
                 usedWidth = 0
                 currentHeight += child.measuredHeightWithMargins
             }
-
         }
     }
 

@@ -2,11 +2,8 @@ package com.example.homework2.customviews
 
 import android.content.Context
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.ViewGroup
-import android.widget.GridLayout
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import com.example.homework2.R
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -28,7 +25,7 @@ class CustomBottomSheetDialog(context: Context, val getEmoji: (String, String) -
         Triple(context.getString(R.string.emoji_11), "neutral", "U+1F610"),
         Triple(context.getString(R.string.emoji_12), "sleeping", "U+1F634"),
         Triple(context.getString(R.string.emoji_13), "stuck_out_tongue_closed_eyes", "U+1F600"),
-        Triple(context.getString(R.string.emoji_1), "+1", "U+1F44D")
+        Triple(context.getString(R.string.emoji_14), "+1", "U+1F44D")
     )
 
     init {

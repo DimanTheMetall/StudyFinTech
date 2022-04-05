@@ -93,44 +93,6 @@ class MessageAdapter(
                 }
             }
 
-//            with(item) {
-//                for (currentReaction in reactions.indices) {
-//                    var isAdded = false
-//                    var meIsAdded = false
-//                    var emojiCount = 1
-//
-//                    if (reactions[currentReaction].user_id == 490112) {
-//                        meIsAdded = true
-//                    }
-//
-//                    for (pastEmojis in 0 until currentReaction - 1) {
-//                        if (reactions[currentReaction].emoji_name == reactions[pastEmojis].emoji_name) {
-//                            isAdded = true
-//                        }
-//                    }
-//
-//                    for (i in currentReaction + 1 until reactions.lastIndex) {
-//                        if (reactions[currentReaction].emoji_name == reactions[i].emoji_name) {
-//                            emojiCount++
-//                        }
-//                    }
-//
-//                    if (!isAdded) {
-//                        customViewGroup.addEmoji(
-//                            reactions[currentReaction],
-//                            emojiCount, meIsAdded
-//                        ) { reaction, isSelected ->
-//                            onEmoji.invoke(
-//                                reaction,
-//                                isSelected,
-//                                item.id
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-
-
             //После регистрации проработать логику
             when (item.sender_email) {
                 "kozlovdiman_je@yahoo.com" -> {
