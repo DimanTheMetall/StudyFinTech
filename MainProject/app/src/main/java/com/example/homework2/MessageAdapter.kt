@@ -22,17 +22,17 @@ class MessageAdapter(
     private val differ = AsyncListDiffer(this, DiffCallback())
 
     private enum class MessageType {
-        MESSAGE, DATA
+        MESSAGE, DATE
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (differ.currentList[position]) {
-            is SelectViewTypeClass.Chat.Date -> MessageType.DATA.ordinal
+            is SelectViewTypeClass.Chat.Date -> MessageType.DATE.ordinal
             is SelectViewTypeClass.Chat.Message -> MessageType.MESSAGE.ordinal
         }
     }
 
-    class DataHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class DateHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val timeViewBinding = TimeTvBinding.bind(view)
         fun bind(time: String) {
             timeViewBinding.timeTv.text = time
@@ -123,21 +123,21 @@ class MessageAdapter(
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
             })
-            MessageType.DATA -> {
+            MessageType.DATE -> {
                 val view =
                     LayoutInflater.from(parent.context).inflate(
                         R.layout.time_tv,
                         parent,
                         false
                     )
-                MessageAdapter.DataHolder(view)
+                MessageAdapter.DateHolder(view)
             }
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val inform = differ.currentList[position]) {
-            is SelectViewTypeClass.Chat.Date -> (holder as MessageAdapter.DataHolder).bind(inform.time)
+            is SelectViewTypeClass.Chat.Date -> (holder as MessageAdapter.DateHolder).bind(inform.time)
             is SelectViewTypeClass.Chat.Message -> {
                 (holder as MessageAdapter.MessageHolder).bind(inform)
             }

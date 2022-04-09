@@ -59,4 +59,11 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:$okHttp3Version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okHttp3Version"
     implementation "com.github.bumptech.glide:glide:$Glide"
+
+    //Room
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-rxjava2:$room_version"
+
+
 }
