@@ -16,6 +16,7 @@ import com.example.homework2.dataclasses.Topic
     )]
 )
 data class TopicEntity(
+
     @ColumnInfo(name = "stream_id")
     val streamId: Int,
 

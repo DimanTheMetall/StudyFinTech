@@ -50,6 +50,8 @@ class RecycleStreamsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
+        viewModel.initDataBase(requireContext())
+
         _binding = FragmentRecycleChannelsBinding.inflate(inflater)
         binding.recycleChannel.adapter = recycleAdapter
         binding.recycleChannel.layoutManager = LinearLayoutManager(
@@ -79,12 +81,14 @@ class RecycleStreamsFragment : Fragment() {
                     }
                 }
             }
+
         compositeDisposable.add(searchDisposable)
 
         fun updateChannelResult(result: ResultStream) {
             when (result) {
                 is ResultStream.Success -> {
                     recycleAdapter.updateList(result.streamList)
+                    viewModel.insertStreamsAndTopics(result.streamList, getIsSubscribedBoolean())
                     shimmer.hideShimmer()
                 }
                 is ResultStream.Error -> {
@@ -103,7 +107,6 @@ class RecycleStreamsFragment : Fragment() {
                     .subscribe {
                         updateChannelResult(it)
                     }
-
                 compositeDisposable.add(subscribedChannelsDisposable)
             }
             false -> {
@@ -120,11 +123,15 @@ class RecycleStreamsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        when(getIsSubscribedBoolean()){
-            true -> {viewModel.loadSubscribedStreams(requireActivity().zulipApp().retrofitService)}
-            false -> {viewModel.loadAllStreams(requireActivity().zulipApp().retrofitService)}
-        }
 
+        when (getIsSubscribedBoolean()) {
+            true -> {
+                viewModel.loadSubscribedStreams(requireActivity().zulipApp().retrofitService)
+            }
+            false -> {
+                viewModel.loadAllStreams(requireActivity().zulipApp().retrofitService)
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -140,7 +147,7 @@ class RecycleStreamsFragment : Fragment() {
             .commit()
     }
 
-    private fun getIsSubscribedBoolean(): Boolean{
+    private fun getIsSubscribedBoolean(): Boolean {
         return requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)
     }
 
