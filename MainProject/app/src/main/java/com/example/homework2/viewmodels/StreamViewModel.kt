@@ -35,7 +35,6 @@ class StreamViewModel : ViewModel() {
         onNext(ResultStream.Success(subscribedList)) //Затычка
     }
 
-
     fun initDataBase(context: Context) {
         dataBase = ZulipDataBase.getInstance(context)
         selectSubscribedStreamsAndTopics()
@@ -50,7 +49,7 @@ class StreamViewModel : ViewModel() {
             .insertStreams(streams = streamsList.map { StreamEntity.toEntity(it, entityType) })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({}, {})
+            .subscribe {}
 
         streamsList.forEach { stream ->
 
@@ -70,7 +69,6 @@ class StreamViewModel : ViewModel() {
         }
     }
 
-
     private fun selectSubscribedStreamsAndTopics() {
         val disposable = dataBase.getStreamsAndTopicsDao().getSubscribedStreamsAndTopic()
             .subscribeOn(Schedulers.io())
@@ -86,8 +84,6 @@ class StreamViewModel : ViewModel() {
                 }
                 subscribedChannelsSubject.onNext(ResultStream.Success(streamList = streamList.sortedBy { it.stream_id }))
             }
-
-
         compositeDisposable.add(disposable)
     }
 

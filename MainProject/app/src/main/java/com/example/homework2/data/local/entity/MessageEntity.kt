@@ -21,7 +21,7 @@ import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 data class MessageEntity(
     @PrimaryKey
     @ColumnInfo(name = "id")
-    val id: Int,
+    val id: Long,
 
     @ColumnInfo(name = "avatar_url")
     val avatarUrl: String,

@@ -8,9 +8,11 @@ sealed class SelectViewTypeClass {
 
     object Progress : SelectViewTypeClass()
 
-    object UploadSuccess: SelectViewTypeClass()
+    object UploadSuccess : SelectViewTypeClass()
 
     data class Success(val messagesList: List<Chat.Message>) : SelectViewTypeClass()
+
+    data class SuccessLast(val messagesList: List<Chat.Message>) : SelectViewTypeClass()
 
     sealed class Chat {
 
@@ -25,7 +27,7 @@ sealed class SelectViewTypeClass {
             val content_type: String,
             val display_recipient: Any,
             val flags: List<String>,
-            val id: Int,
+            val id: Long,
             val is_me_message: Boolean,
             val recipient_id: Int,
             val sender_email: String,

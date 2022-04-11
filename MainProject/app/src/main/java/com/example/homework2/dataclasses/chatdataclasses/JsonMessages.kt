@@ -1,7 +1,7 @@
 package com.example.homework2.dataclasses.chatdataclasses
 
 data class JsonMessages(
-    val anchor: Int,
+    val anchor: Long,
     val found_anchor: Boolean,
     val found_newest: Boolean,
     val messages: List<SelectViewTypeClass.Chat.Message>,

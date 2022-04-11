@@ -11,7 +11,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
-import java.util.concurrent.TimeUnit
 
 class ChatViewModel : ViewModel() {
 
@@ -25,7 +24,7 @@ class ChatViewModel : ViewModel() {
 
     fun uploadNewReaction(
         retrofitService: RetrofitService,
-        messageId: Int,
+        messageId: Long,
         emojiName: String,
         reactionType: String,
         emojiCode: String?
@@ -42,7 +41,7 @@ class ChatViewModel : ViewModel() {
 
     fun deleteOrAddReaction(
         retrofitService: RetrofitService,
-        messageId: Int,
+        messageId: Long,
         emojiName: String,
         reactionType: String,
         isSelected: Boolean
@@ -116,17 +115,22 @@ class ChatViewModel : ViewModel() {
         compositeDisposable.add(sendMessageDisposable)
     }
 
-    fun startObserveChat(retrofitService: RetrofitService, stream: String, topic: String) {
-        val d =  Observable.interval(3, TimeUnit.SECONDS)
-            .subscribe { loadTopicMessage(retrofitService, topic, stream) }
-        observeDisposableChat.add(d)
-    }
+//    fun startObserveChat(retrofitService: RetrofitService, stream: String, topic: String) {
+//        val d =  Observable.interval(3, TimeUnit.SECONDS)
+//            .subscribe { loadTopicMessage(retrofitService, topic, stream) }
+//        observeDisposableChat.add(d)
+//    }
 
-    fun stopObserveChat() {
-        observeDisposableChat.clear()
-    }
+//    fun stopObserveChat() {
+//        observeDisposableChat.clear()
+//    }
 
-    fun loadTopicMessage(retrofitService: RetrofitService, topic: String, stream: String) {
+    fun loadTopicMessage(
+        retrofitService: RetrofitService,
+        topic: String,
+        stream: String,
+        lastMessageId: Long
+    ) {
         val messagesDisposable =
             retrofitService.getMessages(
                 Narrow(
@@ -135,16 +139,23 @@ class ChatViewModel : ViewModel() {
                         Filter("topic", topic),
                     )
                 ).toJson(),
-                "oldest",
-                1000,
-                1000,
+                "$lastMessageId",
+                0,
+                20,
                 false
             )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ chatSubject.onNext(SelectViewTypeClass.Success(it.messages)) }, {
-                    SelectViewTypeClass.Error
-                })
+                .subscribe({
+                    println("AAA ${it.found_newest}")
+                    if (!it.found_newest) chatSubject.onNext(SelectViewTypeClass.Success(it.messages))
+                    else chatSubject.onNext(
+                        SelectViewTypeClass.SuccessLast(it.messages)
+                    )
+                },
+                    {
+                        SelectViewTypeClass.Error
+                    })
 
         compositeDisposable.add(messagesDisposable)
     }

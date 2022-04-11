@@ -1,11 +1,13 @@
 package com.example.homework2.retrofit
 
-import androidx.core.location.LocationRequestCompat
 import com.example.homework2.dataclasses.JsonStreams
 import com.example.homework2.dataclasses.JsonTopic
 import com.example.homework2.dataclasses.JsonUsers
 import com.example.homework2.dataclasses.Member
-import com.example.homework2.dataclasses.chatdataclasses.*
+import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
+import com.example.homework2.dataclasses.chatdataclasses.JsonPresense
+import com.example.homework2.dataclasses.chatdataclasses.JsonRespone
+import com.example.homework2.dataclasses.chatdataclasses.ResponseFromSendMessage
 import io.reactivex.Single
 import retrofit2.http.*
 
@@ -29,7 +31,7 @@ interface RetrofitService {
     @GET("/api/v1/messages")
     @JvmSuppressWildcards
     fun getMessages(
-        @Query("narrow") narrow: String,
+        @Query("narrow") narrow: Any,
         @Query("anchor") anchor: String,
         @Query("num_before") numBefore: Int,
         @Query("num_after") numAfter: Int,
@@ -49,7 +51,7 @@ interface RetrofitService {
 
     @POST("/api/v1/messages/{message_id}/reactions")
     fun addEmoji(
-        @Path("message_id") message_id: Int,
+        @Path("message_id") message_id: Long,
         @Query("emoji_name") emoji_name: String,
         @Query("reaction_type") reaction_type: String,
         @Query("emoji_code") emoji_code: String?
@@ -57,7 +59,7 @@ interface RetrofitService {
 
     @DELETE("/api/v1/messages/{message_id}/reactions")
     fun deleteEmoji(
-        @Path("message_id") message_id: Int,
+        @Path("message_id") message_id: Long,
         @Query("emoji_name") emoji_name: String,
         @Query("reaction_type") reaction_type: String,
     ): Single<JsonRespone>

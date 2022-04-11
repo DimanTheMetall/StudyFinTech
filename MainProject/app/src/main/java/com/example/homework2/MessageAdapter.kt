@@ -14,15 +14,23 @@ import com.example.homework2.dataclasses.Reaction
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 
 class MessageAdapter(
-    val onTab: (Int) -> Unit,
-    val onEmoji: (Reaction, Boolean, Int) -> Unit
+    val onTab: (Long) -> Unit,
+    val onEmoji: (Reaction, Boolean, Long) -> Unit,
+    private val getMessageId: (Long) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val differ = AsyncListDiffer(this, DiffCallback())
+    private var isLast: Boolean = false
 
     private enum class MessageType {
         MESSAGE, DATE
+    }
+
+    init {
+        //zapros v bazu
+
+        if (differ.currentList.isEmpty()) loadMessages(0L, 0)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -46,6 +54,8 @@ class MessageAdapter(
         fun bind(item: SelectViewTypeClass.Chat.Message) = with(binding) {
             messageTextView.text = item.content
             messageTitleTextView.text = item.sender_full_name
+
+            if (!isLast) loadMessages(item.id, adapterPosition)
 
             if (!item.avatar_url.isNullOrEmpty()) {
                 Glide.with(customViewGroup.context)
@@ -72,7 +82,7 @@ class MessageAdapter(
 
             val byEmojiName = item.reactions.groupBy { it.emoji_name }
 
-            for (reactions in byEmojiName){
+            for (reactions in byEmojiName) {
                 var emojiCount = 1
                 var meIsAdded = false
                 reactions.value.forEach {
@@ -136,6 +146,7 @@ class MessageAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
         when (val inform = differ.currentList[position]) {
             is SelectViewTypeClass.Chat.Date -> (holder as MessageAdapter.DateHolder).bind(inform.time)
             is SelectViewTypeClass.Chat.Message -> {
@@ -150,5 +161,27 @@ class MessageAdapter(
 
     fun updateChatList(chatList: List<SelectViewTypeClass.Chat>) {
         differ.submitList(chatList)
+    }
+
+    fun setIsLast(isLastBoolean: Boolean) {
+        isLast = isLastBoolean
+        println("AAA isLast $isLast")
+    }
+
+    fun addMessagesToList(messages: List<SelectViewTypeClass.Chat.Message>) {
+        val newList: MutableList<SelectViewTypeClass.Chat> = mutableListOf()
+        newList.addAll(differ.currentList)
+        newList.addAll(messages)
+        differ.submitList(newList)
+
+
+    }
+
+    private fun loadMessages(messageId: Long?, position: Int) {
+        val currentId = messageId ?: 0L
+        if (position >= differ.currentList.size - 5) {
+            getMessageId.invoke(currentId)
+        }
+
     }
 }

@@ -27,7 +27,7 @@ class ChatFragment : Fragment() {
     private lateinit var topic: Topic
     private lateinit var stream: Stream
 
-    private var messageId = -1
+    private var messageId = -1L
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
     private var dateTime: DateTime = DateTime()
@@ -52,6 +52,9 @@ class ChatFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        topic = requireArguments().getParcelable(Constance.TOPIC_KEY)!!
+        stream = requireArguments().getParcelable(Constance.STREAM_KEY)!!
         _binding = FragmentChatBinding.inflate(inflater)
 
         messageAdapter = MessageAdapter({ messageId ->
@@ -59,22 +62,22 @@ class ChatFragment : Fragment() {
             bottomSheetDialog?.show()
         }, { reaction, isSelected, messageId ->
             viewModel.deleteOrAddReaction(
-                requireActivity().zulipApp().retrofitService,
-                messageId,
-                reaction.emoji_name,
-                getString(R.string.unicodeEmoji),
+                retrofitService = requireActivity().zulipApp().retrofitService,
+                messageId = messageId,
+                emojiName = reaction.emoji_name,
+                reactionType = getString(R.string.unicodeEmoji),
                 isSelected = isSelected
             )
+        }, { messageId ->
+            loadTopicMessage(messageId = messageId)
         })
 
-        topic = requireArguments().getParcelable(Constance.TOPIC_KEY)!!
-        stream = requireArguments().getParcelable(Constance.STREAM_KEY)!!
 
         val shimmer = binding.chatShimmer
         val chatDisposable = viewModel.chatObservable.subscribe {
             when (it) {
                 is SelectViewTypeClass.Success -> {
-                    messageAdapter.updateChatList(it.messagesList)
+                    messageAdapter.addMessagesToList(it.messagesList)
                     shimmer.hideShimmer()
                 }
                 is SelectViewTypeClass.Error -> {
@@ -85,8 +88,15 @@ class ChatFragment : Fragment() {
                     shimmer.showShimmer(true)
                 }
                 is SelectViewTypeClass.UploadSuccess -> {
-                    loadTopicMessage()
+                    //                   loadTopicMessage()
                 }
+
+                is SelectViewTypeClass.SuccessLast -> {
+                    messageAdapter.addMessagesToList(it.messagesList)
+                    messageAdapter.setIsLast(true)
+                    shimmer.hideShimmer()
+                }
+
             }
         }
 
@@ -128,15 +138,15 @@ class ChatFragment : Fragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.startObserveChat(requireActivity().zulipApp().retrofitService, stream.name, topic.name)
-    }
+//    override fun onStart() {
+//        super.onStart()
+//        viewModel.startObserveChat(requireActivity().zulipApp().retrofitService, stream.name, topic.name)
+//    }
 
-    override fun onStop() {
-        super.onStop()
-        viewModel.stopObserveChat()
-    }
+//    override fun onStop() {
+//        super.onStop()
+//        viewModel.stopObserveChat()
+//    }
 
     private fun switchImageOnTextChanged(isTextEmpty: Boolean) {
         when (isTextEmpty) {
@@ -159,11 +169,12 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun loadTopicMessage(){
+    private fun loadTopicMessage(messageId: Long) {
         viewModel.loadTopicMessage(
-            (requireActivity().application as ZulipApp).retrofitService,
-            topic.name,
-            stream.name
+            retrofitService = (requireActivity().application as ZulipApp).retrofitService,
+            topic = topic.name,
+            stream = stream.name,
+            lastMessageId = messageId
         )
     }
 
