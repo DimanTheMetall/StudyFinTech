@@ -32,7 +32,7 @@ data class ReactionEntity(
     @ColumnInfo(name = "message_id")
     val messageId: Long
 ) {
-    fun toMessage(): Reaction = Reaction(
+    fun toReaction(): Reaction = Reaction(
         emoji_code = emojiCode,
         emoji_name = emojiName,
         user_id = userId,

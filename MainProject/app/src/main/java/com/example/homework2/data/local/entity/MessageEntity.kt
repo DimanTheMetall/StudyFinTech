@@ -24,7 +24,7 @@ data class MessageEntity(
     val id: Long,
 
     @ColumnInfo(name = "avatar_url")
-    val avatarUrl: String,
+    val avatarUrl: String? = "",
 
     @ColumnInfo(name = "client")
     val client: String,
@@ -56,19 +56,20 @@ data class MessageEntity(
     @ColumnInfo(name = "type")
     val type: String,
 ) {
-    fun toStream(): MessageEntity = MessageEntity(
+    fun toMessage(): SelectViewTypeClass.Chat.Message = SelectViewTypeClass.Chat.Message(
         id = id,
-        avatarUrl = avatarUrl,
+        avatar_url = avatarUrl ?: "",
         client = client,
         content = content,
-        contentType = contentType,
-        senderEmail = senderEmail,
-        senderFullName = senderFullName,
-        senderId = senderId,
-        streamId = streamId,
+        content_type = contentType,
+        sender_email = senderEmail,
+        sender_full_name = senderFullName,
+        sender_id = senderId,
+        stream_id = streamId,
         subject = subject,
         timestamp = timestamp,
-        type = type
+        type = type,
+        reactions = mutableListOf()
     )
 
     companion object {

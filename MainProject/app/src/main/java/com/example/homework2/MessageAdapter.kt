@@ -16,7 +16,7 @@ import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 class MessageAdapter(
     val onTab: (Long) -> Unit,
     val onEmoji: (Reaction, Boolean, Long) -> Unit,
-    private val getMessageId: (Long) -> Unit
+    private val getList: (MutableList<SelectViewTypeClass.Chat>) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -25,12 +25,6 @@ class MessageAdapter(
 
     private enum class MessageType {
         MESSAGE, DATE
-    }
-
-    init {
-        //zapros v bazu
-
-        if (differ.currentList.isEmpty()) loadMessages(0L, 0)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -54,8 +48,6 @@ class MessageAdapter(
         fun bind(item: SelectViewTypeClass.Chat.Message) = with(binding) {
             messageTextView.text = item.content
             messageTitleTextView.text = item.sender_full_name
-
-            if (!isLast) loadMessages(item.id, adapterPosition)
 
             if (!item.avatar_url.isNullOrEmpty()) {
                 Glide.with(customViewGroup.context)
@@ -159,29 +151,24 @@ class MessageAdapter(
         return differ.currentList.size
     }
 
-    fun updateChatList(chatList: List<SelectViewTypeClass.Chat>) {
-        differ.submitList(chatList)
-    }
+//    fun updateChatList(chatList: List<SelectViewTypeClass.Chat>) {
+//        differ.submitList(chatList)
+//    }
 
     fun setIsLast(isLastBoolean: Boolean) {
         isLast = isLastBoolean
         println("AAA isLast $isLast")
     }
 
-    fun addMessagesToList(messages: List<SelectViewTypeClass.Chat.Message>) {
+    //Разобраться с типизацией сообщений и времени
+    fun addMessagesToList(messages: List<SelectViewTypeClass.Chat>) {
         val newList: MutableList<SelectViewTypeClass.Chat> = mutableListOf()
         newList.addAll(differ.currentList)
         newList.addAll(messages)
+        newList.sortedBy { (it as SelectViewTypeClass.Chat.Message).id }
         differ.submitList(newList)
-
-
-    }
-
-    private fun loadMessages(messageId: Long?, position: Int) {
-        val currentId = messageId ?: 0L
-        if (position >= differ.currentList.size - 5) {
-            getMessageId.invoke(currentId)
-        }
+        getList.invoke(newList)
 
     }
+
 }

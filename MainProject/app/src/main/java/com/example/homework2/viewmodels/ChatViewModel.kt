@@ -1,6 +1,10 @@
 package com.example.homework2.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.example.homework2.data.ZulipDataBase
+import com.example.homework2.data.local.entity.MessageEntity
+import com.example.homework2.data.local.entity.ReactionEntity
 import com.example.homework2.dataclasses.Reaction
 import com.example.homework2.dataclasses.Stream
 import com.example.homework2.dataclasses.Topic
@@ -22,6 +26,70 @@ class ChatViewModel : ViewModel() {
         onNext(SelectViewTypeClass.Progress)
     }
 
+
+    lateinit var dataBase: ZulipDataBase
+
+    fun initDateBase(context: Context, topic: Topic, stream: Stream) {
+        dataBase = ZulipDataBase.getInstance(context)
+        selectMessagesAndReactionOnTopic(topic = topic, stream = stream)
+    }
+
+    val messageList = mutableListOf<SelectViewTypeClass.Chat.Message>()
+
+
+    private fun selectMessagesAndReactionOnTopic(topic: Topic, stream: Stream) {
+        val disposable = dataBase.getMessagesAndReactionDao()
+            .selectMessagesAndReactionFromTopic(topicName = topic.name, streamId = stream.stream_id)
+            .subscribeOn(Schedulers.io())
+            .distinctUntilChanged()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { map ->
+                val messageList = mutableListOf<SelectViewTypeClass.Chat.Message>()
+                map.keys.forEach { messageEntity ->
+                    val message = messageEntity.toMessage()
+                    val reactionList = map.getValue(messageEntity).map { it.toReaction() }
+                    message.reactions = reactionList
+                    messageList.add(message)
+                }
+                this.messageList.addAll(messageList)
+                chatSubject.onNext(SelectViewTypeClass.Success(messagesList = messageList))
+            }
+        compositeDisposable.add(disposable)
+    }
+
+    fun deleteOldestMessagesAndReaction(firstMessageIdOnSave: Long) {
+        dataBase.getMessagesAndReactionDao().deleteOldestMessages(firstMessageIdOnSave)
+        dataBase.getMessagesAndReactionDao()
+            .deleteReactionFromMessagesWhereIdLowes(firstMessageIdOnSave)
+    }
+
+    private fun insertLatestMessagesAndReaction(
+        messages: List<SelectViewTypeClass.Chat.Message>
+    ) {
+        val insertDisposableMessages = dataBase.getMessagesAndReactionDao()
+            .insertMessagesFromTopic(messages.map { MessageEntity.toEntity(it) })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        messages.forEach { message ->
+            val insertDisposableReaction =
+                dataBase.getMessagesAndReactionDao().insertAllReactionOnMessages(message.reactions
+                    .map { reaction ->
+                        ReactionEntity.toEntity(
+                            reaction,
+                            messageId = message.id
+                        )
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe()
+            compositeDisposable.add(insertDisposableReaction)
+        }
+        compositeDisposable.add(insertDisposableMessages)
+    }
+
+
     fun uploadNewReaction(
         retrofitService: RetrofitService,
         messageId: Long,
@@ -37,6 +105,7 @@ class ChatViewModel : ViewModel() {
             }, { chatSubject.onNext(SelectViewTypeClass.Error) })
 
         compositeDisposable.add(reactionDisposable)
+
     }
 
     fun deleteOrAddReaction(
@@ -129,7 +198,9 @@ class ChatViewModel : ViewModel() {
         retrofitService: RetrofitService,
         topic: String,
         stream: String,
-        lastMessageId: Long
+        lastMessageId: Any,
+        numAfter: Int,
+        numBefore: Int
     ) {
         val messagesDisposable =
             retrofitService.getMessages(
@@ -139,19 +210,20 @@ class ChatViewModel : ViewModel() {
                         Filter("topic", topic),
                     )
                 ).toJson(),
-                "$lastMessageId",
-                0,
-                20,
+                anchor = lastMessageId,
+                numBefore,
+                numAfter,
                 false
             )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    println("AAA ${it.found_newest}")
+                    this.messageList.addAll(it.messages)
                     if (!it.found_newest) chatSubject.onNext(SelectViewTypeClass.Success(it.messages))
                     else chatSubject.onNext(
                         SelectViewTypeClass.SuccessLast(it.messages)
                     )
+                    insertLatestMessagesAndReaction(it.messages)
                 },
                     {
                         SelectViewTypeClass.Error

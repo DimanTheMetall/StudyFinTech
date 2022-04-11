@@ -22,6 +22,8 @@ abstract class ZulipDataBase : RoomDatabase() {
 
     abstract fun getStreamsAndTopicsDao(): StreamsAndTopicsDao
 
+    abstract fun getMessagesAndReactionDao(): MessagesAndReactionDao
+
 
     companion object {
 

@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.*
 import com.example.homework2.customviews.CustomBottomSheetDialog
+import com.example.homework2.customviews.addOnPageScrollListener
 import com.example.homework2.customviews.dpToPx
 import com.example.homework2.databinding.FragmentChatBinding
 import com.example.homework2.dataclasses.Stream
@@ -34,6 +35,7 @@ class ChatFragment : Fragment() {
     private val compositeDisposable = CompositeDisposable()
     private val viewModel: ChatViewModel by viewModels()
     private var bottomSheetDialog: CustomBottomSheetDialog? = null
+
     private val itemDivider = object : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(
             outRect: Rect,
@@ -55,7 +57,16 @@ class ChatFragment : Fragment() {
 
         topic = requireArguments().getParcelable(Constance.TOPIC_KEY)!!
         stream = requireArguments().getParcelable(Constance.STREAM_KEY)!!
+
         _binding = FragmentChatBinding.inflate(inflater)
+
+        viewModel.initDateBase(requireContext(), topic = topic, stream = stream)
+
+        binding.rcView.addOnPageScrollListener {
+            loadTopicMessage(
+                currentLastMessageId = viewModel.messageList.lastOrNull()?.id ?: 0L
+            )
+        }
 
         messageAdapter = MessageAdapter({ messageId ->
             this.messageId = messageId
@@ -68,8 +79,8 @@ class ChatFragment : Fragment() {
                 reactionType = getString(R.string.unicodeEmoji),
                 isSelected = isSelected
             )
-        }, { messageId ->
-            loadTopicMessage(messageId = messageId)
+        }, { mutableList ->
+            onUpdateList(mutableList as MutableList<SelectViewTypeClass.Chat.Message>)
         })
 
 
@@ -78,6 +89,7 @@ class ChatFragment : Fragment() {
             when (it) {
                 is SelectViewTypeClass.Success -> {
                     messageAdapter.addMessagesToList(it.messagesList)
+                    messageAdapter.setIsLast(false)
                     shimmer.hideShimmer()
                 }
                 is SelectViewTypeClass.Error -> {
@@ -88,7 +100,7 @@ class ChatFragment : Fragment() {
                     shimmer.showShimmer(true)
                 }
                 is SelectViewTypeClass.UploadSuccess -> {
-                    //                   loadTopicMessage()
+                    loadTopicMessage(currentLastMessageId = "oldest", numAfter = 1, numBefore = 1)
                 }
 
                 is SelectViewTypeClass.SuccessLast -> {
@@ -169,13 +181,52 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun loadTopicMessage(messageId: Long) {
+//    private fun onEmptyLoad(messageId: Any){
+//        if (messageId == 0L){
+//            loadTopicMessage(messageId = "oldest", 20)
+//        }
+//    }
+
+    private fun loadTopicMessage(
+        currentLastMessageId: Any,
+        numAfter: Int = 20,
+        numBefore: Int = 0
+    ) {
         viewModel.loadTopicMessage(
             retrofitService = (requireActivity().application as ZulipApp).retrofitService,
             topic = topic.name,
             stream = stream.name,
-            lastMessageId = messageId
+            lastMessageId = currentLastMessageId,
+            numAfter = numAfter,
+            numBefore = numBefore
         )
+    }
+
+    private fun onUpdateList(list: MutableList<SelectViewTypeClass.Chat.Message>) {
+        val oldestOnSaveMessageId = if (list.lastIndex <= 50) 0L else list[list.lastIndex - 50].id
+
+        //Сохрание сообщений в БД
+//        viewModel.dataBase.getMessagesAndReactionDao()
+//            .insertMessagesFromTopic(list.map { MessageEntity.toEntity(message = it) })
+
+
+//        list.forEach { message ->
+//            viewModel.dataBase.getMessagesAndReactionDao()
+//                .insertAllReactionOnMessages(message.reactions.map {
+//                    ReactionEntity.toEntity(
+//                        reaction = it,
+//                        messageId = message.id
+//                    )
+//                })
+//        }
+
+        //Удаление сообщений из БД
+
+//        viewModel.dataBase.getMessagesAndReactionDao()
+//            .deleteOldestMessages(oldestMessagedItAfterDeleted = oldestOnSaveMessageId)
+//        viewModel.dataBase.getMessagesAndReactionDao()
+//            .deleteReactionFromMessagesWhereIdLowes(oldestOnSaveMessageId)
+
     }
 
     override fun onDestroyView() {
