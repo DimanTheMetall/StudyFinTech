@@ -111,7 +111,7 @@ class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateList(list: List<Stream>) {
-        streamList = list.toMutableList()
+        streamList = list.sortedBy { it.stream_id }.toMutableList()
         notifyDataSetChanged()
     }
 }

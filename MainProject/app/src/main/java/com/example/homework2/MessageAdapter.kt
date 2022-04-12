@@ -15,13 +15,12 @@ import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 
 class MessageAdapter(
     val onTab: (Long) -> Unit,
-    val onEmoji: (Reaction, Boolean, Long) -> Unit,
-    private val getList: (MutableList<SelectViewTypeClass.Chat>) -> Unit
+    val onEmoji: (Reaction, Boolean, Long) -> Unit
+
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val differ = AsyncListDiffer(this, DiffCallback())
-    private var isLast: Boolean = false
 
     private enum class MessageType {
         MESSAGE, DATE
@@ -155,11 +154,6 @@ class MessageAdapter(
 //        differ.submitList(chatList)
 //    }
 
-    fun setIsLast(isLastBoolean: Boolean) {
-        isLast = isLastBoolean
-        println("AAA isLast $isLast")
-    }
-
     //Разобраться с типизацией сообщений и времени
     fun addMessagesToList(messages: List<SelectViewTypeClass.Chat>) {
         val newList: MutableList<SelectViewTypeClass.Chat> = mutableListOf()
@@ -167,8 +161,6 @@ class MessageAdapter(
         newList.addAll(messages)
         newList.sortedBy { (it as SelectViewTypeClass.Chat.Message).id }
         differ.submitList(newList)
-        getList.invoke(newList)
-
     }
 
 }

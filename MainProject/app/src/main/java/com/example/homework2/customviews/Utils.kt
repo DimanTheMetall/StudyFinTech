@@ -38,7 +38,7 @@ fun RecyclerView.addOnPageScrollListener(onScrollToNewPage: () -> Unit) {
             })
         }
         else -> {
-            IllegalStateException("Illegal layoutManager " + layoutManager.toString() + " USE LinearLayoutManager or StaggeredGridLayoutManager")
+            IllegalStateException("Illegal layoutManager " + layoutManager.toString())
         }
     }
 }

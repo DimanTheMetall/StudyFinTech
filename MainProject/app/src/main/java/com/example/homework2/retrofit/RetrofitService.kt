@@ -4,14 +4,14 @@ import com.example.homework2.dataclasses.JsonStreams
 import com.example.homework2.dataclasses.JsonTopic
 import com.example.homework2.dataclasses.JsonUsers
 import com.example.homework2.dataclasses.Member
-import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
-import com.example.homework2.dataclasses.chatdataclasses.JsonPresense
-import com.example.homework2.dataclasses.chatdataclasses.JsonRespone
-import com.example.homework2.dataclasses.chatdataclasses.ResponseFromSendMessage
+import com.example.homework2.dataclasses.chatdataclasses.*
 import io.reactivex.Single
 import retrofit2.http.*
 
 interface RetrofitService {
+
+    @GET("/api/v1/messages/{msg_id}")
+    fun getOneMessage(@Path("msg_id") messageId: Long): Single<SelectViewTypeClass.Chat.Message>
 
     @GET("/api/v1/streams")
     fun getAllStreams(): Single<JsonStreams>

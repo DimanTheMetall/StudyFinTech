@@ -10,7 +10,9 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.*
+import com.example.homework2.Constance
+import com.example.homework2.MessageAdapter
+import com.example.homework2.R
 import com.example.homework2.customviews.CustomBottomSheetDialog
 import com.example.homework2.customviews.addOnPageScrollListener
 import com.example.homework2.customviews.dpToPx
@@ -19,6 +21,7 @@ import com.example.homework2.dataclasses.Stream
 import com.example.homework2.dataclasses.Topic
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.viewmodels.ChatViewModel
+import com.example.homework2.zulipApp
 import io.reactivex.disposables.CompositeDisposable
 import org.joda.time.DateTime
 
@@ -60,11 +63,20 @@ class ChatFragment : Fragment() {
 
         _binding = FragmentChatBinding.inflate(inflater)
 
-        viewModel.initDateBase(requireContext(), topic = topic, stream = stream)
+        viewModel.initDateBase(
+            requireContext(),
+            topic = topic,
+            stream = stream,
+            requireActivity().zulipApp().retrofitService
+        )
 
         binding.rcView.addOnPageScrollListener {
-            loadTopicMessage(
-                currentLastMessageId = viewModel.messageList.lastOrNull()?.id ?: 0L
+            viewModel.loadTopicMessage(
+                requireActivity().zulipApp().retrofitService,
+                topic = topic,
+                stream = stream,
+                viewModel.messageList.lastOrNull()?.id ?: 1L,
+                20, 0
             )
         }
 
@@ -79,17 +91,13 @@ class ChatFragment : Fragment() {
                 reactionType = getString(R.string.unicodeEmoji),
                 isSelected = isSelected
             )
-        }, { mutableList ->
-            onUpdateList(mutableList as MutableList<SelectViewTypeClass.Chat.Message>)
         })
-
 
         val shimmer = binding.chatShimmer
         val chatDisposable = viewModel.chatObservable.subscribe {
             when (it) {
                 is SelectViewTypeClass.Success -> {
                     messageAdapter.addMessagesToList(it.messagesList)
-                    messageAdapter.setIsLast(false)
                     shimmer.hideShimmer()
                 }
                 is SelectViewTypeClass.Error -> {
@@ -100,12 +108,11 @@ class ChatFragment : Fragment() {
                     shimmer.showShimmer(true)
                 }
                 is SelectViewTypeClass.UploadSuccess -> {
-                    loadTopicMessage(currentLastMessageId = "oldest", numAfter = 1, numBefore = 1)
+//                    loadTopicMessage(currentLastMessageId = "newest", numAfter = 1, numBefore = 1)
                 }
 
                 is SelectViewTypeClass.SuccessLast -> {
-                    messageAdapter.addMessagesToList(it.messagesList)
-                    messageAdapter.setIsLast(true)
+//                    messageAdapter.addMessagesToList(it.messagesList)
                     shimmer.hideShimmer()
                 }
 
@@ -187,47 +194,6 @@ class ChatFragment : Fragment() {
 //        }
 //    }
 
-    private fun loadTopicMessage(
-        currentLastMessageId: Any,
-        numAfter: Int = 20,
-        numBefore: Int = 0
-    ) {
-        viewModel.loadTopicMessage(
-            retrofitService = (requireActivity().application as ZulipApp).retrofitService,
-            topic = topic.name,
-            stream = stream.name,
-            lastMessageId = currentLastMessageId,
-            numAfter = numAfter,
-            numBefore = numBefore
-        )
-    }
-
-    private fun onUpdateList(list: MutableList<SelectViewTypeClass.Chat.Message>) {
-        val oldestOnSaveMessageId = if (list.lastIndex <= 50) 0L else list[list.lastIndex - 50].id
-
-        //Сохрание сообщений в БД
-//        viewModel.dataBase.getMessagesAndReactionDao()
-//            .insertMessagesFromTopic(list.map { MessageEntity.toEntity(message = it) })
-
-
-//        list.forEach { message ->
-//            viewModel.dataBase.getMessagesAndReactionDao()
-//                .insertAllReactionOnMessages(message.reactions.map {
-//                    ReactionEntity.toEntity(
-//                        reaction = it,
-//                        messageId = message.id
-//                    )
-//                })
-//        }
-
-        //Удаление сообщений из БД
-
-//        viewModel.dataBase.getMessagesAndReactionDao()
-//            .deleteOldestMessages(oldestMessagedItAfterDeleted = oldestOnSaveMessageId)
-//        viewModel.dataBase.getMessagesAndReactionDao()
-//            .deleteReactionFromMessagesWhereIdLowes(oldestOnSaveMessageId)
-
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

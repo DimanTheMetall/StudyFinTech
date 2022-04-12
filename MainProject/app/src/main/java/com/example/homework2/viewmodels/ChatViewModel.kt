@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.data.local.entity.MessageEntity
 import com.example.homework2.data.local.entity.ReactionEntity
-import com.example.homework2.dataclasses.Reaction
 import com.example.homework2.dataclasses.Stream
 import com.example.homework2.dataclasses.Topic
 import com.example.homework2.dataclasses.chatdataclasses.*
@@ -20,52 +19,103 @@ class ChatViewModel : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
     private val observeDisposableChat = CompositeDisposable()
+    private var loadedIsLast = false
+    private var lastId = 0L
 
     val chatObservable: Observable<SelectViewTypeClass> get() = chatSubject
     private val chatSubject = BehaviorSubject.create<SelectViewTypeClass>().apply {
         onNext(SelectViewTypeClass.Progress)
     }
 
-
     lateinit var dataBase: ZulipDataBase
 
-    fun initDateBase(context: Context, topic: Topic, stream: Stream) {
+    fun initDateBase(
+        context: Context,
+        topic: Topic,
+        stream: Stream,
+        retrofitService: RetrofitService
+    ) {
+        messageList.clear()
         dataBase = ZulipDataBase.getInstance(context)
-        selectMessagesAndReactionOnTopic(topic = topic, stream = stream)
+        selectMessagesAndReactionOnTopic(
+            topic = topic, stream = stream,
+            retrofitService = retrofitService
+        )
     }
 
     val messageList = mutableListOf<SelectViewTypeClass.Chat.Message>()
 
+    private fun onUpdateList(
+        topicName: String,
+        streamId: Int
+    ) {
+        val oldestOnSaveMessageId =
+            if (messageList.lastIndex - 50 < 0) 0L else messageList[messageList.lastIndex - 50].id
 
-    private fun selectMessagesAndReactionOnTopic(topic: Topic, stream: Stream) {
         val disposable = dataBase.getMessagesAndReactionDao()
-            .selectMessagesAndReactionFromTopic(topicName = topic.name, streamId = stream.stream_id)
+            .deleteOldestMessages(
+                oldestMessagedItAfterDeleted = oldestOnSaveMessageId,
+                streamId = streamId,
+                topicName = topicName
+            )
             .subscribeOn(Schedulers.io())
-            .distinctUntilChanged()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { map ->
-                val messageList = mutableListOf<SelectViewTypeClass.Chat.Message>()
-                map.keys.forEach { messageEntity ->
-                    val message = messageEntity.toMessage()
-                    val reactionList = map.getValue(messageEntity).map { it.toReaction() }
-                    message.reactions = reactionList
-                    messageList.add(message)
-                }
-                this.messageList.addAll(messageList)
-                chatSubject.onNext(SelectViewTypeClass.Success(messagesList = messageList))
-            }
+            .subscribe()
+
+//        viewModel.dataBase.getMessagesAndReactionDao()
+//            .deleteReactionFromMessagesWhereIdLowes(oldestOnSaveMessageId)
+
         compositeDisposable.add(disposable)
     }
 
-    fun deleteOldestMessagesAndReaction(firstMessageIdOnSave: Long) {
-        dataBase.getMessagesAndReactionDao().deleteOldestMessages(firstMessageIdOnSave)
-        dataBase.getMessagesAndReactionDao()
-            .deleteReactionFromMessagesWhereIdLowes(firstMessageIdOnSave)
+
+    private fun selectMessagesAndReactionOnTopic(
+        topic: Topic,
+        stream: Stream,
+        retrofitService: RetrofitService
+    ) {
+        val resultMessages = mutableListOf<SelectViewTypeClass.Chat.Message>()
+        val disposable = dataBase.getMessagesAndReactionDao()
+            .selectMessagesAndReactionFromTopic(topicName = topic.name, streamId = stream.stream_id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { map ->
+                resultMessages.clear()
+                map.keys.forEach { messageEntity ->
+                    val message = messageEntity.toMessage()
+                    val reactionList =
+                        map.getValue(messageEntity).map { it.toReaction() }
+                    message.reactions = reactionList
+                    resultMessages.add(message)
+                }
+            }
+
+        if (resultMessages.isNullOrEmpty()) {
+            loadTopicMessage(
+                retrofitService = retrofitService,
+                topic = topic,
+                stream = stream,
+                1,
+                20,
+                0
+            )
+        } else {
+            chatSubject.onNext(SelectViewTypeClass.Success(messagesList = resultMessages))
+        }
+
+        compositeDisposable.add(disposable)
     }
+
+//    fun deleteOldestMessagesAndReaction(firstMessageIdOnSave: Long) {
+//        dataBase.getMessagesAndReactionDao().deleteOldestMessages(firstMessageIdOnSave)
+//        dataBase.getMessagesAndReactionDao()
+//            .deleteReactionFromMessagesWhereIdLowes(firstMessageIdOnSave)
+//    }
 
     private fun insertLatestMessagesAndReaction(
         messages: List<SelectViewTypeClass.Chat.Message>
     ) {
+
         val insertDisposableMessages = dataBase.getMessagesAndReactionDao()
             .insertMessagesFromTopic(messages.map { MessageEntity.toEntity(it) })
             .subscribeOn(Schedulers.io())
@@ -85,6 +135,9 @@ class ChatViewModel : ViewModel() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe()
             compositeDisposable.add(insertDisposableReaction)
+        }
+        if (messages.last().id != lastId) {
+            chatSubject.onNext(SelectViewTypeClass.Success(messagesList = messages))
         }
         compositeDisposable.add(insertDisposableMessages)
     }
@@ -136,25 +189,6 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    fun getPresense(retrofitService: RetrofitService, userEmail: String): String {
-        var resultString: String = "offline"
-
-        val presenceDisposalbe = retrofitService.getPresence(userEmail)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                resultString = if (it.presence.website.timestamp > 500) {
-                    "offline"
-                } else {
-                    it.presence.website.status
-                }
-            }, { resultString = "offline" })
-
-        compositeDisposable.add(presenceDisposalbe)
-
-        return resultString
-    }
-
     fun sendMessage(
         message: String,
         topic: Topic,
@@ -196,50 +230,42 @@ class ChatViewModel : ViewModel() {
 
     fun loadTopicMessage(
         retrofitService: RetrofitService,
-        topic: String,
-        stream: String,
+        topic: Topic,
+        stream: Stream,
         lastMessageId: Any,
         numAfter: Int,
         numBefore: Int
     ) {
-        val messagesDisposable =
-            retrofitService.getMessages(
-                Narrow(
-                    listOf(
-                        Filter("stream", stream),
-                        Filter("topic", topic),
-                    )
-                ).toJson(),
-                anchor = lastMessageId,
-                numBefore,
-                numAfter,
-                false
-            )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    this.messageList.addAll(it.messages)
-                    if (!it.found_newest) chatSubject.onNext(SelectViewTypeClass.Success(it.messages))
-                    else chatSubject.onNext(
-                        SelectViewTypeClass.SuccessLast(it.messages)
-                    )
-                    insertLatestMessagesAndReaction(it.messages)
-                },
-                    {
-                        SelectViewTypeClass.Error
-                    })
-
-        compositeDisposable.add(messagesDisposable)
-    }
-
-    private fun MutableList<SelectViewTypeClass.Chat.Message>.updateEmoji(
-        emojiList: List<Reaction>,
-        position: Int
-    ) {
-        (this[position] as? SelectViewTypeClass.Chat.Message)?.copy(reactions = emojiList)
-            ?.let {
-                this[position] = it
-            }
+        if (!loadedIsLast) {
+            chatSubject.onNext(SelectViewTypeClass.Progress)
+            val messagesDisposable =
+                retrofitService.getMessages(
+                    Narrow(
+                        listOf(
+                            Filter("stream", stream.name),
+                            Filter("topic", topic.name),
+                        )
+                    ).toJson(),
+                    anchor = lastMessageId,
+                    numBefore,
+                    numAfter,
+                    false
+                )
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        val messages = it.messages.filterNot { it.id == lastMessageId }
+                        messageList.addAll(messages)
+                        insertLatestMessagesAndReaction(messages)
+                        loadedIsLast = it.found_newest
+                        lastId = it.messages.last().id
+                    },
+                        {
+                            SelectViewTypeClass.Error
+                        })
+            onUpdateList(topicName = topic.name, streamId = stream.stream_id)
+            compositeDisposable.add(messagesDisposable)
+        }
     }
 
     override fun onCleared() {

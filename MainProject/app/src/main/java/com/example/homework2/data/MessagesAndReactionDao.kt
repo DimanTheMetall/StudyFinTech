@@ -38,11 +38,19 @@ interface MessagesAndReactionDao {
     @Query("SELECT * FROM reactions WHERE reactions.message_id = :messageId")
     fun selectReactionFromMessages(messageId: Long): Flowable<List<ReactionEntity>>
 
-    @Query("DELETE FROM messages WHERE messages.id<:oldestMessagedItAfterDeleted")
-    fun deleteOldestMessages(oldestMessagedItAfterDeleted: Long): Completable
+    @Query(
+        "DELETE FROM messages " +
+                "WHERE messages.id<:oldestMessagedItAfterDeleted " +
+                "AND messages.stream_id=:streamId " +
+                "AND messages.subject =:topicName"
+    )
+    fun deleteOldestMessages(
+        oldestMessagedItAfterDeleted: Long,
+        streamId: Int,
+        topicName: String
+    ): Completable
 
     @Query("DELETE FROM reactions WHERE reactions.message_id<:messageId")
     fun deleteReactionFromMessagesWhereIdLowes(messageId: Long): Completable
-
 
 }
