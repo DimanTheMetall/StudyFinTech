@@ -9,11 +9,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.*
+import com.example.homework2.Constance
+import com.example.homework2.R
+import com.example.homework2.ZulipApp
+import com.example.homework2.adapters.StreamRecycleViewAdapter
 import com.example.homework2.customviews.dpToPx
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
 import com.example.homework2.dataclasses.ResultStream
 import com.example.homework2.viewmodels.StreamViewModel
+import com.example.homework2.zulipApp
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit

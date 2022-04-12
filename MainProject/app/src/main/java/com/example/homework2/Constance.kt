@@ -8,11 +8,14 @@ object Constance {
 
     const val AUTHORIZATION_HEADER = "Authorization"
 
+    const val STREAM = "stream"
+    const val TOPIC = "topic"
+    const val DBNAME = "zulipDataBase"
+
     object Status {
         const val ACTIVE = "active"
         const val IDLE = "idle"
         const val OFFLINE = "offline"
-
     }
 
     //URL

@@ -12,7 +12,7 @@ import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import com.example.homework2.R
-import com.example.homework2.dataclasses.Reaction
+import com.example.homework2.dataclasses.chatdataclasses.Reaction
 
 class CustomViewGroup @JvmOverloads constructor(
     context: Context,
@@ -165,12 +165,17 @@ class CustomViewGroup @JvmOverloads constructor(
         super.dispatchDraw(canvas)
     }
 
-    fun addEmoji(reaction: Reaction, count: Int, meIsAdded: Boolean,  onAddEmojiCLick: (Reaction, isSelected: Boolean) -> Unit) {
+    fun addEmoji(
+        reaction: Reaction,
+        count: Int,
+        meIsAdded: Boolean,
+        onAddEmojiCLick: (Reaction, isSelected: Boolean) -> Unit
+    ) {
         flexBox.addView(
             CustomTextView(ContextThemeWrapper(context, R.style.CustomTextView))
                 .apply {
                     layoutParams =
-                        ViewGroup.MarginLayoutParams(
+                        MarginLayoutParams(
                             LayoutParams.WRAP_CONTENT,
                             LayoutParams.WRAP_CONTENT
                         ).apply {
@@ -197,14 +202,14 @@ class CustomViewGroup @JvmOverloads constructor(
     }
 
     override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
-        return ViewGroup.MarginLayoutParams(context, attrs)
+        return MarginLayoutParams(context, attrs)
     }
 
     override fun checkLayoutParams(p: LayoutParams?): Boolean {
-        return p is ViewGroup.MarginLayoutParams
+        return p is MarginLayoutParams
     }
 
     override fun generateLayoutParams(p: LayoutParams?): LayoutParams {
-        return ViewGroup.MarginLayoutParams(p)
+        return MarginLayoutParams(p)
     }
 }

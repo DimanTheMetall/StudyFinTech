@@ -1,6 +1,7 @@
 package com.example.homework2.viewmodels
 
 import androidx.lifecycle.ViewModel
+import com.example.homework2.Constance
 import com.example.homework2.dataclasses.Member
 import com.example.homework2.dataclasses.ResultMember
 import com.example.homework2.dataclasses.chatdataclasses.Website
@@ -31,7 +32,7 @@ class PeoplesViewModel : ViewModel() {
                 retrofitService.getPresence(member.user_id)
                     .map { it.presence.website }
                     .onErrorReturnItem(
-                        Website("offline", -1)
+                        Website(Constance.Status.OFFLINE, -1)
                     )
                     .map { website ->
                         member.copy(website = website)

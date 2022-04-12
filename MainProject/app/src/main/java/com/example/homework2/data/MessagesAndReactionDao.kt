@@ -22,21 +22,11 @@ interface MessagesAndReactionDao {
         streamId: Int
     ): Flowable<Map<MessageEntity, List<ReactionEntity>>>
 
-    @Query(
-        "DELETE FROM messages " +
-                "WHERE messages.subject = :topicName " +
-                "AND messages.stream_id = :streamId"
-    )
-    fun deleteAllMessagesFromTopic(topicName: String, streamId: Int): Completable
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessagesFromTopic(listMessagesEntity: List<MessageEntity>): Completable
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAllReactionOnMessages(reactionEntityList: List<ReactionEntity>): Completable
-
-    @Query("SELECT * FROM reactions WHERE reactions.message_id = :messageId")
-    fun selectReactionFromMessages(messageId: Long): Flowable<List<ReactionEntity>>
 
     @Query(
         "DELETE FROM messages " +
@@ -52,5 +42,4 @@ interface MessagesAndReactionDao {
 
     @Query("DELETE FROM reactions WHERE reactions.message_id<:messageId")
     fun deleteReactionFromMessagesWhereIdLowes(messageId: Long): Completable
-
 }

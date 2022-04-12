@@ -1,11 +1,14 @@
-package com.example.homework2
+package com.example.homework2.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.homework2.Constance
+import com.example.homework2.R
 import com.example.homework2.databinding.ProfileLayoutBinding
 import com.example.homework2.dataclasses.Member
 
@@ -14,6 +17,7 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
 
     private var peopleList = mutableListOf<Member>()
 
+    @SuppressLint("InflateParams")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
             R.layout.profile_layout,
@@ -38,7 +42,7 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
 
             with(binding) {
                 when (item.website?.status) {
-                    "active" -> {
+                    Constance.Status.ACTIVE -> {
                         onlineImage.isVisible = true
                     }
                     else -> {
@@ -55,6 +59,7 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateProfileList(list: List<Member>) {
         peopleList = list.toMutableList()
         notifyDataSetChanged()

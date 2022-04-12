@@ -1,4 +1,4 @@
-package com.example.homework2
+package com.example.homework2.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,10 +7,12 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.homework2.DiffCallback
+import com.example.homework2.R
 import com.example.homework2.customviews.CustomViewGroup
 import com.example.homework2.databinding.CustomViewGroupLayoutBinding
 import com.example.homework2.databinding.TimeTvBinding
-import com.example.homework2.dataclasses.Reaction
+import com.example.homework2.dataclasses.chatdataclasses.Reaction
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 
 class MessageAdapter(
@@ -130,7 +132,7 @@ class MessageAdapter(
                         parent,
                         false
                     )
-                MessageAdapter.DateHolder(view)
+                DateHolder(view)
             }
         }
     }
@@ -138,19 +140,15 @@ class MessageAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
         when (val inform = differ.currentList[position]) {
-            is SelectViewTypeClass.Chat.Date -> (holder as MessageAdapter.DateHolder).bind(inform.time)
+            is SelectViewTypeClass.Chat.Date -> (holder as DateHolder).bind(inform.time)
             is SelectViewTypeClass.Chat.Message -> {
-                (holder as MessageAdapter.MessageHolder).bind(inform)
+                (holder as MessageHolder).bind(inform)
             }
         }
     }
 
     override fun getItemCount(): Int {
         return differ.currentList.size
-    }
-
-    fun updateChatList(chatList: List<SelectViewTypeClass.Chat>) {
-        differ.submitList(chatList)
     }
 
     //Разобраться с типизацией сообщений и времени

@@ -10,6 +10,7 @@ import retrofit2.http.*
 
 interface RetrofitService {
 
+    //Функция для обновления сообщения после добавления реакции
     @GET("/api/v1/messages/{msg_id}")
     fun getOneMessage(@Path("msg_id") messageId: Long): Single<SelectViewTypeClass.Chat.Message>
 

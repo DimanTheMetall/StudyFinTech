@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.homework2.Constance
 import com.example.homework2.data.local.entity.MessageEntity
 import com.example.homework2.data.local.entity.ReactionEntity
 import com.example.homework2.data.local.entity.StreamEntity
@@ -24,7 +25,6 @@ abstract class ZulipDataBase : RoomDatabase() {
 
     abstract fun getMessagesAndReactionDao(): MessagesAndReactionDao
 
-
     companion object {
 
         @Volatile
@@ -39,7 +39,7 @@ abstract class ZulipDataBase : RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         ZulipDataBase::class.java,
-                        "zulipDataBase"
+                        Constance.DBNAME
                     )
                         .fallbackToDestructiveMigration()
                         .build()

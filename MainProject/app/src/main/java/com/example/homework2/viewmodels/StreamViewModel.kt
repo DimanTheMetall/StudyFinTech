@@ -46,7 +46,12 @@ class StreamViewModel : ViewModel() {
         val entityType = if (isSubscribed) StreamEntity.SUBSCRIBED else StreamEntity.ALL
 
         val streamDisposable = dataBase.getStreamsAndTopicsDao()
-            .insertStreams(streams = streamsList.map { StreamEntity.toEntity(it, entityType) })
+            .insertStreams(streams = streamsList.map {
+                StreamEntity.toEntity(
+                    stream = it,
+                    type = entityType
+                )
+            })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {}

@@ -8,7 +8,6 @@ import kotlinx.parcelize.Parcelize
 data class Member(
     val avatar_url: String?,
     val bot_owner_id: Int,
-//    val bot_type: Any,
     val date_joined: String,
     val email: String,
     val full_name: String,
@@ -18,7 +17,6 @@ data class Member(
     val is_bot: Boolean,
     val is_guest: Boolean,
     val is_owner: Boolean,
-//    val profile_data: ProfileData,
     val role: Int,
     val timezone: String,
     val user_id: Int,

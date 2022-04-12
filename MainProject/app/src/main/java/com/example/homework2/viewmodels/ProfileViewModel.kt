@@ -13,19 +13,19 @@ import io.reactivex.subjects.BehaviorSubject
 
 open class ProfileViewModel : ViewModel() {
 
+    private val subjectOtherProfilePresence = BehaviorSubject.create<Presence>()
     private val compositeDisposable = CompositeDisposable()
-    val myProfileObservable: Observable<Member> get() = subjectMyProfile
     private val subjectMyProfile = BehaviorSubject.create<Member>()
 
+    val myProfileObservable: Observable<Member> get() = subjectMyProfile
     val otherProfilePresenceObservable: Observable<Presence> get() = subjectOtherProfilePresence
-    private val subjectOtherProfilePresence = BehaviorSubject.create<Presence>()
 
     fun loadMyProfile(retrofitService: RetrofitService) {
 
         val myProfileDisposable = retrofitService.getOwnUser()
             .subscribeOn(Schedulers.io())
             .flatMap { member ->
-                retrofitService.getPresence(member.email)
+                retrofitService.getPresence(user_id_or_email = member.email)
                     .flatMap { Single.just(member.copy(website = it.presence.website)) }
             }
             .observeOn(AndroidSchedulers.mainThread())

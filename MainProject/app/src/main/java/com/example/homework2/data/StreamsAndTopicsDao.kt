@@ -51,15 +51,10 @@ interface StreamsAndTopicsDao {
     )
     fun getAllStreamsAndTopic(): Flowable<Map<StreamEntity, List<TopicEntity>>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllStreamList(streamEntityList: List<StreamEntity>): Completable
-
     @Update
     fun updateStreamList(streamEntityList: List<StreamEntity>): Completable
 
     @Insert
     fun insertTopicList(topicEntityList: List<TopicEntity>): Completable
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertTopics(topicEntity: TopicEntity): Completable
 }

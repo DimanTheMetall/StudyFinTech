@@ -2,6 +2,7 @@ package com.example.homework2.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.example.homework2.Constance
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.data.local.entity.MessageEntity
 import com.example.homework2.data.local.entity.ReactionEntity
@@ -18,7 +19,6 @@ import io.reactivex.subjects.BehaviorSubject
 class ChatViewModel : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val observeDisposableChat = CompositeDisposable()
     private var loadedIsLast = false
 
     val chatObservable: Observable<SelectViewTypeClass> get() = chatSubject
@@ -61,12 +61,8 @@ class ChatViewModel : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
 
-//        viewModel.dataBase.getMessagesAndReactionDao()
-//            .deleteReactionFromMessagesWhereIdLowes(oldestOnSaveMessageId)
-
         compositeDisposable.add(disposable)
     }
-
 
     private fun selectMessagesAndReactionOnTopic(
         topic: Topic,
@@ -101,15 +97,8 @@ class ChatViewModel : ViewModel() {
         } else {
             chatSubject.onNext(SelectViewTypeClass.Success(messagesList = resultMessages))
         }
-
         compositeDisposable.add(disposable)
     }
-
-//    fun deleteOldestMessagesAndReaction(firstMessageIdOnSave: Long) {
-//        dataBase.getMessagesAndReactionDao().deleteOldestMessages(firstMessageIdOnSave)
-//        dataBase.getMessagesAndReactionDao()
-//            .deleteReactionFromMessagesWhereIdLowes(firstMessageIdOnSave)
-//    }
 
     private fun insertLatestMessagesAndReaction(
         messages: List<SelectViewTypeClass.Chat.Message>
@@ -126,7 +115,7 @@ class ChatViewModel : ViewModel() {
                 dataBase.getMessagesAndReactionDao().insertAllReactionOnMessages(message.reactions
                     .map { reaction ->
                         ReactionEntity.toEntity(
-                            reaction,
+                            reaction = reaction,
                             messageId = message.id
                         )
                     })
@@ -139,19 +128,17 @@ class ChatViewModel : ViewModel() {
         compositeDisposable.add(insertDisposableMessages)
     }
 
-
     fun uploadNewReaction(
         retrofitService: RetrofitService,
         messageId: Long,
         emojiName: String,
         reactionType: String,
-        emojiCode: String?
     ) {
         val reactionDisposable = retrofitService.addEmoji(messageId, emojiName, reactionType, null)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                chatSubject.onNext(SelectViewTypeClass.UploadSuccess)
+                chatSubject.onNext(SelectViewTypeClass.UploadMessageSuccess)
             }, { chatSubject.onNext(SelectViewTypeClass.Error) })
 
         compositeDisposable.add(reactionDisposable)
@@ -170,7 +157,7 @@ class ChatViewModel : ViewModel() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    chatSubject.onNext(SelectViewTypeClass.UploadSuccess)
+                    chatSubject.onNext(SelectViewTypeClass.UploadMessageSuccess)
                 }, { chatSubject.onNext(SelectViewTypeClass.Error) })
 
             compositeDisposable.add(reactionDisposable)
@@ -179,7 +166,7 @@ class ChatViewModel : ViewModel() {
                 retrofitService.addEmoji(messageId, emojiName, reactionType, null)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ chatSubject.onNext(SelectViewTypeClass.UploadSuccess) },
+                    .subscribe({ chatSubject.onNext(SelectViewTypeClass.UploadMessageSuccess) },
                         { chatSubject.onNext(SelectViewTypeClass.Error) })
 
             compositeDisposable.add(reactionDisposable)
@@ -192,38 +179,28 @@ class ChatViewModel : ViewModel() {
         stream: Stream,
         retrofitService: RetrofitService
     ) {
-        val sentMessage: SendMessage = SendMessage(
-            "stream",
-            stream.name,
-            message,
-            topic.name
+        val sentMessage = SendMessage(
+            type = Constance.STREAM,
+            to = stream.name,
+            content = message,
+            topic = topic.name
         )
 
         val sendMessageDisposable =
             retrofitService.sendMessage(
-                sentMessage.type,
-                sentMessage.to,
-                sentMessage.content,
-                sentMessage.topic
+                type = sentMessage.type,
+                to = sentMessage.to,
+                content = sentMessage.content,
+                topic = sentMessage.topic
             )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { chatSubject.onNext(SelectViewTypeClass.UploadSuccess) },
+                    { chatSubject.onNext(SelectViewTypeClass.UploadMessageSuccess) },
                     { chatSubject.onNext(SelectViewTypeClass.Error) })
 
         compositeDisposable.add(sendMessageDisposable)
     }
-
-//    fun startObserveChat(retrofitService: RetrofitService, stream: String, topic: String) {
-//        val d =  Observable.interval(3, TimeUnit.SECONDS)
-//            .subscribe { loadTopicMessage(retrofitService, topic, stream) }
-//        observeDisposableChat.add(d)
-//    }
-
-//    fun stopObserveChat() {
-//        observeDisposableChat.clear()
-//    }
 
     fun loadTopicMessage(
         retrofitService: RetrofitService,
@@ -237,15 +214,15 @@ class ChatViewModel : ViewModel() {
             chatSubject.onNext(SelectViewTypeClass.Progress)
             val messagesDisposable =
                 retrofitService.getMessages(
-                    Narrow(
+                    narrow = Narrow(
                         listOf(
-                            Filter("stream", stream.name),
-                            Filter("topic", topic.name),
+                            Filter(operator = Constance.STREAM, operand = stream.name),
+                            Filter(operator = Constance.TOPIC, operand = topic.name),
                         )
                     ).toJson(),
                     anchor = lastMessageId,
-                    numBefore,
-                    numAfter,
+                    numBefore = numBefore,
+                    numAfter = numAfter,
                     false
                 )
                     .subscribeOn(Schedulers.io())
@@ -253,8 +230,8 @@ class ChatViewModel : ViewModel() {
                     .subscribe({
                         val messages = it.messages.filterNot { it.id == lastMessageId }
                         messageList.addAll(messages)
-                        insertLatestMessagesAndReaction(messages)
-                        loadedIsLast = it.found_newest
+                        insertLatestMessagesAndReaction(messages = messages)
+                        loadedIsLast = it.foundNewest
                     },
                         {
                             SelectViewTypeClass.Error

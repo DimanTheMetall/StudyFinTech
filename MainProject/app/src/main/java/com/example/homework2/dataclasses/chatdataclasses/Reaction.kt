@@ -1,4 +1,4 @@
-package com.example.homework2.dataclasses
+package com.example.homework2.dataclasses.chatdataclasses
 
 data class Reaction(
     var emoji_code: String,

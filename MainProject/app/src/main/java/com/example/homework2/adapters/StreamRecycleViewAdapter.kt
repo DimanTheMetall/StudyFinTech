@@ -1,4 +1,4 @@
-package com.example.homework2
+package com.example.homework2.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.homework2.R
 import com.example.homework2.databinding.ChannelItemBinding
 import com.example.homework2.dataclasses.Stream
 import com.example.homework2.dataclasses.Topic

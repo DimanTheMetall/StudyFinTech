@@ -1,18 +1,16 @@
 package com.example.homework2.dataclasses.chatdataclasses
 
-import com.example.homework2.dataclasses.Reaction
-
 sealed class SelectViewTypeClass {
 
     object Error : SelectViewTypeClass()
 
     object Progress : SelectViewTypeClass()
 
-    object UploadSuccess : SelectViewTypeClass()
+    object UploadMessageSuccess : SelectViewTypeClass()
 
     data class Success(val messagesList: List<Chat.Message>) : SelectViewTypeClass()
 
-    data class SuccessLast(val messagesList: List<Chat.Message>) : SelectViewTypeClass()
+    data class UploadReactionSuccess(val messagesId: Long) : SelectViewTypeClass()
 
     sealed class Chat {
 

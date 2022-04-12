@@ -27,7 +27,6 @@ class OtherProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ProfileViewModel by viewModels()
-
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreateView(

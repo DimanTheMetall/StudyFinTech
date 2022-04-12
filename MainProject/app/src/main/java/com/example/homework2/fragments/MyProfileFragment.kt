@@ -63,7 +63,7 @@ class MyProfileFragment : Fragment() {
         with(binding) {
             profileName.text = member.full_name
 
-            if (member.website != null && member.website.timestamp > 150) {
+            if (member.website != null && member.website.timestamp > 500) {
                 profileStatusOnline.text = Constance.Status.OFFLINE
                 profileStatusOnline.setTextColor(Color.RED)
             }

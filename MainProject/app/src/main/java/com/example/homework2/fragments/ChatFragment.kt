@@ -11,8 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.Constance
-import com.example.homework2.MessageAdapter
 import com.example.homework2.R
+import com.example.homework2.adapters.MessageAdapter
 import com.example.homework2.customviews.CustomBottomSheetDialog
 import com.example.homework2.customviews.addOnPageScrollListener
 import com.example.homework2.customviews.dpToPx
@@ -108,12 +108,12 @@ class ChatFragment : Fragment() {
                 is SelectViewTypeClass.Progress -> {
                     shimmer.showShimmer(true)
                 }
-                is SelectViewTypeClass.UploadSuccess -> {
-//                    loadTopicMessage(currentLastMessageId = "newest", numAfter = 1, numBefore = 1)
+                is SelectViewTypeClass.UploadMessageSuccess -> {
+
                 }
 
-                is SelectViewTypeClass.SuccessLast -> {
-//                    messageAdapter.addMessagesToList(it.messagesList)
+                is SelectViewTypeClass.UploadReactionSuccess -> {
+
                     shimmer.hideShimmer()
                 }
 
