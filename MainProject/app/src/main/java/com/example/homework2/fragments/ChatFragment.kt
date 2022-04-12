@@ -64,19 +64,20 @@ class ChatFragment : Fragment() {
         _binding = FragmentChatBinding.inflate(inflater)
 
         viewModel.initDateBase(
-            requireContext(),
+            context = requireContext(),
             topic = topic,
             stream = stream,
-            requireActivity().zulipApp().retrofitService
+            retrofitService = requireActivity().zulipApp().retrofitService
         )
 
         binding.rcView.addOnPageScrollListener {
             viewModel.loadTopicMessage(
-                requireActivity().zulipApp().retrofitService,
+                retrofitService = requireActivity().zulipApp().retrofitService,
                 topic = topic,
                 stream = stream,
-                viewModel.messageList.lastOrNull()?.id ?: 1L,
-                20, 0
+                lastMessageId = viewModel.messageList.lastOrNull()?.id ?: 1L,
+                numAfter = 20,
+                numBefore = 0
             )
         }
 

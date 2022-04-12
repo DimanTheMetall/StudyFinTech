@@ -27,18 +27,21 @@ fun Context.dpToPx(dp: Int): Int {
 }
 
 fun RecyclerView.addOnPageScrollListener(onScrollToNewPage: () -> Unit) {
+    var position = -1
     when (val layoutManager = layoutManager) {
         is LinearLayoutManager -> {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (layoutManager.findLastVisibleItemPosition() == adapter?.getLastPosition()) {
+                    val visiblePosition = layoutManager.findLastVisibleItemPosition()
+                    if (visiblePosition == adapter?.getLastPosition() && visiblePosition != position) {
                         onScrollToNewPage.invoke()
+                        position = visiblePosition
                     }
                 }
             })
         }
         else -> {
-            IllegalStateException("Illegal layoutManager " + layoutManager.toString())
+            throw IllegalStateException("Illegal layoutManager " + layoutManager.toString())
         }
     }
 }

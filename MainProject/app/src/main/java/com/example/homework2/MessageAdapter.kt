@@ -16,7 +16,6 @@ import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 class MessageAdapter(
     val onTab: (Long) -> Unit,
     val onEmoji: (Reaction, Boolean, Long) -> Unit
-
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -150,9 +149,9 @@ class MessageAdapter(
         return differ.currentList.size
     }
 
-//    fun updateChatList(chatList: List<SelectViewTypeClass.Chat>) {
-//        differ.submitList(chatList)
-//    }
+    fun updateChatList(chatList: List<SelectViewTypeClass.Chat>) {
+        differ.submitList(chatList)
+    }
 
     //Разобраться с типизацией сообщений и времени
     fun addMessagesToList(messages: List<SelectViewTypeClass.Chat>) {

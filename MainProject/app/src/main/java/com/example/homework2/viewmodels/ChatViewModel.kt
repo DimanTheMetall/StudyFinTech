@@ -20,7 +20,6 @@ class ChatViewModel : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
     private val observeDisposableChat = CompositeDisposable()
     private var loadedIsLast = false
-    private var lastId = 0L
 
     val chatObservable: Observable<SelectViewTypeClass> get() = chatSubject
     private val chatSubject = BehaviorSubject.create<SelectViewTypeClass>().apply {
@@ -136,9 +135,7 @@ class ChatViewModel : ViewModel() {
                     .subscribe()
             compositeDisposable.add(insertDisposableReaction)
         }
-        if (messages.last().id != lastId) {
             chatSubject.onNext(SelectViewTypeClass.Success(messagesList = messages))
-        }
         compositeDisposable.add(insertDisposableMessages)
     }
 
@@ -258,7 +255,6 @@ class ChatViewModel : ViewModel() {
                         messageList.addAll(messages)
                         insertLatestMessagesAndReaction(messages)
                         loadedIsLast = it.found_newest
-                        lastId = it.messages.last().id
                     },
                         {
                             SelectViewTypeClass.Error
