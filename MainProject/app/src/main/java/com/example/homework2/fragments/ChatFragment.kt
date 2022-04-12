@@ -126,7 +126,6 @@ class ChatFragment : Fragment() {
                 messageId,
                 emojiName,
                 getString(R.string.unicodeEmoji),
-                emojiCode
             )
             bottomSheetDialog?.hide()
         }

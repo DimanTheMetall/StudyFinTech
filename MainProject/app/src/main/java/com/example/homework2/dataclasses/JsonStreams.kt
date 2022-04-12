@@ -7,7 +7,7 @@ data class JsonStreams(
     @SerializedName("invite_only")
     val inviteOnly: Boolean? = null,
 
-    @SerializedName("invite_only")
+    @SerializedName("msg")
     val msg: String,
 
     @SerializedName("result")
