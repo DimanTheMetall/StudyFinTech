@@ -3,7 +3,6 @@ package com.example.homework2.mvp.streams
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.viewpager2.widget.ViewPager2
 import com.example.homework2.PagerChannelsAdapter
 import com.example.homework2.R
@@ -41,7 +40,6 @@ class StreamFragment :
     override fun initPresenter(): StreamsPresenter =
         StreamPresenterImpl(this, StreamsModelImpl())
 
-
     override fun inflateViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -57,12 +55,6 @@ class StreamFragment :
         TabLayoutMediator(binding.tabChannels, viewPager) { tab, pos ->
             tab.text = Tabs.values()[pos].getText(requireContext())
         }.attach()
-    }
-
-    override fun initSearchTextChangeListener() {
-        binding.searchStreamsEditText.addTextChangedListener { text ->
-            searchSubject.onNext(text.toString())
-        }
     }
 
     companion object {

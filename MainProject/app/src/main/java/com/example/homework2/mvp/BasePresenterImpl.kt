@@ -9,7 +9,7 @@ abstract class BasePresenterImpl<V : BaseView, M : BaseModel>(
 
     protected val compositeDisposable = CompositeDisposable()
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         compositeDisposable.dispose()
     }
 }

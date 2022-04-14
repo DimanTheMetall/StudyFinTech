@@ -8,8 +8,6 @@ interface StreamsView : BaseView {
 
     fun initViewPager()
 
-    fun initSearchTextChangeListener()
-
 }
 
 interface StreamsPresenter : BasePresenter {

@@ -9,12 +9,10 @@ import androidx.viewbinding.ViewBinding
 
 abstract class BaseFragment<P : BasePresenter, VB : ViewBinding> : Fragment(), BaseView {
 
-    private lateinit var presenter: P
+   protected lateinit var presenter: P
 
     private var _binding: VB? = null
-
     val binding get() = _binding!!
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,6 +31,7 @@ abstract class BaseFragment<P : BasePresenter, VB : ViewBinding> : Fragment(), B
 
     override fun onDestroyView() {
         super.onDestroyView()
+        presenter.onDestroyView()
         _binding = null
     }
 

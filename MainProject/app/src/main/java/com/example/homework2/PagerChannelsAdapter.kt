@@ -2,7 +2,7 @@ package com.example.homework2
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.homework2.mvp.streams.RecycleStreamsFragment
+import com.example.homework2.mvp.streams.recyclestream.RecycleStreamsFragment
 
 class PagerChannelsAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 

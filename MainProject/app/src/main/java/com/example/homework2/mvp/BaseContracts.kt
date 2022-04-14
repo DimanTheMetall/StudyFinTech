@@ -6,7 +6,7 @@ interface BaseView {
 
 interface BasePresenter {
 
-    fun onDestroy()
+    fun onDestroyView()
 
     fun onInit()
 }

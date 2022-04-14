@@ -123,9 +123,9 @@ class StreamViewModel : ViewModel() {
             }
             .toList()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ stream ->
+            .subscribe({ streams ->
                 subscribedChannelsSubject.onNext(ResultStream.Success(
-                    stream.filter { it.name.contains(searchText) }
+                    streams.filter { it.name.contains(searchText) }
                 ))
             }, {
                 subscribedChannelsSubject.onNext(ResultStream.Error)

@@ -7,9 +7,9 @@ class StreamPresenterImpl(
     model: StreamsModel
 ) : BasePresenterImpl<StreamsView, StreamsModel>(view, model), StreamsPresenter {
 
+
     override fun onInit() {
         view.initViewPager()
-        view.initSearchTextChangeListener()
     }
 
 }
