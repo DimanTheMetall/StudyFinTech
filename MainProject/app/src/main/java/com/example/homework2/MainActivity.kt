@@ -6,10 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.homework2.databinding.ActivityMainBinding
 import com.example.homework2.dataclasses.Member
-import com.example.homework2.fragments.StreamFragment
 import com.example.homework2.fragments.ChatFragment
-import com.example.homework2.fragments.PeoplesFragment
 import com.example.homework2.fragments.MyProfileFragment
+import com.example.homework2.fragments.PeoplesFragment
+import com.example.homework2.mvp.streams.StreamFragment
 import com.example.homework2.retrofit.RetrofitService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

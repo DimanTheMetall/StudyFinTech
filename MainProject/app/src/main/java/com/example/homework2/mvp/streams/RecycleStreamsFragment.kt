@@ -1,4 +1,4 @@
-package com.example.homework2.fragments
+package com.example.homework2.mvp.streams
 
 import android.graphics.Rect
 import android.os.Bundle
@@ -16,6 +16,7 @@ import com.example.homework2.adapters.StreamRecycleViewAdapter
 import com.example.homework2.customviews.dpToPx
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
 import com.example.homework2.dataclasses.ResultStream
+import com.example.homework2.fragments.ChatFragment
 import com.example.homework2.viewmodels.StreamViewModel
 import com.example.homework2.zulipApp
 import io.reactivex.android.schedulers.AndroidSchedulers
