@@ -9,8 +9,6 @@ import com.example.homework2.R
 import com.example.homework2.databinding.FragmentChannelBinding
 import com.example.homework2.mvp.BaseFragment
 import com.google.android.material.tabs.TabLayoutMediator
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
 
 enum class Tabs {
     SUBSCRIBED {
@@ -31,8 +29,6 @@ class StreamFragment :
     BaseFragment<StreamsPresenter, FragmentChannelBinding>(),
     StreamsView {
 
-    val searchObservable: Observable<String> get() = searchSubject
-    private val searchSubject = BehaviorSubject.create<String>()
 
     private lateinit var adapter: PagerChannelsAdapter
     private lateinit var viewPager: ViewPager2
