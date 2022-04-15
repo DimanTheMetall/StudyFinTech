@@ -7,8 +7,8 @@ import androidx.fragment.app.Fragment
 import com.example.homework2.databinding.ActivityMainBinding
 import com.example.homework2.dataclasses.Member
 import com.example.homework2.fragments.ChatFragment
-import com.example.homework2.fragments.PeoplesFragment
 import com.example.homework2.mvp.myprofile.MyProfileFragment
+import com.example.homework2.mvp.peoples.PeoplesFragment
 import com.example.homework2.mvp.streams.StreamFragment
 import com.example.homework2.retrofit.RetrofitService
 import io.reactivex.android.schedulers.AndroidSchedulers
