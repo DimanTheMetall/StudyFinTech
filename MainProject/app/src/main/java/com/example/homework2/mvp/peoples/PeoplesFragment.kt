@@ -9,8 +9,8 @@ import com.example.homework2.R
 import com.example.homework2.adapters.PeopleAdapter
 import com.example.homework2.databinding.FragmentPeopleBinding
 import com.example.homework2.dataclasses.Member
-import com.example.homework2.fragments.OtherProfileFragment
 import com.example.homework2.mvp.BaseFragment
+import com.example.homework2.mvp.otherprofile.OtherProfileFragment
 import com.example.homework2.zulipApp
 import com.facebook.shimmer.ShimmerFrameLayout
 

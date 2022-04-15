@@ -1,12 +1,10 @@
-package com.example.homework2.fragments
+package com.example.homework2.mvp.otherprofile
 
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -16,49 +14,25 @@ import com.example.homework2.R
 import com.example.homework2.databinding.FragmentOtherProfileBinding
 import com.example.homework2.dataclasses.Member
 import com.example.homework2.dataclasses.chatdataclasses.Presence
-import com.example.homework2.viewmodels.ProfileViewModel
+import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.zulipApp
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 
-class OtherProfileFragment : Fragment() {
-
-    private var _binding: FragmentOtherProfileBinding? = null
-    private val binding get() = _binding!!
-
-    private val viewModel: ProfileViewModel by viewModels()
-    private val compositeDisposable = CompositeDisposable()
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentOtherProfileBinding.inflate(inflater)
-
-        return binding.root
-    }
+class OtherProfileFragment : BaseFragment<OtherProfilePresenter, FragmentOtherProfileBinding>(),
+    OtherProfileView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        updateUser()
+    }
 
+
+    override fun updateUser() {
         val member: Member = requireArguments().getParcelable(Constance.PROFILE_KEY)
             ?: throw IllegalArgumentException("Member cannot be null")
-
-        val statusDisposable = viewModel.otherProfilePresenceObservable
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { setStatus(member, it) }
-
-        viewModel.loadOtherProfile(requireActivity().zulipApp().retrofitService, member)
-        compositeDisposable.add(statusDisposable)
+        presenter.onUserNeededUpdate(member = member)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-        compositeDisposable.clear()
-    }
-
-    private fun setStatus(member: Member, presence: Presence) {
+    override fun setStatus(member: Member, presence: Presence) {
 
         var requestOptions = RequestOptions()
         requestOptions = requestOptions.transform(CenterCrop(), RoundedCorners(32))
@@ -83,6 +57,20 @@ class OtherProfileFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun inflateViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentOtherProfileBinding {
+        return FragmentOtherProfileBinding.inflate(inflater, container, false)
+    }
+
+    override fun initPresenter(): OtherProfilePresenter {
+        return OtherProfilePresenterImpl(
+            view = this,
+            model = OtherProfileModelImpl(requireActivity().zulipApp().retrofitService)
+        )
     }
 
     companion object {

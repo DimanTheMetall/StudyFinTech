@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/bg_main"
-    tools:context=".fragments.OtherProfileFragment">
+    tools:context=".mvp.otherprofile.OtherProfileFragment">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/profile_image"
