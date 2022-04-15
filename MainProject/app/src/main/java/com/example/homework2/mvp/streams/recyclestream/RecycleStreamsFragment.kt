@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.Constance
@@ -21,7 +20,6 @@ import com.example.homework2.dataclasses.Stream
 import com.example.homework2.fragments.ChatFragment
 import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.mvp.streams.StreamFragment
-import com.example.homework2.viewmodels.StreamViewModel
 import com.example.homework2.zulipApp
 import com.facebook.shimmer.ShimmerFrameLayout
 
@@ -31,7 +29,6 @@ class RecycleStreamsFragment :
     private lateinit var recycleAdapter: StreamRecycleViewAdapter
     private lateinit var shimmer: ShimmerFrameLayout
 
-    private val viewModel: StreamViewModel by viewModels()
     private var isSubscribed = false
 
     override fun onCreateView(
@@ -40,22 +37,7 @@ class RecycleStreamsFragment :
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         isSubscribed = getIsSubscribedBoolean()
-        viewModel.initDataBase(requireContext())
-
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        when (isSubscribed) {
-            true -> {
-                viewModel.loadSubscribedStreams(requireActivity().zulipApp().retrofitService)
-            }
-            false -> {
-                viewModel.loadAllStreams(requireActivity().zulipApp().retrofitService)
-            }
-        }
     }
 
     private fun getIsSubscribedBoolean(): Boolean {
@@ -130,6 +112,17 @@ class RecycleStreamsFragment :
         }
     }
 
+    override fun loadStreamsFromZulip() {
+        when (isSubscribed) {
+            true -> {
+                presenter.onSubscribedStreamsNeeded()
+            }
+            false -> {
+                presenter.onAllStreamsNeeded()
+            }
+        }
+    }
+
     override fun showProgress() {
         shimmer.showShimmer(true)
     }
@@ -139,11 +132,8 @@ class RecycleStreamsFragment :
     }
 
     override fun showStreams(streamList: List<Stream>) {
-        recycleAdapter.updateList(list = streamList)
-        viewModel.insertStreamsAndTopics(
-            streamsList = streamList,
-            isSubscribed = getIsSubscribedBoolean()
-        )
+        val sortedList = streamList.sortedBy { it.name }
+        recycleAdapter.updateList(list = sortedList)
         shimmer.hideShimmer()
     }
 
