@@ -1,4 +1,4 @@
-package com.example.homework2
+package com.example.homework2.mvp.streams
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter

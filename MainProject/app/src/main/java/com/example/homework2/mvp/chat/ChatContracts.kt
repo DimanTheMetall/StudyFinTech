@@ -2,12 +2,12 @@ package com.example.homework2.mvp.chat
 
 import com.example.homework2.data.local.entity.MessageEntity
 import com.example.homework2.data.local.entity.ReactionEntity
-import com.example.homework2.dataclasses.Stream
-import com.example.homework2.dataclasses.Topic
 import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
 import com.example.homework2.dataclasses.chatdataclasses.JsonRespone
 import com.example.homework2.dataclasses.chatdataclasses.ResponseFromSendMessage
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
+import com.example.homework2.dataclasses.streamsandtopics.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseModel
 import com.example.homework2.mvp.BasePresenter
 import com.example.homework2.mvp.BaseView
@@ -53,6 +53,8 @@ interface ChatPresenter : BasePresenter {
     fun onSendMessageRequest(sentText: String, topic: Topic, stream: Stream)
 
     fun onInitMessageRequest(stream: Stream, topic: Topic)
+
+    fun onEmojiInSheetDialogClick(messageId: Long, emojiName: String, reactionType: String)
 
 }
 

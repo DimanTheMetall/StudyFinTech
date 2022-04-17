@@ -5,6 +5,8 @@ import android.util.AttributeSet
 import android.view.ViewGroup
 import androidx.core.view.marginLeft
 import androidx.core.view.marginTop
+import com.example.homework2.measuredHeightWithMargins
+import com.example.homework2.measuredWidthWithMargins
 
 class CustomFlexBox @JvmOverloads constructor(
     context: Context,

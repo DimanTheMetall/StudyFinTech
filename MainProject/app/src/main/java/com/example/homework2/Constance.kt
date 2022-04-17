@@ -13,7 +13,10 @@ object Constance {
     const val DBNAME = "zulipDataBase"
 
     const val MESSAGES_COUNT_PAGINATION = 20
-    const val NON_EXIST_MESSAGE_ID = 99999999999999L
+    const val MESSAGE_COUNT_FOR_REQUEST_LOAD = 5
+
+    const val LIMIT_MESSAGE_COUNT_FOR_TOPIC = 50
+
 
     object Status {
         const val ACTIVE = "active"
@@ -25,7 +28,6 @@ object Constance {
         const val NEWEST = "newest"
         const val OLDEST = "oldest"
     }
-
 
     //URL
     const val BASE_URL = "https://tinkoff-android-spring-2022.zulipchat.com"

@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
-import com.example.homework2.PagerChannelsAdapter
 import com.example.homework2.R
 import com.example.homework2.databinding.FragmentChannelBinding
 import com.example.homework2.mvp.BaseFragment

@@ -3,7 +3,7 @@ package com.example.homework2.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import com.example.homework2.dataclasses.Topic
+import com.example.homework2.dataclasses.streamsandtopics.Topic
 
 @Entity(
     tableName = "topics",

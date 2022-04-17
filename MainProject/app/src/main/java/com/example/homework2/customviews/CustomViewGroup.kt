@@ -13,6 +13,9 @@ import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import com.example.homework2.R
 import com.example.homework2.dataclasses.chatdataclasses.Reaction
+import com.example.homework2.dpToPx
+import com.example.homework2.measuredHeightWithMargins
+import com.example.homework2.measuredWidthWithMargins
 
 class CustomViewGroup @JvmOverloads constructor(
     context: Context,

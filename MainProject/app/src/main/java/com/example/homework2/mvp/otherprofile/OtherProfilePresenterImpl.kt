@@ -1,6 +1,6 @@
 package com.example.homework2.mvp.otherprofile
 
-import com.example.homework2.dataclasses.Member
+import com.example.homework2.dataclasses.streamsandtopics.Member
 import com.example.homework2.mvp.BasePresenterImpl
 
 class OtherProfilePresenterImpl(

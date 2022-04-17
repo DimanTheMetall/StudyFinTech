@@ -2,7 +2,7 @@ package com.example.homework2.mvp.streams.recyclestream
 
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
-import com.example.homework2.dataclasses.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.mvp.BaseModel
 import com.example.homework2.mvp.BasePresenter
 import com.example.homework2.mvp.BaseView
@@ -25,14 +25,13 @@ interface RecycleStreamView : BaseView {
 
     fun showStreams(streamList: List<Stream>)
 
-
 }
 
 interface RecycleStreamPresenter : BasePresenter {
 
-    fun searchedTextChangedAllStreams(text: String)
+    fun onSearchedTextChangedAllStreams(text: String)
 
-    fun searchedTextChangedSubscribedStreams(text: String)
+    fun onSearchedTextChangedSubscribedStreams(text: String)
 
     fun onAllStreamsNeeded()
 

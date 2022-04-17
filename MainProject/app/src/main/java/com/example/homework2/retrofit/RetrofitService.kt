@@ -1,10 +1,10 @@
 package com.example.homework2.retrofit
 
-import com.example.homework2.dataclasses.JsonStreams
-import com.example.homework2.dataclasses.JsonTopic
-import com.example.homework2.dataclasses.JsonUsers
-import com.example.homework2.dataclasses.Member
 import com.example.homework2.dataclasses.chatdataclasses.*
+import com.example.homework2.dataclasses.streamsandtopics.JsonStreams
+import com.example.homework2.dataclasses.streamsandtopics.JsonTopic
+import com.example.homework2.dataclasses.streamsandtopics.JsonUsers
+import com.example.homework2.dataclasses.streamsandtopics.Member
 import io.reactivex.Single
 import retrofit2.http.*
 

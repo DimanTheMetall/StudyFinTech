@@ -1,4 +1,4 @@
-package com.example.homework2.adapters
+package com.example.homework2.mvp.chat
 
 import android.view.LayoutInflater
 import android.view.View
@@ -47,11 +47,11 @@ class MessageAdapter(
 
         fun bind(item: SelectViewTypeClass.Chat.Message) = with(binding) {
             messageTextView.text = item.content
-            messageTitleTextView.text = item.sender_full_name
+            messageTitleTextView.text = item.senderFullName
 
-            if (!item.avatar_url.isNullOrEmpty()) {
+            if (!item.avatarUrl.isNullOrEmpty()) {
                 Glide.with(customViewGroup.context)
-                    .load(item.avatar_url)
+                    .load(item.avatarUrl)
                     .placeholder(R.mipmap.ic_launcher)
                     .circleCrop()
                     .into(binding.avatarImageView)
@@ -75,12 +75,11 @@ class MessageAdapter(
             val byEmojiName = item.reactions.groupBy { it.emoji_name }
 
             for (reactions in byEmojiName) {
-                var emojiCount = 1
                 var meIsAdded = false
                 reactions.value.forEach {
                     meIsAdded = it.user_id == 490112
                 }
-                emojiCount = reactions.value.size
+                val emojiCount: Int = reactions.value.size
 
 
                 customViewGroup.addEmoji(
@@ -96,7 +95,7 @@ class MessageAdapter(
             }
 
             //После регистрации проработать логику
-            when (item.sender_email) {
+            when (item.senderEmail) {
                 "kozlovdiman_je@yahoo.com" -> {
                     customViewGroup.setRectangleColor(R.color.teal_700)
                     customViewGroup.setYoursMessage(true)

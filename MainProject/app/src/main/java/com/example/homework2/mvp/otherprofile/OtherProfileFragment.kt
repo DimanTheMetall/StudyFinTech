@@ -12,8 +12,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.homework2.Constance
 import com.example.homework2.R
 import com.example.homework2.databinding.FragmentOtherProfileBinding
-import com.example.homework2.dataclasses.Member
 import com.example.homework2.dataclasses.chatdataclasses.Presence
+import com.example.homework2.dataclasses.streamsandtopics.Member
 import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.zulipApp
 

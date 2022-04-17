@@ -1,6 +1,6 @@
 package com.example.homework2.mvp.streams.recyclestream
 
-import com.example.homework2.dataclasses.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.mvp.BasePresenterImpl
 
 class RecycleStreamPresenterImpl(
@@ -9,7 +9,7 @@ class RecycleStreamPresenterImpl(
 ) : BasePresenterImpl<RecycleStreamView, RecycleStreamModel>(view, model), RecycleStreamPresenter {
 
 
-    override fun searchedTextChangedAllStreams(text: String) {
+    override fun onSearchedTextChangedAllStreams(text: String) {
         view.showProgress()
         val disposable = model.loadAllStreams()
             .subscribe({ streams ->
@@ -21,7 +21,7 @@ class RecycleStreamPresenterImpl(
         compositeDisposable.add(disposable)
     }
 
-    override fun searchedTextChangedSubscribedStreams(text: String) {
+    override fun onSearchedTextChangedSubscribedStreams(text: String) {
         view.showProgress()
         val disposable = model.loadSubscribedStreams()
             .subscribe({ streams ->
@@ -61,6 +61,7 @@ class RecycleStreamPresenterImpl(
     }
 
     override fun onSubscribedStreamsNeeded() {
+        view.showProgress()
         val selectDisposable = model.selectSubscribedStreamsAndTopics()
             .subscribe { map ->
                 val streamList = mutableListOf<Stream>()

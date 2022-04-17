@@ -6,18 +6,27 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homework2.R
-import com.example.homework2.adapters.PeopleAdapter
 import com.example.homework2.databinding.FragmentPeopleBinding
-import com.example.homework2.dataclasses.Member
+import com.example.homework2.dataclasses.streamsandtopics.Member
 import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.mvp.otherprofile.OtherProfileFragment
 import com.example.homework2.zulipApp
 import com.facebook.shimmer.ShimmerFrameLayout
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
+import java.util.concurrent.TimeUnit
 
 class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(), PeoplesView {
 
+    private val compositeDisposable = CompositeDisposable()
     private val recycleAdapter = PeopleAdapter { member -> openProfileFrag(member) }
     private lateinit var shimmer: ShimmerFrameLayout
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        compositeDisposable.clear()
+    }
 
     private fun openProfileFrag(member: Member) {
         requireActivity().supportFragmentManager
@@ -50,8 +59,17 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
     }
 
     override fun initSearchedTextListener() {
+        val subject = PublishSubject.create<String>()
+        val disposable = subject
+            .debounce(1, TimeUnit.SECONDS)
+            .filter { it.isNotEmpty() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { presenter.onSearchedTextChanged(it.toString()) }
+
+        compositeDisposable.add(disposable)
+
         binding.searchUsers.addTextChangedListener { text ->
-            presenter.onSearchedTextChanged(text.toString())
+            subject.onNext(text.toString())
         }
     }
 

@@ -1,7 +1,7 @@
 package com.example.homework2.mvp.otherprofile
 
-import com.example.homework2.dataclasses.Member
 import com.example.homework2.dataclasses.chatdataclasses.Presence
+import com.example.homework2.dataclasses.streamsandtopics.Member
 import com.example.homework2.mvp.BaseModelImpl
 import com.example.homework2.retrofit.RetrofitService
 import io.reactivex.Single

@@ -1,4 +1,4 @@
-package com.example.homework2.dataclasses
+package com.example.homework2.dataclasses.streamsandtopics
 
 import android.os.Parcelable
 import com.example.homework2.dataclasses.chatdataclasses.Website

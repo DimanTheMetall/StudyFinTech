@@ -5,10 +5,10 @@ import com.example.homework2.Constance
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.data.local.entity.MessageEntity
 import com.example.homework2.data.local.entity.ReactionEntity
-import com.example.homework2.dataclasses.Stream
-import com.example.homework2.dataclasses.Topic
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.chatdataclasses.SendMessage
+import com.example.homework2.dataclasses.streamsandtopics.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.retrofit.RetrofitService
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

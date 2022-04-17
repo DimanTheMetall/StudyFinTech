@@ -1,4 +1,4 @@
-package com.example.homework2.dataclasses
+package com.example.homework2.dataclasses.streamsandtopics
 
 import com.google.gson.annotations.SerializedName
 

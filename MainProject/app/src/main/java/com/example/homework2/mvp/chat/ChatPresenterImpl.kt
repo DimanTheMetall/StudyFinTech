@@ -1,9 +1,9 @@
 package com.example.homework2.mvp.chat
 
 import com.example.homework2.Constance
-import com.example.homework2.dataclasses.Stream
-import com.example.homework2.dataclasses.Topic
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
+import com.example.homework2.dataclasses.streamsandtopics.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BasePresenterImpl
 
 class ChatPresenterImpl(
@@ -15,9 +15,10 @@ class ChatPresenterImpl(
     private val currentMessageList = mutableListOf<SelectViewTypeClass.Chat.Message>()
 
     override fun checkAndDelete(stream: Stream, topic: Topic) {
-        if (currentMessageList.size > 50) {
+        if (currentMessageList.size > Constance.LIMIT_MESSAGE_COUNT_FOR_TOPIC) {
             model.deleteOldestMessagesWhereIdLess(
-                messageIdToSave = currentMessageList[currentMessageList.lastIndex - 50].id,
+                messageIdToSave =
+                currentMessageList[currentMessageList.lastIndex - Constance.LIMIT_MESSAGE_COUNT_FOR_TOPIC].id,
                 stream = stream,
                 topic = topic
             )
@@ -127,6 +128,28 @@ class ChatPresenterImpl(
             view.showMessages(resultMessages)
         }
         compositeDisposable.add(disposable)
+    }
+
+    override fun onEmojiInSheetDialogClick(
+        messageId: Long,
+        emojiName: String,
+        reactionType: String
+    ) {
+        val emojiDisposable = model.addEmoji(
+            messageId = messageId,
+            emojiName = emojiName,
+            reactionType = reactionType
+        )
+            .subscribe({
+                val messageDisposable = model.loadMessageById(messageId = messageId)
+                    .subscribe({ message ->
+                        val newList =
+                            currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
+                        view.showMessages(newList)
+                    }, {})
+                compositeDisposable.add(messageDisposable)
+            }, {})
+        compositeDisposable.add(emojiDisposable)
     }
 
     override fun onInit() {

@@ -7,22 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.Constance
-import com.example.homework2.R
-import com.example.homework2.adapters.MessageAdapter
+import com.example.homework2.*
 import com.example.homework2.customviews.CustomBottomSheetDialog
-import com.example.homework2.customviews.addOnPageScrollListener
-import com.example.homework2.customviews.dpToPx
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.databinding.FragmentChatBinding
-import com.example.homework2.dataclasses.Stream
-import com.example.homework2.dataclasses.Topic
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
+import com.example.homework2.dataclasses.streamsandtopics.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseFragment
-import com.example.homework2.viewmodels.ChatViewModel
-import com.example.homework2.zulipApp
 import com.facebook.shimmer.ShimmerFrameLayout
 import io.reactivex.disposables.CompositeDisposable
 import org.joda.time.DateTime
@@ -35,12 +28,10 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private lateinit var shimmer: ShimmerFrameLayout
 
     private var messageId = -1L
+    private val compositeDisposable = CompositeDisposable()
 
     private var dateTime: DateTime = DateTime()
-    private val compositeDisposable = CompositeDisposable()
-    private val viewModel: ChatViewModel by viewModels()
     private var bottomSheetDialog: CustomBottomSheetDialog? = null
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,6 +43,11 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         initShimmer()
         initClickListenerOnMessageTranslateImage()
         presenter.onInitMessageRequest(stream = stream, topic = topic)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        compositeDisposable.clear()
     }
 
 //    override fun onStart() {
@@ -90,11 +86,10 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     override fun initBottomSheetDialog() {
         bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emojiName, emojiCode ->
-            viewModel.uploadNewReaction(
-                requireActivity().zulipApp().retrofitService,
-                messageId,
-                emojiName,
-                getString(R.string.unicodeEmoji),
+            presenter.onEmojiInSheetDialogClick(
+                messageId = messageId,
+                emojiName = emojiName,
+                reactionType = getString(R.string.unicodeEmoji),
             )
             bottomSheetDialog?.hide()
         }
@@ -204,7 +199,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     }
 
     override fun showMessages(messages: List<SelectViewTypeClass.Chat.Message>) {
-        //Каст на мутабельный лист из-за ссылочного типа
+        //Каст на мутабельность из-за ссылочного типа
         messageAdapter.replaceMessageList(newList = messages.toMutableList())
         shimmer.hideShimmer()
     }

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatTextView
 import com.example.homework2.R
+import com.example.homework2.dpToPx
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class CustomBottomSheetDialog(context: Context, val getEmoji: (String, String) -> Unit) :

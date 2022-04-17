@@ -1,4 +1,4 @@
-package com.example.homework2.adapters
+package com.example.homework2.mvp.streams.recyclestream
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -9,8 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.R
 import com.example.homework2.databinding.ChannelItemBinding
-import com.example.homework2.dataclasses.Stream
-import com.example.homework2.dataclasses.Topic
+import com.example.homework2.dataclasses.streamsandtopics.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Topic
 
 class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {

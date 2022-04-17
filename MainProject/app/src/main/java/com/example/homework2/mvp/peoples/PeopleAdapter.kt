@@ -1,4 +1,4 @@
-package com.example.homework2.adapters
+package com.example.homework2.mvp.peoples
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.homework2.Constance
 import com.example.homework2.R
 import com.example.homework2.databinding.ProfileLayoutBinding
-import com.example.homework2.dataclasses.Member
+import com.example.homework2.dataclasses.streamsandtopics.Member
 
 class PeopleAdapter(val openFrag: (Member) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {

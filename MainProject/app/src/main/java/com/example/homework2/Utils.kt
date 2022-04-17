@@ -1,4 +1,4 @@
-package com.example.homework2.customviews
+package com.example.homework2
 
 import android.content.Context
 import android.util.TypedValue
@@ -47,5 +47,5 @@ fun RecyclerView.addOnPageScrollListener(onScrollToNewPage: () -> Unit) {
 }
 
 fun RecyclerView.Adapter<*>.getLastPosition(): Int {
-    return itemCount - 5
+    return itemCount - Constance.MESSAGE_COUNT_FOR_REQUEST_LOAD
 }

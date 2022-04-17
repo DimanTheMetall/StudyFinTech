@@ -1,6 +1,6 @@
 package com.example.homework2.mvp.myprofile
 
-import com.example.homework2.dataclasses.Member
+import com.example.homework2.dataclasses.streamsandtopics.Member
 import com.example.homework2.mvp.BaseModel
 import com.example.homework2.mvp.BasePresenter
 import com.example.homework2.mvp.BaseView

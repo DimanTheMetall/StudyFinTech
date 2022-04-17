@@ -12,16 +12,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.Constance
 import com.example.homework2.R
-import com.example.homework2.adapters.StreamRecycleViewAdapter
-import com.example.homework2.customviews.dpToPx
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
-import com.example.homework2.dataclasses.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Stream
+import com.example.homework2.dpToPx
 import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.mvp.chat.ChatFragment
 import com.example.homework2.mvp.streams.StreamFragment
 import com.example.homework2.zulipApp
 import com.facebook.shimmer.ShimmerFrameLayout
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
+import java.util.concurrent.TimeUnit
 
 class RecycleStreamsFragment :
     BaseFragment<RecycleStreamPresenter, FragmentRecycleChannelsBinding>(), RecycleStreamView {
@@ -30,6 +33,7 @@ class RecycleStreamsFragment :
     private lateinit var shimmer: ShimmerFrameLayout
 
     private var isSubscribed = false
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -98,16 +102,27 @@ class RecycleStreamsFragment :
     }
 
     override fun initSearchTextListener() {
-        (parentFragment as StreamFragment).binding.searchStreamsEditText.addTextChangedListener { text: Editable? ->
-            if (text.toString().isNotBlank()) {
+
+        val textSubject = PublishSubject.create<String>()
+
+        val disposable = textSubject
+            .debounce(1, TimeUnit.SECONDS)
+            .filter { it.isNotEmpty() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
                 when (isSubscribed) {
                     true -> {
-                        presenter.searchedTextChangedSubscribedStreams(text = text.toString())
+                        presenter.onSearchedTextChangedSubscribedStreams(text = it.toString())
                     }
                     false -> {
-                        presenter.searchedTextChangedAllStreams(text = text.toString())
+                        presenter.onSearchedTextChangedAllStreams(text = it.toString())
                     }
                 }
+            }
+        compositeDisposable.add(disposable)
+        (parentFragment as StreamFragment).binding.searchStreamsEditText.addTextChangedListener { text: Editable? ->
+            if (text.toString().isNotBlank()) {
+                textSubject.onNext(text.toString())
             }
         }
     }

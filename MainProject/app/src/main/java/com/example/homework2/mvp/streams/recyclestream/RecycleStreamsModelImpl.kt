@@ -3,7 +3,7 @@ package com.example.homework2.mvp.streams.recyclestream
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
-import com.example.homework2.dataclasses.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.mvp.BaseModelImpl
 import com.example.homework2.retrofit.RetrofitService
 import io.reactivex.Flowable
