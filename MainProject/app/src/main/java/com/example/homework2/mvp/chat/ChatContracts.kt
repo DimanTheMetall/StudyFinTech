@@ -5,6 +5,7 @@ import com.example.homework2.data.local.entity.ReactionEntity
 import com.example.homework2.dataclasses.Stream
 import com.example.homework2.dataclasses.Topic
 import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
+import com.example.homework2.dataclasses.chatdataclasses.JsonRespone
 import com.example.homework2.dataclasses.chatdataclasses.ResponseFromSendMessage
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.mvp.BaseModel
@@ -59,9 +60,9 @@ interface ChatModel : BaseModel {
 
     fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Chat.Message>
 
-    fun deleteEmoji(messageId: Long, emojiName: String, reactionType: String)
+    fun deleteEmoji(messageId: Long, emojiName: String, reactionType: String): Single<JsonRespone>
 
-    fun addEmoji(messageId: Long, emojiName: String, reactionType: String)
+    fun addEmoji(messageId: Long, emojiName: String, reactionType: String): Single<JsonRespone>
 
     fun sendMessage(sentText: String, topic: Topic, stream: Stream): Single<ResponseFromSendMessage>
 

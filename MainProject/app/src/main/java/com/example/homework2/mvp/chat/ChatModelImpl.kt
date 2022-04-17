@@ -22,25 +22,31 @@ class ChatModelImpl(
     //HTTP operation
 
     override fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Chat.Message> {
-        return retrofitService.getOneMessage(messageId = messageId)
+        return retrofitService.getOneMessage(messageId = messageId, false)
+            .subscribeOn(Schedulers.io())
+            .map { it.message }
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun deleteEmoji(
+        messageId: Long,
+        emojiName: String,
+        reactionType: String
+    ): Single<JsonRespone> {
+        return retrofitService.deleteEmoji(messageId, emojiName, reactionType)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override fun deleteEmoji(messageId: Long, emojiName: String, reactionType: String) {
-        val reactionDisposable = retrofitService.deleteEmoji(messageId, emojiName, reactionType)
+    override fun addEmoji(
+        messageId: Long,
+        emojiName: String,
+        reactionType: String
+    ): Single<JsonRespone> {
+        return retrofitService.addEmoji(messageId, emojiName, reactionType, null)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
-        compositeDisposable.add(reactionDisposable)
-    }
 
-    override fun addEmoji(messageId: Long, emojiName: String, reactionType: String) {
-        val reactionDisposable = retrofitService.addEmoji(messageId, emojiName, reactionType, null)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
-        compositeDisposable.add(reactionDisposable)
     }
 
     override fun sendMessage(

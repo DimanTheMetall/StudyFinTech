@@ -30,30 +30,37 @@ class ChatPresenterImpl(
         reactionType: String,
         isSelected: Boolean
     ) {
-        if (isSelected) {
-            model.deleteEmoji(
+        if (!isSelected) {
+            val disposable = model.deleteEmoji(
                 messageId = messageId,
                 emojiName = emojiName,
                 reactionType = reactionType
-            )
-            val deleteDisposable = model.loadMessageById(messageId = messageId)
-                .subscribe({ message ->
-                    currentMessageList.map { if (it.id == message.id) message else it }
-//                    view.replaceMessage(message)
-                }, {})
-            compositeDisposable.add(deleteDisposable)
+            ).subscribe({
+                val deleteDisposable = model.loadMessageById(messageId = messageId)
+                    .subscribe({ message ->
+                        val newList =
+                            currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
+                        view.showMessages(newList)
+                    }, {})
+                compositeDisposable.add(deleteDisposable)
+            }, { })
+            compositeDisposable.add(disposable)
         } else {
-            model.addEmoji(
+            val disposable = model.addEmoji(
                 messageId = messageId,
                 emojiName = emojiName,
                 reactionType = reactionType
             )
-            val addDisposable = model.loadMessageById(messageId = messageId)
-                .subscribe({ message ->
-                    currentMessageList.map { if (it.id == message.id) message else it }
-//                    view.replaceMessage(message = message)
+                .subscribe({
+                    val addDisposable = model.loadMessageById(messageId = messageId)
+                        .subscribe({ message ->
+                            val newList =
+                                currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
+                            view.showMessages(newList)
+                        }, {})
+                    compositeDisposable.add(addDisposable)
                 }, {})
-            compositeDisposable.add(addDisposable)
+            compositeDisposable.add(disposable)
         }
     }
 

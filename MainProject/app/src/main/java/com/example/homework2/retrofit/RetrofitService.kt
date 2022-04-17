@@ -12,7 +12,10 @@ interface RetrofitService {
 
     //Функция для обновления сообщения после добавления реакции
     @GET("/api/v1/messages/{msg_id}")
-    fun getOneMessage(@Path("msg_id") messageId: Long): Single<SelectViewTypeClass.Chat.Message>
+    fun getOneMessage(
+        @Path("msg_id") messageId: Long,
+        @Query("apply_markdown") apply_markdown: Boolean
+    ): Single<JsonMessage>
 
     @GET("/api/v1/streams")
     fun getAllStreams(): Single<JsonStreams>
