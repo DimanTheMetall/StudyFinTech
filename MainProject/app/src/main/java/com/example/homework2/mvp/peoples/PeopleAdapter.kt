@@ -31,9 +31,9 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
         private val binding = ProfileLayoutBinding.bind(view)
 
         fun bind(item: Member) {
-            if (!item.avatar_url.isNullOrBlank()) {
+            if (!item.avatarUrl.isNullOrBlank()) {
                 Glide.with(itemView.context)
-                    .load(item.avatar_url)
+                    .load(item.avatarUrl)
                     .circleCrop()
                     .into(binding.profileImage)
             } else {
@@ -51,7 +51,7 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
                 }
 
                 profileEmail.text = item.email
-                profileName.text = item.full_name
+                profileName.text = item.fullName
                 root.setOnClickListener {
                     openFrag.invoke(item)
                 }

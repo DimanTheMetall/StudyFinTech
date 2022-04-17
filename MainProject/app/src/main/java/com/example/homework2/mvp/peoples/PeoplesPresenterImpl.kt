@@ -8,9 +8,10 @@ class PeoplesPresenterImpl(
 ) : BasePresenterImpl<PeoplesView, PeoplesModel>(view, model), PeoplesPresenter {
 
     override fun onSearchedTextChanged(searchedText: String) {
+        view.showProgress()
         val disposable = model.loadAllUsersWithOutPresence()
             .subscribe({ members ->
-                view.showUsers(members.filter { it.full_name.contains(other = searchedText) })
+                view.showUsers(members.filter { it.fullName.contains(other = searchedText) })
             }, { view.showError() })
 
         compositeDisposable.add(disposable)

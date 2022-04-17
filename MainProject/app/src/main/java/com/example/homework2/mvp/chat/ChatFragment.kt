@@ -84,6 +84,14 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         )
     }
 
+    override fun configureActionBar() {
+        (activity as MainActivity).supportActionBar?.apply {
+            show()
+            setDisplayHomeAsUpEnabled(true)
+            title = "#${stream.name}"
+        }
+    }
+
     override fun initBottomSheetDialog() {
         bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emojiName, emojiCode ->
             presenter.onEmojiInSheetDialogClick(

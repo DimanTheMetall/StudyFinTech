@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,47 +7,54 @@
     android:orientation="vertical"
     tools:context=".mvp.peoples.PeoplesFragment">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/search_users"
-        android:layout_width="350dp"
-        android:layout_height="60dp"
-        android:background="@color/unselected"
-        android:hint="@string/search"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:textSize="22sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/search_image"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/unselected"
-        android:src="@drawable/ic_search"
-        app:layout_constraintBottom_toBottomOf="@id/search_users"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/search_users"
-        app:layout_constraintTop_toTopOf="@id/search_users" />
-
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmer_people"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_users">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycle_people"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/bg_main"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/search_users" />
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/search_users"
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:background="@color/unselected"
+                android:hint="@string/search"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="22sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/search_image"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/unselected"
+                android:src="@drawable/ic_search"
+                app:layout_constraintBottom_toBottomOf="@id/search_users"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/search_users"
+                app:layout_constraintTop_toTopOf="@id/search_users" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycle_people"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@color/bg_main"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/search_users" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

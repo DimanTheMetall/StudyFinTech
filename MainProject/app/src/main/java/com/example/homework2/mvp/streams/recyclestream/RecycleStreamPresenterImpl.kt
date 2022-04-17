@@ -8,7 +8,6 @@ class RecycleStreamPresenterImpl(
     model: RecycleStreamModel
 ) : BasePresenterImpl<RecycleStreamView, RecycleStreamModel>(view, model), RecycleStreamPresenter {
 
-
     override fun onSearchedTextChangedAllStreams(text: String) {
         view.showProgress()
         val disposable = model.loadAllStreams()
@@ -35,7 +34,6 @@ class RecycleStreamPresenterImpl(
 
     override fun onAllStreamsNeeded() {
         view.showProgress()
-
         val selectDisposable = model.selectAllStreamsAndTopics()
             .subscribe { map ->
                 val streamList = mutableListOf<Stream>()

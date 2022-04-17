@@ -5,15 +5,11 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.homework2.databinding.ActivityMainBinding
-import com.example.homework2.dataclasses.streamsandtopics.Member
 import com.example.homework2.mvp.chat.ChatFragment
 import com.example.homework2.mvp.myprofile.MyProfileFragment
 import com.example.homework2.mvp.peoples.PeoplesFragment
 import com.example.homework2.mvp.streams.StreamFragment
-import com.example.homework2.retrofit.RetrofitService
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,7 +34,6 @@ class MainActivity : AppCompatActivity() {
                 binding.bNavigation.visibility = View.VISIBLE
             }
         }
-
         binding.bNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.item_channels -> replaceFrag(StreamFragment.newInstance())
@@ -47,6 +42,7 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+        supportActionBar?.hide()
     }
 
 
@@ -62,16 +58,4 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun getOwnUserData(retrofitService: RetrofitService): Member? {
-        var user: Member? = null
-
-        val userDisposable = retrofitService.getOwnUser()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ user = it }, {})
-
-        compositeDisposable.add(userDisposable)
-
-        return user
-    }
 }

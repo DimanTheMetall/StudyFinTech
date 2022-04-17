@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.example.homework2.MainActivity
 
 abstract class BaseFragment<P : BasePresenter, VB : ViewBinding> : Fragment(), BaseView {
 
@@ -29,10 +30,19 @@ abstract class BaseFragment<P : BasePresenter, VB : ViewBinding> : Fragment(), B
         presenter.onInit()
     }
 
+    override fun onResume() {
+        super.onResume()
+        configureActionBar()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         presenter.onDestroyView()
         _binding = null
+    }
+
+    override fun configureActionBar() {
+        (activity as MainActivity).supportActionBar?.hide()
     }
 
     abstract fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB

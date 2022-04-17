@@ -2,6 +2,8 @@ package com.example.homework2.mvp
 
 interface BaseView {
 
+    fun configureActionBar()
+
 }
 
 interface BasePresenter {

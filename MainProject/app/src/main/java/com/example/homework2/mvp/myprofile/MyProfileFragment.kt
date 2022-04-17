@@ -23,13 +23,13 @@ class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBindin
         requestOptions = requestOptions.transform(CenterCrop(), RoundedCorners(32))
 
         Glide.with(requireContext())
-            .load(member.avatar_url)
+            .load(member.avatarUrl)
             .placeholder(R.mipmap.ic_launcher)
             .apply(requestOptions)
             .into(binding.profileImage)
 
         with(binding) {
-            profileName.text = member.full_name
+            profileName.text = member.fullName
 
             if (member.website != null && member.website.timestamp > 500) {
                 profileStatusOnline.text = Constance.Status.OFFLINE

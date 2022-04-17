@@ -15,7 +15,7 @@ import com.example.homework2.dataclasses.streamsandtopics.Topic
 class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var streamList: MutableList<Stream> = mutableListOf()
+    private var streamList: List<Stream> = mutableListOf()
 
     @SuppressLint("InflateParams")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -112,7 +112,7 @@ class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateList(list: List<Stream>) {
-        streamList = list.sortedBy { it.stream_id }.toMutableList()
+        streamList = list.sortedBy { it.stream_id }
         notifyDataSetChanged()
     }
 }

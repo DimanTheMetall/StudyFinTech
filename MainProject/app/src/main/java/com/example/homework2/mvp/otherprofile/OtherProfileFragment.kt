@@ -37,13 +37,13 @@ class OtherProfileFragment : BaseFragment<OtherProfilePresenter, FragmentOtherPr
         var requestOptions = RequestOptions()
         requestOptions = requestOptions.transform(CenterCrop(), RoundedCorners(32))
         Glide.with(requireContext())
-            .load(member.avatar_url)
+            .load(member.avatarUrl)
             .apply(requestOptions)
             .placeholder(R.mipmap.ic_launcher)
             .into(binding.profileImage)
 
         with(binding) {
-            profileName.text = member.full_name
+            profileName.text = member.fullName
             profileStatusOnline.text = presence.website.status
             when (presence.website.status) {
                 Constance.Status.ACTIVE -> {

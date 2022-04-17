@@ -28,7 +28,6 @@ class StreamFragment :
     BaseFragment<StreamsPresenter, FragmentChannelBinding>(),
     StreamsView {
 
-
     private lateinit var adapter: PagerChannelsAdapter
     private lateinit var viewPager: ViewPager2
 

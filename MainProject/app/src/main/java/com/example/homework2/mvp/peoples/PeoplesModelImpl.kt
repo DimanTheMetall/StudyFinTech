@@ -26,7 +26,7 @@ class PeoplesModelImpl(
             .subscribeOn(Schedulers.io())
             .flatMapObservable { Observable.fromIterable(it.members) }
             .flatMap { member ->
-                retrofitService.getPresence(member.user_id)
+                retrofitService.getPresence(member.userId)
                     .map { it.presence.website }
                     .onErrorReturnItem(
                         Website(Constance.Status.OFFLINE, -1)
