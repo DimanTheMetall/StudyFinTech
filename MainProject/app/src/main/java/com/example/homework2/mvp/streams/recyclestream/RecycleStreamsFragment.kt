@@ -17,8 +17,8 @@ import com.example.homework2.customviews.dpToPx
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
 import com.example.homework2.dataclasses.Stream
-import com.example.homework2.fragments.ChatFragment
 import com.example.homework2.mvp.BaseFragment
+import com.example.homework2.mvp.chat.ChatFragment
 import com.example.homework2.mvp.streams.StreamFragment
 import com.example.homework2.zulipApp
 import com.facebook.shimmer.ShimmerFrameLayout

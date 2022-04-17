@@ -7,7 +7,7 @@ import androidx.room.Query
 import com.example.homework2.data.local.entity.MessageEntity
 import com.example.homework2.data.local.entity.ReactionEntity
 import io.reactivex.Completable
-import io.reactivex.Flowable
+import io.reactivex.Single
 
 @Dao
 interface MessagesAndReactionDao {
@@ -20,7 +20,7 @@ interface MessagesAndReactionDao {
     fun selectMessagesAndReactionFromTopic(
         topicName: String,
         streamId: Int
-    ): Flowable<Map<MessageEntity, List<ReactionEntity>>>
+    ): Single<Map<MessageEntity, List<ReactionEntity>>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessagesFromTopic(listMessagesEntity: List<MessageEntity>): Completable

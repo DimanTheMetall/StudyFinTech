@@ -151,13 +151,7 @@ class MessageAdapter(
         return differ.currentList.size
     }
 
-    //Разобраться с типизацией сообщений и времени
-    fun addMessagesToList(messages: List<SelectViewTypeClass.Chat>) {
-        val newList: MutableList<SelectViewTypeClass.Chat> = mutableListOf()
-        newList.addAll(differ.currentList)
-        newList.addAll(messages)
-        newList.sortedBy { (it as SelectViewTypeClass.Chat.Message).id }
+    fun replaceMessageList(newList: List<SelectViewTypeClass.Chat.Message>) {
         differ.submitList(newList)
     }
-
 }

@@ -17,6 +17,8 @@ interface OtherProfileView : BaseView {
 interface OtherProfilePresenter : BasePresenter {
 
     fun onUserNeededUpdate(member: Member)
+
+
 }
 
 interface OtherProfileModel : BaseModel {

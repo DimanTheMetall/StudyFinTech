@@ -47,5 +47,5 @@ fun RecyclerView.addOnPageScrollListener(onScrollToNewPage: () -> Unit) {
 }
 
 fun RecyclerView.Adapter<*>.getLastPosition(): Int {
-    return itemCount - 6
+    return itemCount - 5
 }

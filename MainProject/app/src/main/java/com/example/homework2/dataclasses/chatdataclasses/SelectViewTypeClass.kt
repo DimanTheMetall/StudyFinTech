@@ -10,8 +10,6 @@ sealed class SelectViewTypeClass {
 
     data class Success(val messagesList: List<Chat.Message>) : SelectViewTypeClass()
 
-    data class UploadReactionSuccess(val messagesId: Long) : SelectViewTypeClass()
-
     sealed class Chat {
 
         data class Date(

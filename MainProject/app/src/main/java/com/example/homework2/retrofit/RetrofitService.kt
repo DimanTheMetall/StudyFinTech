@@ -33,7 +33,7 @@ interface RetrofitService {
     @JvmSuppressWildcards
     fun getMessages(
         @Query("narrow") narrow: Any,
-        @Query("anchor") anchor: Any,
+        @Query("anchor") anchor: String,
         @Query("num_before") numBefore: Int,
         @Query("num_after") numAfter: Int,
         @Query("apply_markdown") apply_markdown: Boolean
