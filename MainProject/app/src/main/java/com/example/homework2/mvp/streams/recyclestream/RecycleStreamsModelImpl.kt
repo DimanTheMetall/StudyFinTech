@@ -22,30 +22,9 @@ class RecycleStreamsModelImpl(
     override fun insertStreamsAndTopics(streamsList: List<Stream>, isSubscribed: Boolean) {
         val entityType = if (isSubscribed) StreamEntity.SUBSCRIBED else StreamEntity.ALL
 
-        val disposable = Observable.fromIterable(streamsList)
-            .subscribeOn(Schedulers.io())
-            .doOnNext { stream ->
-                val topicsDisposable =
-                    database.getStreamsAndTopicsDao().insertTopicList(stream.topicList.map {
-                        TopicEntity.toEntity(
-                            topic = it,
-                            streamId = stream.stream_id
-                        )
-                    })
-                        .subscribeOn(Schedulers.io())
-                        .subscribe({}, {})
-                compositeDisposable.add(topicsDisposable)
-            }
-            .toList()
-            .subscribe({ stream ->
-                database.getStreamsAndTopicsDao()
-                    .insertStreams(streams = stream.map {
-                        StreamEntity.toEntity(
-                            stream = it,
-                            type = entityType
-                        )
-                    })
-            }, {})
+        val disposable =
+            database.getStreamsAndTopicsDao().insertStreamsAsynh(streamsList, entityType)
+                .subscribeOn(Schedulers.io()).subscribe()
 
         compositeDisposable.add(disposable)
     }

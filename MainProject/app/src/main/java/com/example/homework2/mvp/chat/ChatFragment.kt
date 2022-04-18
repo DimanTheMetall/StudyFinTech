@@ -92,7 +92,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         }
     }
 
-    override fun initBottomSheetDialog() {
+    private fun initBottomSheetDialog() {
         bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emojiName, emojiCode ->
             presenter.onEmojiInSheetDialogClick(
                 messageId = messageId,
@@ -104,7 +104,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     }
 
-    override fun initClickListenerOnMessageTranslateImage() {
+    private fun initClickListenerOnMessageTranslateImage() {
         binding.apply {
             messageTranslateImage.setOnClickListener {
                 presenter.onSendMessageRequest(
@@ -116,7 +116,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         }
     }
 
-    override fun initImageSwitcher() {
+    private fun initImageSwitcher() {
 
         fun switchImageOnTextChanged(isTextEmpty: Boolean) {
             when (isTextEmpty) {
@@ -148,13 +148,13 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         }
     }
 
-    override fun initArguments() {
+    private fun initArguments() {
         topic = requireArguments().getParcelable(Constance.TOPIC_KEY)!!
         stream = requireArguments().getParcelable(Constance.STREAM_KEY)!!
         binding.streamName.text = getString(R.string.topiclable, topic.name)
     }
 
-    override fun initRecycleAdapter() {
+    private fun initRecycleAdapter() {
         messageAdapter = MessageAdapter({ messageId ->
             this.messageId = messageId
             bottomSheetDialog?.show()
@@ -169,7 +169,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         binding.rcView.adapter = messageAdapter
     }
 
-    override fun configureRecycleAdapter() {
+    private fun configureRecycleAdapter() {
 
         val itemDivider = object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(
@@ -193,7 +193,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         }
     }
 
-    override fun initShimmer() {
+    private fun initShimmer() {
         shimmer = binding.chatShimmer
     }
 

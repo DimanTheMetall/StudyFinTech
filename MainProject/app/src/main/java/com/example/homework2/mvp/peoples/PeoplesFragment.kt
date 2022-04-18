@@ -1,6 +1,8 @@
 package com.example.homework2.mvp.peoples
 
+import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
@@ -22,6 +24,13 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
     private val compositeDisposable = CompositeDisposable()
     private val recycleAdapter = PeopleAdapter { member -> openProfileFrag(member) }
     private lateinit var shimmer: ShimmerFrameLayout
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        configureRecycleAdapter()
+        initSearchedTextListener()
+        initShimmer()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -50,7 +59,7 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
         )
     }
 
-    override fun configureRecycleAdapter() {
+    private fun configureRecycleAdapter() {
         binding.recyclePeople.adapter = recycleAdapter
         binding.recyclePeople.layoutManager = LinearLayoutManager(
             requireContext(),
@@ -58,7 +67,7 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
         )
     }
 
-    override fun initSearchedTextListener() {
+    private fun initSearchedTextListener() {
         val subject = PublishSubject.create<String>()
         val disposable = subject
             .debounce(1, TimeUnit.SECONDS)
@@ -73,7 +82,7 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
         }
     }
 
-    override fun initShimmer() {
+    private fun initShimmer() {
         shimmer = binding.shimmerPeople
     }
 

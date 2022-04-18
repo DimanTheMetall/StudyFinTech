@@ -1,7 +1,9 @@
 package com.example.homework2.mvp.streams
 
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
 import com.example.homework2.R
@@ -31,6 +33,11 @@ class StreamFragment :
     private lateinit var adapter: PagerChannelsAdapter
     private lateinit var viewPager: ViewPager2
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initViewPager()
+    }
+
     override fun initPresenter(): StreamsPresenter =
         StreamPresenterImpl(this, StreamsModelImpl())
 
@@ -41,7 +48,7 @@ class StreamFragment :
         return FragmentChannelBinding.inflate(inflater, container, false)
     }
 
-    override fun initViewPager() {
+    private fun initViewPager() {
         adapter = PagerChannelsAdapter(this)
         viewPager = binding.channelPager
         viewPager.adapter = adapter

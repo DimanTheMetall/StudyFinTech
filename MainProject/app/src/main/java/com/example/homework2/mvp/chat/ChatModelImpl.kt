@@ -9,6 +9,7 @@ import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseModelImpl
 import com.example.homework2.retrofit.RetrofitService
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -122,25 +123,25 @@ class ChatModelImpl(
     override fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Chat.Message>) {
         val messagesDisposable = database.getMessagesAndReactionDao()
             .insertMessagesFromTopic(messages.map { MessageEntity.toEntity(it) })
-
             .subscribeOn(Schedulers.io())
+            .andThen(
+                Observable.fromIterable(messages)
+                    .flatMapCompletable { message ->
+                        database.getMessagesAndReactionDao()
+                            .insertAllReactionOnMessages(
+                                message.reactions
+                                    .map { reaction ->
+                                        ReactionEntity.toEntity(
+                                            reaction = reaction,
+                                            messageId = message.id
+                                        )
+                                    }
+                            )
+                    }
+            )
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
 
-        messages.forEach { message ->
-            val insertDisposableReaction =
-                database.getMessagesAndReactionDao().insertAllReactionOnMessages(message.reactions
-                    .map { reaction ->
-                        ReactionEntity.toEntity(
-                            reaction = reaction,
-                            messageId = message.id
-                        )
-                    })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe()
-            compositeDisposable.add(insertDisposableReaction)
-        }
         compositeDisposable.add(messagesDisposable)
     }
 

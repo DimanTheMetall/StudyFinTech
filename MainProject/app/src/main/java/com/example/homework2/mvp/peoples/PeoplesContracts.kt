@@ -8,12 +8,6 @@ import io.reactivex.Single
 
 interface PeoplesView : BaseView {
 
-    fun configureRecycleAdapter()
-
-    fun initSearchedTextListener()
-
-    fun initShimmer()
-
     fun showProgress()
 
     fun showError()

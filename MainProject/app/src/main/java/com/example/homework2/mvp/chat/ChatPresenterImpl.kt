@@ -65,7 +65,6 @@ class ChatPresenterImpl(
         }
     }
 
-
     override fun onMessagesLoadRequested(stream: Stream, topic: Topic) {
         if (!loadedIsLast) {
             val lastMessageId =
@@ -119,14 +118,15 @@ class ChatPresenterImpl(
                         map.getValue(messageEntity).map { it.toReaction() }
                     message.reactions = reactionList
                     resultMessages.add(message)
-
+                }
+                if (resultMessages.isNullOrEmpty()) {
+                    onMessagesLoadRequested(stream = stream, topic = topic)
+                } else {
+                    currentMessageList.addAll(resultMessages)
+                    view.showMessages(currentMessageList)
                 }
             }, {})
-        if (resultMessages.isNullOrEmpty()) {
-            onMessagesLoadRequested(stream = stream, topic = topic)
-        } else {
-            view.showMessages(resultMessages)
-        }
+
         compositeDisposable.add(disposable)
     }
 
@@ -153,6 +153,5 @@ class ChatPresenterImpl(
     }
 
     override fun onInit() {
-
     }
 }

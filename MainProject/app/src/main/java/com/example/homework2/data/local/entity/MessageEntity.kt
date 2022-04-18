@@ -50,15 +50,14 @@ data class MessageEntity(
     @ColumnInfo(name = "subject")
     val subject: String,
 
-    @ColumnInfo(name = "timetamp")
+    @ColumnInfo(name = "timestamp")
     val timestamp: Int,
 
     @ColumnInfo(name = "type")
     val type: String,
 
-//    @ColumnInfo(name = "reactions")
 //    @Embedded
-//    val reactions: List<Reaction>
+//    val reactions: List<ReactionEntity?>
 ) {
     fun toMessage(): SelectViewTypeClass.Chat.Message = SelectViewTypeClass.Chat.Message(
         id = id,
@@ -90,7 +89,12 @@ data class MessageEntity(
             subject = message.subject,
             timestamp = message.timestamp,
             type = message.type,
-//            reactions = message.reactions
+//            reactions = message.reactions.map {
+//                ReactionEntity.toEntity(
+//                    reaction = it,
+//                    messageId = message.id
+//                )
+//            }
         )
     }
 }

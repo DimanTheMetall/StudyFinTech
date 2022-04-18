@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".mvp.streams.recyclestream.RecycleStreamsFragment">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/channel_shimmer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:shimmer_repeat_mode="reverse">
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycle_channel"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
 
 </FrameLayout>

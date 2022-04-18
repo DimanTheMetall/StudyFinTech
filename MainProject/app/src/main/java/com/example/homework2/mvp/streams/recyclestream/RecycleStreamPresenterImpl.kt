@@ -33,8 +33,8 @@ class RecycleStreamPresenterImpl(
     }
 
     override fun onAllStreamsNeeded() {
-        view.showProgress()
         val selectDisposable = model.selectAllStreamsAndTopics()
+            .doOnSubscribe { view.showProgress() }
             .subscribe { map ->
                 val streamList = mutableListOf<Stream>()
                 map.keys.forEach { streamEntity ->
@@ -46,9 +46,8 @@ class RecycleStreamPresenterImpl(
                 view.showStreams(streamList = streamList)
             }
 
-        view.showProgress()
-
         val disposable = model.loadAllStreams()
+            .doOnSubscribe { view.showProgress() }
             .subscribe({
                 view.showStreams(it)
                 model.insertStreamsAndTopics(streamsList = it, isSubscribed = false)
@@ -59,8 +58,8 @@ class RecycleStreamPresenterImpl(
     }
 
     override fun onSubscribedStreamsNeeded() {
-        view.showProgress()
         val selectDisposable = model.selectSubscribedStreamsAndTopics()
+            .doOnSubscribe { view.showProgress() }
             .subscribe { map ->
                 val streamList = mutableListOf<Stream>()
                 map.keys.forEach { streamEntity ->
@@ -72,9 +71,8 @@ class RecycleStreamPresenterImpl(
                 view.showStreams(streamList = streamList)
             }
 
-        view.showProgress()
-
         val disposable = model.loadSubscribedStreams()
+            .doOnSubscribe { view.showProgress() }
             .subscribe({
                 view.showStreams(it)
                 model.insertStreamsAndTopics(streamsList = it, isSubscribed = true)
@@ -85,10 +83,7 @@ class RecycleStreamPresenterImpl(
     }
 
     override fun onInit() {
-        view.initRecycleAdapter()
-        view.initShimmer()
-        view.initSearchTextListener()
-        view.loadStreamsFromZulip()
+
     }
 
 }

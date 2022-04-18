@@ -18,10 +18,7 @@ class PeoplesPresenterImpl(
     }
 
     override fun onInit() {
-        view.initShimmer()
-        view.configureRecycleAdapter()
         view.showProgress()
-        view.initSearchedTextListener()
         val disposable = model.loadAllUsersWithPresence()
             .subscribe({ view.showUsers(it) }, { view.showError() })
 

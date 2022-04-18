@@ -15,20 +15,6 @@ import io.reactivex.Single
 
 interface ChatView : BaseView {
 
-    fun initBottomSheetDialog()
-
-    fun initClickListenerOnMessageTranslateImage()
-
-    fun initImageSwitcher()
-
-    fun initArguments()
-
-    fun initRecycleAdapter()
-
-    fun configureRecycleAdapter()
-
-    fun initShimmer()
-
     fun showError()
 
     fun showProgress()

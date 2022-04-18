@@ -10,14 +10,6 @@ import io.reactivex.Single
 
 interface RecycleStreamView : BaseView {
 
-    fun initRecycleAdapter()
-
-    fun initShimmer()
-
-    fun initSearchTextListener()
-
-    fun loadStreamsFromZulip()
-
     fun showProgress()
 
     fun showError()

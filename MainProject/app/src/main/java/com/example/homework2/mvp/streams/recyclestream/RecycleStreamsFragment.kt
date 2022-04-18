@@ -6,6 +6,7 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -44,6 +45,14 @@ class RecycleStreamsFragment :
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initRecycleAdapter()
+        initShimmer()
+        initSearchTextListener()
+        loadStreamsFromZulip()
+    }
+
     private fun getIsSubscribedBoolean(): Boolean {
         return requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)
     }
@@ -64,7 +73,7 @@ class RecycleStreamsFragment :
             )
         )
 
-    override fun initRecycleAdapter() {
+    private fun initRecycleAdapter() {
         fun openFrag(fragment: Fragment, tag: String? = null) {
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_holder, fragment, tag)
@@ -97,11 +106,11 @@ class RecycleStreamsFragment :
         binding.recycleChannel.addItemDecoration(itemDivider)
     }
 
-    override fun initShimmer() {
-        shimmer = binding.channelShimmer
+    private fun initShimmer() {
+        shimmer = (parentFragment as StreamFragment).binding.streamsShimmer
     }
 
-    override fun initSearchTextListener() {
+    private fun initSearchTextListener() {
 
         val textSubject = PublishSubject.create<String>()
 
@@ -127,7 +136,7 @@ class RecycleStreamsFragment :
         }
     }
 
-    override fun loadStreamsFromZulip() {
+    private fun loadStreamsFromZulip() {
         when (isSubscribed) {
             true -> {
                 presenter.onSubscribedStreamsNeeded()
@@ -144,6 +153,7 @@ class RecycleStreamsFragment :
 
     override fun showError() {
         shimmer.hideShimmer()
+        Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_SHORT).show()
     }
 
     override fun showStreams(streamList: List<Stream>) {

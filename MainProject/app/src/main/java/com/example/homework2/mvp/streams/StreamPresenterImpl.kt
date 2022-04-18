@@ -9,7 +9,7 @@ class StreamPresenterImpl(
 
 
     override fun onInit() {
-        view.initViewPager()
+
     }
 
 }
