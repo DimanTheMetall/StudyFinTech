@@ -22,38 +22,53 @@ class RecycleStreamsModelImpl(
     override fun insertStreamsAndTopics(streamsList: List<Stream>, isSubscribed: Boolean) {
         val entityType = if (isSubscribed) StreamEntity.SUBSCRIBED else StreamEntity.ALL
 
-        val streamDisposable = database.getStreamsAndTopicsDao()
-            .insertStreams(streams = streamsList.map { stream ->
-                StreamEntity.toEntity(
-                    stream = stream,
-                    type = entityType
-                )
-
-            })
+        val disposable = Observable.fromIterable(streamsList)
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {}
+            .doOnNext { stream ->
+                val topicsDisposable =
+                    database.getStreamsAndTopicsDao().insertTopicList(stream.topicList.map {
+                        TopicEntity.toEntity(
+                            topic = it,
+                            streamId = stream.stream_id
+                        )
+                    })
+                        .subscribeOn(Schedulers.io())
+                        .subscribe({}, {})
+                compositeDisposable.add(topicsDisposable)
+            }
+            .toList()
+            .subscribe({ stream ->
+                database.getStreamsAndTopicsDao()
+                    .insertStreams(streams = stream.map {
+                        StreamEntity.toEntity(
+                            stream = it,
+                            type = entityType
+                        )
+                    })
+            }, {})
 
-        streamsList.forEach { stream ->
-
-            val topicsDisposable =
-                database.getStreamsAndTopicsDao().insertTopicList(stream.topicList.map {
-                    TopicEntity.toEntity(
-                        topic = it,
-                        streamId = stream.stream_id
-                    )
-                })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({}, {})
-            compositeDisposable.add(topicsDisposable)
-        }
-        compositeDisposable.add(streamDisposable)
+        compositeDisposable.add(disposable)
     }
+
+//        streamsList.forEach { stream ->
+//            val topicsDisposable =
+//                database.getStreamsAndTopicsDao().insertTopicList(stream.topicList.map {
+//                    TopicEntity.toEntity(
+//                        topic = it,
+//                        streamId = stream.stream_id
+//                    )
+//                })
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe({}, {})
+//            compositeDisposable.add(topicsDisposable)
+//        }
+//    }
 
 
     override fun loadSubscribedStreams(): Single<List<Stream>> {
         return retrofitService.getSubscribedStreams()
+            .delay(1, TimeUnit.SECONDS)
             .subscribeOn(Schedulers.io())
             .flatMapObservable { Observable.fromIterable(it.streams) }
             .flatMap { stream ->

@@ -55,6 +55,10 @@ data class MessageEntity(
 
     @ColumnInfo(name = "type")
     val type: String,
+
+//    @ColumnInfo(name = "reactions")
+//    @Embedded
+//    val reactions: List<Reaction>
 ) {
     fun toMessage(): SelectViewTypeClass.Chat.Message = SelectViewTypeClass.Chat.Message(
         id = id,
@@ -85,7 +89,8 @@ data class MessageEntity(
             streamId = message.streamId,
             subject = message.subject,
             timestamp = message.timestamp,
-            type = message.type
+            type = message.type,
+//            reactions = message.reactions
         )
     }
 }

@@ -5,46 +5,34 @@ import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 @Dao
 interface StreamsAndTopicsDao {
 
     @Transaction
-    fun insertStreams(streams: List<StreamEntity>): Completable {
-        return Completable.create { emitter ->
-            streams.forEach { streamEntity ->
-                var cashedStream: StreamEntity?
+    fun insertStreams(streams: List<StreamEntity>) {
+        streams.forEach { streamEntity ->
+            val cashedStream = getStreamById(streamEntity.id.toLong())
 
-                val disposable = getStreamById(streamEntity.id.toLong())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        cashedStream = streamEntity
-                        when {
-                            cashedStream == null -> {
-                                insertStream(streamEntity)
-                            }
-                            cashedStream != streamEntity || streamEntity.subscribedOrAll == StreamEntity.SUBSCRIBED -> {
-                                updateStream(streamEntity)
-                            }
-                        }
-                    }, {})
-                disposable.dispose()
+            when {
+                cashedStream == null -> {
+                    insertStream(streamEntity)
+                }
+                cashedStream != streamEntity || streamEntity.subscribedOrAll == StreamEntity.SUBSCRIBED -> {
+                    updateStream(streamEntity)
+                }
             }
-            emitter.onComplete()
         }
     }
 
     @Update
-    fun updateStream(stream: StreamEntity): Completable
+    fun updateStream(stream: StreamEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertStream(stream: StreamEntity): Completable
+    fun insertStream(stream: StreamEntity)
 
     @Query("SELECT * FROM streams WHERE id=:id")
-    fun getStreamById(id: Long): Single<StreamEntity?>
+    fun getStreamById(id: Long): StreamEntity?
 
     @Query(
         "SELECT * FROM streams " +
