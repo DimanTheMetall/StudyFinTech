@@ -51,7 +51,7 @@ class RecycleStreamPresenterImpl(
         val disposable = model.loadAllStreams()
             .subscribe({
                 view.showStreams(it)
-                model.insertStreamsANdTopics(streamsList = it, isSubscribed = false)
+                model.insertStreamsAndTopics(streamsList = it, isSubscribed = false)
             }, { view.showError() })
 
         compositeDisposable.add(disposable)
@@ -77,7 +77,7 @@ class RecycleStreamPresenterImpl(
         val disposable = model.loadSubscribedStreams()
             .subscribe({
                 view.showStreams(it)
-                model.insertStreamsANdTopics(streamsList = it, isSubscribed = true)
+                model.insertStreamsAndTopics(streamsList = it, isSubscribed = true)
             }, { view.showError() })
 
         compositeDisposable.add(selectDisposable)

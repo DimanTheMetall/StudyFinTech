@@ -122,6 +122,7 @@ class ChatModelImpl(
     override fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Chat.Message>) {
         val messagesDisposable = database.getMessagesAndReactionDao()
             .insertMessagesFromTopic(messages.map { MessageEntity.toEntity(it) })
+
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe()

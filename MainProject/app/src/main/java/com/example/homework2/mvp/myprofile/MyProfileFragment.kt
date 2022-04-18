@@ -31,7 +31,7 @@ class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBindin
         with(binding) {
             profileName.text = member.fullName
 
-            if (member.website != null && member.website.timestamp > 500) {
+            if (member.website != null && member.website.timestamp > Constance.Status.TIME_FOR_ON_ACTIVE_STATUS) {
                 profileStatusOnline.text = Constance.Status.OFFLINE
                 profileStatusOnline.setTextColor(Color.RED)
             }

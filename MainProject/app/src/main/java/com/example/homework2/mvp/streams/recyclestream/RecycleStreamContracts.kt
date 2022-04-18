@@ -6,7 +6,6 @@ import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.mvp.BaseModel
 import com.example.homework2.mvp.BasePresenter
 import com.example.homework2.mvp.BaseView
-import io.reactivex.Flowable
 import io.reactivex.Single
 
 interface RecycleStreamView : BaseView {
@@ -41,13 +40,13 @@ interface RecycleStreamPresenter : BasePresenter {
 
 interface RecycleStreamModel : BaseModel {
 
-    fun insertStreamsANdTopics(streamsList: List<Stream>, isSubscribed: Boolean)
+    fun insertStreamsAndTopics(streamsList: List<Stream>, isSubscribed: Boolean)
 
     fun loadSubscribedStreams(): Single<List<Stream>>
 
     fun loadAllStreams(): Single<List<Stream>>
 
-    fun selectAllStreamsAndTopics(): Flowable<Map<StreamEntity, List<TopicEntity>>>
+    fun selectAllStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>>
 
-    fun selectSubscribedStreamsAndTopics(): Flowable<Map<StreamEntity, List<TopicEntity>>>
+    fun selectSubscribedStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>>
 }

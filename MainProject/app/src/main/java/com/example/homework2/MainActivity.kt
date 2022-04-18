@@ -1,6 +1,7 @@
 package com.example.homework2
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -43,8 +44,15 @@ class MainActivity : AppCompatActivity() {
             true
         }
         supportActionBar?.hide()
+
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            replaceFrag(StreamFragment.newInstance())
+        }
+        return true
+    }
 
     override fun onDestroy() {
         super.onDestroy()
