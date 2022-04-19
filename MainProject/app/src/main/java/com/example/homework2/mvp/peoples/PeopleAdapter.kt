@@ -31,31 +31,8 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
         private val binding = ProfileLayoutBinding.bind(view)
 
         fun bind(item: Member) {
-            if (!item.avatarUrl.isNullOrBlank()) {
-                Glide.with(itemView.context)
-                    .load(item.avatarUrl)
-                    .circleCrop()
-                    .into(binding.profileImage)
-            } else {
-                binding.profileImage.setImageResource(R.mipmap.ic_launcher)
-            }
-
-            with(binding) {
-                when (item.website?.status) {
-                    Constance.Status.ACTIVE -> {
-                        onlineImage.isVisible = true
-                    }
-                    else -> {
-                        onlineImage.isVisible = false
-                    }
-                }
-
-                profileEmail.text = item.email
-                profileName.text = item.fullName
-                root.setOnClickListener {
-                    openFrag.invoke(item)
-                }
-            }
+            setAvatar(member = item, binding = binding, itemView = itemView)
+            setStatus(member = item, binding = binding)
         }
     }
 
@@ -63,6 +40,37 @@ class PeopleAdapter(val openFrag: (Member) -> Unit) :
     fun updateProfileList(list: List<Member>) {
         peopleList = list.toMutableList()
         notifyDataSetChanged()
+    }
+
+    private fun setAvatar(member: Member, binding: ProfileLayoutBinding, itemView: View) {
+        if (!member.avatarUrl.isNullOrBlank()) {
+            Glide.with(itemView.context)
+                .load(member.avatarUrl)
+                .placeholder(R.mipmap.ic_launcher)
+                .circleCrop()
+                .into(binding.profileImage)
+        } else {
+            binding.profileImage.setImageResource(R.mipmap.ic_launcher)
+        }
+    }
+
+    private fun setStatus(member: Member, binding: ProfileLayoutBinding) {
+        with(binding) {
+            when (member.website?.status) {
+                Constance.Status.ACTIVE -> {
+                    onlineImage.isVisible = true
+                }
+                else -> {
+                    onlineImage.isVisible = false
+                }
+            }
+
+            profileEmail.text = member.email
+            profileName.text = member.fullName
+            root.setOnClickListener {
+                openFrag.invoke(member)
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

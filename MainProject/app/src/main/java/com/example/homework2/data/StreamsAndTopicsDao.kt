@@ -18,8 +18,7 @@ interface StreamsAndTopicsDao {
     fun insertStreams(streamsList: List<Stream>, type: String) {
         streamsList.forEach { stream ->
             val streamEntity = StreamEntity.toEntity(stream = stream, type = type)
-            val cashedStream =
-                getStreamById(streamEntity.id.toLong())
+            val cashedStream = getStreamById(streamEntity.id.toLong())
 
             when {
                 cashedStream == null -> {

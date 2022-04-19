@@ -14,7 +14,7 @@ import com.example.homework2.databinding.CustomViewGroupLayoutBinding
 import com.example.homework2.databinding.TimeTvBinding
 import com.example.homework2.dataclasses.chatdataclasses.Reaction
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
-import org.joda.time.DateTime
+import org.joda.time.Instant
 import org.joda.time.format.DateTimeFormat
 
 class MessageAdapter(
@@ -152,16 +152,15 @@ class MessageAdapter(
         return differ.currentList.size
     }
 
-    //Исправить логику вычесления времени
+
     fun replaceMessageList(newList: List<SelectViewTypeClass.Chat.Message>) {
         val format = DateTimeFormat.forPattern("d MMMM, yyyy")
         val listWithTime: MutableList<SelectViewTypeClass.Chat> = mutableListOf()
 
         for (i in newList.indices) {
             if (i % 10 == 0) {
-                val dateTime = DateTime()
-                val dt = DateTime(dateTime - newList[i].timestamp)
-                val dateView = SelectViewTypeClass.Chat.Date(dt.toString(format))
+                val currentDate = Instant.ofEpochSecond(newList[i].timestamp).toDateTime()
+                val dateView = SelectViewTypeClass.Chat.Date(currentDate.toString(format))
                 listWithTime.add(dateView)
                 listWithTime.add(newList[i])
             } else {

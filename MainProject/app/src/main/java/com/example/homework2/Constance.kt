@@ -34,5 +34,5 @@ object Constance {
     }
 
     //URL
-    const val BASE_URL = "https://tinkoff-android-spring-2022.zulipchat.com"
+    const val BASE_URL = "https://tinkoff-android-spring-2022.zulipchat.com/api/v1/"
 }

@@ -68,5 +68,4 @@ class RecycleStreamsModelImpl(
         database.getStreamsAndTopicsDao().getSubscribedStreamsAndTopic()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-
 }

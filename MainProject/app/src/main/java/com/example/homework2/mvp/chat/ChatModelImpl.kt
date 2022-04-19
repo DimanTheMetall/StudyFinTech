@@ -1,5 +1,6 @@
 package com.example.homework2.mvp.chat
 
+import android.util.Log
 import com.example.homework2.Constance
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.data.local.entity.MessageEntity
@@ -18,7 +19,6 @@ class ChatModelImpl(
     private val database: ZulipDataBase,
     private val retrofitService: RetrofitService
 ) : BaseModelImpl(), ChatModel {
-
 
     //HTTP operation
 
@@ -71,7 +71,6 @@ class ChatModelImpl(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
-
 
     override fun loadTopicMessages(
         topic: Topic,
@@ -140,7 +139,19 @@ class ChatModelImpl(
                     }
             )
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+            .subscribe({
+                Log.d(
+                    Constance.Log.MESSAGES_AND_REACTIONS,
+                    "INSERT MESSAGE AND REACTION COMPLETE"
+                )
+            },
+                {
+                    Log.e(
+                        Constance.Log.MESSAGES_AND_REACTIONS,
+                        "INSERT MESSAGE AND REACTION FAILED",
+                        it
+                    )
+                })
 
         compositeDisposable.add(messagesDisposable)
     }
@@ -158,7 +169,14 @@ class ChatModelImpl(
             )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+            .subscribe({
+                Log.d(
+                    Constance.Log.MESSAGES_AND_REACTIONS,
+                    "DELETE OLDEST MESSAGE SUCCESS"
+                )
+            }, {
+                Log.e(Constance.Log.MESSAGES_AND_REACTIONS, "DELETE OLDEST MESSAGE FAILED", it)
+            })
         compositeDisposable.add(disposable)
     }
 

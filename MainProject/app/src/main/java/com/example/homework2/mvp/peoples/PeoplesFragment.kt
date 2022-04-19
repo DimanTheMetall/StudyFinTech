@@ -25,11 +25,12 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
     private val recycleAdapter = PeopleAdapter { member -> openProfileFrag(member) }
     private lateinit var shimmer: ShimmerFrameLayout
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         configureRecycleAdapter()
         initSearchedTextListener()
         initShimmer()
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDestroyView() {

@@ -18,7 +18,6 @@ import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseFragment
 import com.facebook.shimmer.ShimmerFrameLayout
 import io.reactivex.disposables.CompositeDisposable
-import org.joda.time.DateTime
 
 class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatView {
 
@@ -30,7 +29,6 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private var messageId = -1L
     private val compositeDisposable = CompositeDisposable()
 
-    private var dateTime: DateTime = DateTime()
     private var bottomSheetDialog: CustomBottomSheetDialog? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,23 +47,6 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         super.onDestroyView()
         compositeDisposable.clear()
     }
-
-//    override fun onStart() {
-//        super.onStart()
-//        viewModel.startObserveChat(requireActivity().zulipApp().retrofitService, stream.name, topic.name)
-//    }
-
-//    override fun onStop() {
-//        super.onStop()
-//        viewModel.stopObserveChat()
-//    }
-
-
-//    private fun onEmptyLoad(messageId: Any){
-//        if (messageId == 0L){
-//            loadTopicMessage(messageId = "oldest", 20)
-//        }
-//    }
 
     override fun inflateViewBinding(
         inflater: LayoutInflater,

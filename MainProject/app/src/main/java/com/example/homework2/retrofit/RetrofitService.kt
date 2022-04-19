@@ -11,28 +11,28 @@ import retrofit2.http.*
 interface RetrofitService {
 
     //Функция для обновления сообщения после добавления реакции
-    @GET("/api/v1/messages/{msg_id}")
+    @GET("messages/{msg_id}")
     fun getOneMessage(
         @Path("msg_id") messageId: Long,
         @Query("apply_markdown") apply_markdown: Boolean
     ): Single<JsonMessage>
 
-    @GET("/api/v1/streams")
+    @GET("streams")
     fun getAllStreams(): Single<JsonStreams>
 
-    @GET("/api/v1/users/me/{stream_id}/topics")
+    @GET("users/me/{stream_id}/topics")
     fun getTopicList(@Path("stream_id") streamId: Int): Single<JsonTopic>
 
-    @GET("/api/v1/users/me/subscriptions")
+    @GET("users/me/subscriptions")
     fun getSubscribedStreams(): Single<JsonStreams>
 
-    @GET("/api/v1/users")
+    @GET("users")
     fun getUsers(): Single<JsonUsers>
 
-    @GET("/api/v1/users/me")
+    @GET("users/me")
     fun getOwnUser(): Single<Member>
 
-    @GET("/api/v1/messages")
+    @GET("messages")
     @JvmSuppressWildcards
     fun getMessages(
         @Query("narrow") narrow: Any,
@@ -42,7 +42,7 @@ interface RetrofitService {
         @Query("apply_markdown") apply_markdown: Boolean
     ): Single<JsonMessages>
 
-    @POST("/api/v1/messages")
+    @POST("messages")
     fun sendMessage(
         @Query("type") type: String,
         @Query("to") to: String,
@@ -50,10 +50,10 @@ interface RetrofitService {
         @Query("topic") topic: String
     ): Single<ResponseFromSendMessage>
 
-    @GET("/api/v1/users/{user_id_or_email}/presence")
+    @GET("users/{user_id_or_email}/presence")
     fun getPresence(@Path("user_id_or_email") user_id_or_email: Any): Single<JsonPresense>
 
-    @POST("/api/v1/messages/{message_id}/reactions")
+    @POST("messages/{message_id}/reactions")
     fun addEmoji(
         @Path("message_id") message_id: Long,
         @Query("emoji_name") emoji_name: String,
@@ -61,7 +61,7 @@ interface RetrofitService {
         @Query("emoji_code") emoji_code: String?
     ): Single<JsonRespone>
 
-    @DELETE("/api/v1/messages/{message_id}/reactions")
+    @DELETE("messages/{message_id}/reactions")
     fun deleteEmoji(
         @Path("message_id") message_id: Long,
         @Query("emoji_name") emoji_name: String,
