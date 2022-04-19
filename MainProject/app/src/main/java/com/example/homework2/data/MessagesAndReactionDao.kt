@@ -15,7 +15,7 @@ interface MessagesAndReactionDao {
     @Query(
         "SELECT * FROM messages LEFT JOIN reactions " +
                 "ON messages.id = reactions.message_id " +
-                "AND messages.subject = :topicName AND messages.stream_id = :streamId"
+                "WHERE messages.subject = :topicName AND messages.stream_id = :streamId"
     )
     fun selectMessagesAndReactionFromTopic(
         topicName: String,

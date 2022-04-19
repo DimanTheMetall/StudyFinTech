@@ -28,6 +28,11 @@ object Constance {
         const val OLDEST = "oldest"
     }
 
+    object Log {
+        const val TOPIC_AND_STREAM = "TOPIC and STREAM"
+        const val MESSAGES_AND_REACTIONS = "MESSAGES and REACTIONS"
+    }
+
     //URL
     const val BASE_URL = "https://tinkoff-android-spring-2022.zulipchat.com"
 }

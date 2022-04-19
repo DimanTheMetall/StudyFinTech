@@ -1,7 +1,9 @@
 package com.example.homework2.data
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.room.*
+import com.example.homework2.Constance
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
 import com.example.homework2.dataclasses.streamsandtopics.Stream
@@ -15,19 +17,27 @@ interface StreamsAndTopicsDao {
     @Transaction
     fun insertStreams(streamsList: List<Stream>, type: String) {
         streamsList.forEach { stream ->
+            val streamEntity = StreamEntity.toEntity(stream = stream, type = type)
+            val cashedStream =
+                getStreamById(streamEntity.id.toLong())
+
+            when {
+                cashedStream == null -> {
+                    insertStream(streamEntity)
+
+                }
+                cashedStream != streamEntity || streamEntity.subscribedOrAll == StreamEntity.SUBSCRIBED -> {
+                    updateStream(streamEntity)
+                }
+            }
             insertTopicList(stream.topicList.map {
                 TopicEntity.toEntity(
                     topic = it,
                     streamId = stream.stream_id
                 )
-            }).subscribe({}, {})
+            }).subscribe({}, { Log.e(Constance.Log.TOPIC_AND_STREAM, "$it") })
         }
-        checkStreams(streams = streamsList.map {
-            StreamEntity.toEntity(
-                stream = it,
-                type = type
-            )
-        })
+
     }
 
     fun insertStreamsAsynh(streamsList: List<Stream>, type: String): Completable {
@@ -37,20 +47,6 @@ interface StreamsAndTopicsDao {
         }
     }
 
-    @Transaction
-    fun checkStreams(streams: List<StreamEntity>) {
-        streams.forEach { streamEntity ->
-            val cashedStream = getStreamById(streamEntity.id.toLong())
-            when {
-                cashedStream == null -> {
-                    insertStream(streamEntity)
-                }
-                cashedStream != streamEntity || streamEntity.subscribedOrAll == StreamEntity.SUBSCRIBED -> {
-                    updateStream(streamEntity)
-                }
-            }
-        }
-    }
 
     @Update
     fun updateStream(stream: StreamEntity)
@@ -77,7 +73,7 @@ interface StreamsAndTopicsDao {
     @Update
     fun updateStreamList(streamEntityList: List<StreamEntity>): Completable
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTopicList(topicEntityList: List<TopicEntity>): Completable
 
 }

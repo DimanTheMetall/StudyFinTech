@@ -2,7 +2,7 @@ package com.example.homework2.dataclasses.chatdataclasses
 
 import com.google.gson.annotations.SerializedName
 
-data class JsonMessages(
+class JsonMessages(
 
     @SerializedName("anchor")
     val anchor: Long,

@@ -1,5 +1,6 @@
 package com.example.homework2.mvp.chat
 
+import android.util.Log
 import com.example.homework2.Constance
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.streamsandtopics.Stream
@@ -77,15 +78,22 @@ class ChatPresenterImpl(
                 numAfter = Constance.MESSAGES_COUNT_PAGINATION,
                 0
             )
-                .subscribe({ json ->
-                    val messages =
-                        json.messages.filterNot { it.id == lastMessageId }
-                    loadedIsLast = json.foundNewest
-                    currentMessageList.addAll(messages)
-                    view.showMessages(currentMessageList)
-                    model.insertAllMessagesAndReactions(messages = messages)
-                    checkAndDelete(stream = stream, topic = topic)
-                },
+                .subscribe(
+                    { json ->
+                        val messages =
+                            json.messages.filterNot { it.id == lastMessageId }
+                        loadedIsLast = json.foundNewest
+                        currentMessageList.addAll(messages)
+                        view.showMessages(currentMessageList)
+                        try {
+                            model.insertAllMessagesAndReactions(messages = messages)
+                            checkAndDelete(stream = stream, topic = topic)
+                        } catch (e: Exception) {
+                            Log.e(Constance.Log.MESSAGES_AND_REACTIONS, e.toString())
+                            view.showError()
+                        }
+
+                    },
                     {
                         view.showError()
                     })
@@ -153,5 +161,7 @@ class ChatPresenterImpl(
     }
 
     override fun onInit() {
+        currentMessageList.clear()
+        loadedIsLast = false
     }
 }

@@ -51,7 +51,7 @@ data class MessageEntity(
     val subject: String,
 
     @ColumnInfo(name = "timestamp")
-    val timestamp: Int,
+    val timestamp: Long,
 
     @ColumnInfo(name = "type")
     val type: String,

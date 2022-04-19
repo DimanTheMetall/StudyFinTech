@@ -3,6 +3,7 @@ package com.example.homework2.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 
 @Entity(
@@ -13,7 +14,8 @@ import com.example.homework2.dataclasses.streamsandtopics.Topic
         parentColumns = ["id"],
         childColumns = ["stream_id"],
         onDelete = ForeignKey.CASCADE
-    )]
+    )],
+    indices = [Index("name", unique = false)]
 )
 data class TopicEntity(
 
@@ -31,6 +33,7 @@ data class TopicEntity(
         fun toEntity(topic: Topic, streamId: Int): TopicEntity = TopicEntity(
             streamId = streamId,
             name = topic.name
+
         )
     }
 }

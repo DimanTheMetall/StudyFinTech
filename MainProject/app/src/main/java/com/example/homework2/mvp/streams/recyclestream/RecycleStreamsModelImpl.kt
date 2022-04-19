@@ -1,5 +1,7 @@
 package com.example.homework2.mvp.streams.recyclestream
 
+import android.util.Log
+import com.example.homework2.Constance
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
@@ -17,33 +19,18 @@ class RecycleStreamsModelImpl(
     private val retrofitService: RetrofitService
 ) : BaseModelImpl(), RecycleStreamModel {
 
-
-    //Пофиксить
     override fun insertStreamsAndTopics(streamsList: List<Stream>, isSubscribed: Boolean) {
         val entityType = if (isSubscribed) StreamEntity.SUBSCRIBED else StreamEntity.ALL
 
         val disposable =
             database.getStreamsAndTopicsDao().insertStreamsAsynh(streamsList, entityType)
-                .subscribeOn(Schedulers.io()).subscribe()
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    { Log.d(Constance.Log.TOPIC_AND_STREAM, "INSERT SUCCESS") },
+                    { Log.e(Constance.Log.TOPIC_AND_STREAM, it.toString()) })
 
         compositeDisposable.add(disposable)
     }
-
-//        streamsList.forEach { stream ->
-//            val topicsDisposable =
-//                database.getStreamsAndTopicsDao().insertTopicList(stream.topicList.map {
-//                    TopicEntity.toEntity(
-//                        topic = it,
-//                        streamId = stream.stream_id
-//                    )
-//                })
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe({}, {})
-//            compositeDisposable.add(topicsDisposable)
-//        }
-//    }
-
 
     override fun loadSubscribedStreams(): Single<List<Stream>> {
         return retrofitService.getSubscribedStreams()

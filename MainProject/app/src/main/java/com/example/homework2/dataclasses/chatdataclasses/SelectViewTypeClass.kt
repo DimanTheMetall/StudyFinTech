@@ -50,7 +50,7 @@ sealed class SelectViewTypeClass {
             val subject: String,
 
             @SerializedName("timestamp")
-            val timestamp: Int,
+            val timestamp: Long,
 
             @SerializedName("type")
             val type: String,
