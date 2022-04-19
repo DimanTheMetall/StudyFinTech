@@ -15,7 +15,7 @@ class RecycleStreamPresenterImpl(
                 val searchedStreams: List<Stream> = streams.filter { it.name.contains(text) }
                 view.showStreams(streamList = searchedStreams)
             }, {
-                view.showError()
+                view.showError(it)
             })
         compositeDisposable.add(disposable)
     }
@@ -27,7 +27,7 @@ class RecycleStreamPresenterImpl(
                 val searchedStreams: List<Stream> = streams.filter { it.name.contains(text) }
                 view.showStreams(streamList = searchedStreams)
             }, {
-                view.showError()
+                view.showError(it)
             })
         compositeDisposable.add(disposable)
     }
@@ -51,7 +51,7 @@ class RecycleStreamPresenterImpl(
             .subscribe({
                 view.showStreams(it)
                 model.insertStreamsAndTopics(streamsList = it, isSubscribed = false)
-            }, { view.showError() })
+            }, { view.showError(it) })
 
         compositeDisposable.add(disposable)
         compositeDisposable.add(selectDisposable)
@@ -76,14 +76,13 @@ class RecycleStreamPresenterImpl(
             .subscribe({
                 view.showStreams(it)
                 model.insertStreamsAndTopics(streamsList = it, isSubscribed = true)
-            }, { view.showError() })
+            }, { view.showError(it) })
 
         compositeDisposable.add(selectDisposable)
         compositeDisposable.add(disposable)
     }
 
     override fun onInit() {
-
     }
 
 }

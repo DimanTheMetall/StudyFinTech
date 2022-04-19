@@ -59,13 +59,13 @@ interface RetrofitService {
         @Query("emoji_name") emoji_name: String,
         @Query("reaction_type") reaction_type: String,
         @Query("emoji_code") emoji_code: String?
-    ): Single<JsonRespone>
+    ): Single<JsonResponse>
 
     @DELETE("messages/{message_id}/reactions")
     fun deleteEmoji(
         @Path("message_id") message_id: Long,
         @Query("emoji_name") emoji_name: String,
         @Query("reaction_type") reaction_type: String,
-    ): Single<JsonRespone>
+    ): Single<JsonResponse>
 
 }

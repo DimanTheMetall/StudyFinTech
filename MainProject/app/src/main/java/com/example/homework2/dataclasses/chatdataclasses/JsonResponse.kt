@@ -1,7 +1,5 @@
 package com.example.homework2.dataclasses.chatdataclasses
 
-data class JsonRespone(
-    val code: String,
-    val msg: String,
+class JsonResponse(
     val result: String
 )

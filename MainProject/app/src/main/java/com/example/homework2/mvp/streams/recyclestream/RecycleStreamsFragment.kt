@@ -3,6 +3,7 @@ package com.example.homework2.mvp.streams.recyclestream
 import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -151,9 +152,10 @@ class RecycleStreamsFragment :
         shimmer.showShimmer(true)
     }
 
-    override fun showError() {
+    override fun showError(throwable: Throwable) {
         shimmer.hideShimmer()
-        Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_SHORT).show()
+        Log.e(Constance.LogTag.TOPIC_AND_STREAM, getString(R.string.error), throwable)
+        Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_SHORT).show()
     }
 
     override fun showStreams(streamList: List<Stream>) {

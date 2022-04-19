@@ -3,7 +3,7 @@ package com.example.homework2.mvp.chat
 import com.example.homework2.data.local.entity.MessageEntity
 import com.example.homework2.data.local.entity.ReactionEntity
 import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
-import com.example.homework2.dataclasses.chatdataclasses.JsonRespone
+import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
 import com.example.homework2.dataclasses.chatdataclasses.ResponseFromSendMessage
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.streamsandtopics.Stream
@@ -15,7 +15,7 @@ import io.reactivex.Single
 
 interface ChatView : BaseView {
 
-    fun showError()
+    fun showError(throwable: Throwable)
 
     fun showProgress()
 
@@ -24,8 +24,6 @@ interface ChatView : BaseView {
 }
 
 interface ChatPresenter : BasePresenter {
-
-    fun checkAndDelete(stream: Stream, topic: Topic)
 
     fun onEmojiInMessageClick(
         messageId: Long,
@@ -48,9 +46,9 @@ interface ChatModel : BaseModel {
 
     fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Chat.Message>
 
-    fun deleteEmoji(messageId: Long, emojiName: String, reactionType: String): Single<JsonRespone>
+    fun deleteEmoji(messageId: Long, emojiName: String, reactionType: String): Single<JsonResponse>
 
-    fun addEmoji(messageId: Long, emojiName: String, reactionType: String): Single<JsonRespone>
+    fun addEmoji(messageId: Long, emojiName: String, reactionType: String): Single<JsonResponse>
 
     fun sendMessage(sentText: String, topic: Topic, stream: Stream): Single<ResponseFromSendMessage>
 

@@ -1,7 +1,5 @@
 package com.example.homework2.dataclasses.chatdataclasses
 
-data class ResponseFromSendMessage(
-    val code: String,
-    val msg: String,
+class ResponseFromSendMessage(
     val result: String
 )

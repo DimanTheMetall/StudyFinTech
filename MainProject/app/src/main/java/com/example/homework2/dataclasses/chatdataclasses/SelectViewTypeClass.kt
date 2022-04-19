@@ -4,14 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 sealed class SelectViewTypeClass {
 
-    object Error : SelectViewTypeClass()
-
-    object Progress : SelectViewTypeClass()
-
-    object UploadMessageSuccess : SelectViewTypeClass()
-
-    data class Success(val messagesList: List<Chat.Message>) : SelectViewTypeClass()
-
     sealed class Chat {
 
         data class Date(

@@ -9,4 +9,3 @@ interface StreamsView : BaseView
 interface StreamsPresenter : BasePresenter
 
 interface StreamsModel : BaseModel
-

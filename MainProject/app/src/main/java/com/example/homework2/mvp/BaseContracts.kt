@@ -13,7 +13,6 @@ interface BasePresenter {
     fun onInit()
 }
 
-
 interface BaseModel {
 
     fun clearDisposable()

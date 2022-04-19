@@ -9,6 +9,7 @@ import io.reactivex.Single
 interface MyProfileView : BaseView {
 
     fun renderProfile(member: Member)
+
 }
 
 interface MyProfilePresenter : BasePresenter
@@ -16,4 +17,5 @@ interface MyProfilePresenter : BasePresenter
 interface MyProfileModel : BaseModel {
 
     fun loadMyProfile(): Single<Member>
+
 }

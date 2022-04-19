@@ -15,7 +15,7 @@ class ChatPresenterImpl(
     private var loadedIsLast = false
     private val currentMessageList = mutableListOf<SelectViewTypeClass.Chat.Message>()
 
-    override fun checkAndDelete(stream: Stream, topic: Topic) {
+    private fun checkAndDelete(stream: Stream, topic: Topic) {
         if (currentMessageList.size > Constance.LIMIT_MESSAGE_COUNT_FOR_TOPIC) {
             model.deleteOldestMessagesWhereIdLess(
                 messageIdToSave =
@@ -89,13 +89,12 @@ class ChatPresenterImpl(
                             model.insertAllMessagesAndReactions(messages = messages)
                             checkAndDelete(stream = stream, topic = topic)
                         } catch (e: Exception) {
-                            Log.e(Constance.Log.MESSAGES_AND_REACTIONS, e.toString())
-                            view.showError()
+                            Log.e(Constance.LogTag.MESSAGES_AND_REACTIONS, e.toString())
+                            view.showError(e)
                         }
-
                     },
                     {
-                        view.showError()
+                        view.showError(it)
                     })
 
             compositeDisposable.add(disposable)
@@ -112,7 +111,7 @@ class ChatPresenterImpl(
                         view.showMessages(currentMessageList)
                     }, {})
                 compositeDisposable.add(loadDisposable)
-            }, { view.showError() })
+            }, { view.showError(it) })
         compositeDisposable.add(sendDisposable)
     }
 

@@ -1,12 +1,14 @@
 package com.example.homework2.mvp.peoples
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.homework2.Constance
 import com.example.homework2.R
 import com.example.homework2.databinding.FragmentPeopleBinding
 import com.example.homework2.dataclasses.streamsandtopics.Member
@@ -92,8 +94,9 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
         shimmer.showShimmer(true)
     }
 
-    override fun showError() {
-        Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG).show()
+    override fun showError(throwable: Throwable) {
+        Log.e(Constance.LogTag.PEOPLES, getString(R.string.error), throwable)
+        Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_SHORT).show()
         shimmer.hideShimmer()
     }
 

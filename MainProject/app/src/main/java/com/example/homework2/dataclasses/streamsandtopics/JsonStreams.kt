@@ -2,7 +2,7 @@ package com.example.homework2.dataclasses.streamsandtopics
 
 import com.google.gson.annotations.SerializedName
 
-data class JsonStreams(
+class JsonStreams(
 
     @SerializedName("invite_only")
     val inviteOnly: Boolean? = null,

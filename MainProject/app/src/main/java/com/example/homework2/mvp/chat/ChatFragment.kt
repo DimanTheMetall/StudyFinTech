@@ -2,6 +2,7 @@ package com.example.homework2.mvp.chat
 
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -178,8 +179,9 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         shimmer = binding.chatShimmer
     }
 
-    override fun showError() {
-        Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG).show()
+    override fun showError(throwable: Throwable) {
+        Log.e(Constance.LogTag.MESSAGES_AND_REACTIONS, getString(R.string.error), throwable)
+        Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_SHORT).show()
         shimmer.hideShimmer()
     }
 
@@ -192,7 +194,6 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         messageAdapter.replaceMessageList(newList = messages.toMutableList())
         shimmer.hideShimmer()
     }
-
 
     companion object {
         const val TAG = "ChatFragment"

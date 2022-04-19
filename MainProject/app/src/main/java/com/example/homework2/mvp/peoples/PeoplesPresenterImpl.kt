@@ -12,7 +12,7 @@ class PeoplesPresenterImpl(
         val disposable = model.loadAllUsersWithOutPresence()
             .subscribe({ members ->
                 view.showUsers(members.filter { it.fullName.contains(other = searchedText) })
-            }, { view.showError() })
+            }, { view.showError(it) })
 
         compositeDisposable.add(disposable)
     }
@@ -20,7 +20,7 @@ class PeoplesPresenterImpl(
     override fun onInit() {
         view.showProgress()
         val disposable = model.loadAllUsersWithPresence()
-            .subscribe({ view.showUsers(it) }, { view.showError() })
+            .subscribe({ view.showUsers(it) }, { view.showError(it) })
 
         compositeDisposable.add(disposable)
     }

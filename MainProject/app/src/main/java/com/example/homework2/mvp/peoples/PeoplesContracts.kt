@@ -10,7 +10,7 @@ interface PeoplesView : BaseView {
 
     fun showProgress()
 
-    fun showError()
+    fun showError(throwable: Throwable)
 
     fun showUsers(userList: List<Member>)
 }

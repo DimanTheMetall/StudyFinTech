@@ -12,7 +12,7 @@ import com.example.homework2.R
 import com.example.homework2.databinding.ProfileLayoutBinding
 import com.example.homework2.dataclasses.streamsandtopics.Member
 
-class PeopleAdapter(val openFrag: (Member) -> Unit) :
+class PeopleAdapter(private val openFrag: (Member) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var peopleList = mutableListOf<Member>()

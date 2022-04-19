@@ -12,7 +12,7 @@ interface RecycleStreamView : BaseView {
 
     fun showProgress()
 
-    fun showError()
+    fun showError(throwable: Throwable)
 
     fun showStreams(streamList: List<Stream>)
 

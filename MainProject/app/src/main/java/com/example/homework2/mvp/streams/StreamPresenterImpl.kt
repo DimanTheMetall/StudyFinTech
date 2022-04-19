@@ -9,7 +9,5 @@ class StreamPresenterImpl(
 
 
     override fun onInit() {
-
     }
-
 }

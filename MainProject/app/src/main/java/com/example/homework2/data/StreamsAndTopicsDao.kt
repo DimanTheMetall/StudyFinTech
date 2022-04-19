@@ -34,7 +34,7 @@ interface StreamsAndTopicsDao {
                     topic = it,
                     streamId = stream.stream_id
                 )
-            }).subscribe({}, { Log.e(Constance.Log.TOPIC_AND_STREAM, "$it") })
+            }).subscribe({}, { Log.e(Constance.LogTag.TOPIC_AND_STREAM, "$it") })
         }
 
     }

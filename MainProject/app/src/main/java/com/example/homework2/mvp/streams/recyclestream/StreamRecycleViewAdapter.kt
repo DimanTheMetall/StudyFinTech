@@ -43,8 +43,27 @@ class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
             binding.channelName.text = stream.name
             binding.topicList.removeAllViews()
             openStreamTopics(false)
+            setTopicList(stream = stream, topicList = stream.topicList, binding = binding)
 
-            stream.topicList.forEach { topic ->
+
+            binding.iconOpenStreams.setOnClickListener {
+                when (binding.topicList.visibility) {
+                    View.VISIBLE -> {
+                        openStreamTopics(false)
+                    }
+                    else -> {
+                        openStreamTopics(true)
+                    }
+                }
+            }
+        }
+
+        private fun setTopicList(
+            topicList: List<Topic>,
+            binding: ChannelItemBinding,
+            stream: Stream
+        ) {
+            topicList.forEach { topic ->
                 if (index == 3) index = 0
 
                 val view = LayoutInflater.from(itemView.context)
@@ -79,17 +98,6 @@ class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
                         }
                     }
                 binding.topicList.addView(view)
-            }
-
-            binding.iconOpenStreams.setOnClickListener {
-                when (binding.topicList.visibility) {
-                    View.VISIBLE -> {
-                        openStreamTopics(false)
-                    }
-                    else -> {
-                        openStreamTopics(true)
-                    }
-                }
             }
         }
 

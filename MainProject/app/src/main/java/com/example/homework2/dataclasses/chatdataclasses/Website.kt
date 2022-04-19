@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Website(
+class Website(
     var status: String,
     val timestamp: Int
-): Parcelable
+) : Parcelable

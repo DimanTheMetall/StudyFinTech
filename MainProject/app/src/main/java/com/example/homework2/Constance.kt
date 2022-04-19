@@ -28,9 +28,10 @@ object Constance {
         const val OLDEST = "oldest"
     }
 
-    object Log {
+    object LogTag {
         const val TOPIC_AND_STREAM = "TOPIC and STREAM"
         const val MESSAGES_AND_REACTIONS = "MESSAGES and REACTIONS"
+        const val PEOPLES = "PEOPLES"
     }
 
     //URL

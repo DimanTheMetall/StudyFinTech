@@ -33,7 +33,7 @@ class ChatModelImpl(
         messageId: Long,
         emojiName: String,
         reactionType: String
-    ): Single<JsonRespone> {
+    ): Single<JsonResponse> {
         return retrofitService.deleteEmoji(messageId, emojiName, reactionType)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -43,7 +43,7 @@ class ChatModelImpl(
         messageId: Long,
         emojiName: String,
         reactionType: String
-    ): Single<JsonRespone> {
+    ): Single<JsonResponse> {
         return retrofitService.addEmoji(messageId, emojiName, reactionType, null)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -141,13 +141,13 @@ class ChatModelImpl(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 Log.d(
-                    Constance.Log.MESSAGES_AND_REACTIONS,
+                    Constance.LogTag.MESSAGES_AND_REACTIONS,
                     "INSERT MESSAGE AND REACTION COMPLETE"
                 )
             },
                 {
                     Log.e(
-                        Constance.Log.MESSAGES_AND_REACTIONS,
+                        Constance.LogTag.MESSAGES_AND_REACTIONS,
                         "INSERT MESSAGE AND REACTION FAILED",
                         it
                     )
@@ -171,11 +171,11 @@ class ChatModelImpl(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 Log.d(
-                    Constance.Log.MESSAGES_AND_REACTIONS,
+                    Constance.LogTag.MESSAGES_AND_REACTIONS,
                     "DELETE OLDEST MESSAGE SUCCESS"
                 )
             }, {
-                Log.e(Constance.Log.MESSAGES_AND_REACTIONS, "DELETE OLDEST MESSAGE FAILED", it)
+                Log.e(Constance.LogTag.MESSAGES_AND_REACTIONS, "DELETE OLDEST MESSAGE FAILED", it)
             })
         compositeDisposable.add(disposable)
     }

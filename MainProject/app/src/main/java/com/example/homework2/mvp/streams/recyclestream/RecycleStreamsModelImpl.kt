@@ -26,8 +26,8 @@ class RecycleStreamsModelImpl(
             database.getStreamsAndTopicsDao().insertStreamsAsynh(streamsList, entityType)
                 .subscribeOn(Schedulers.io())
                 .subscribe(
-                    { Log.d(Constance.Log.TOPIC_AND_STREAM, "INSERT SUCCESS") },
-                    { Log.e(Constance.Log.TOPIC_AND_STREAM, it.toString()) })
+                    { Log.d(Constance.LogTag.TOPIC_AND_STREAM, "INSERT SUCCESS") },
+                    { Log.e(Constance.LogTag.TOPIC_AND_STREAM, it.toString()) })
 
         compositeDisposable.add(disposable)
     }

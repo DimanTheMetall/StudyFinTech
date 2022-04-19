@@ -34,4 +34,6 @@
     <string name="mess">\"mess %1$s\"</string>
     <string name="search">Search...</string>
 
+    <string name="error">ERROR</string>
+
 </resources>
