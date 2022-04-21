@@ -39,7 +39,7 @@ class StreamFragment :
     }
 
     override fun initPresenter(): StreamsPresenter =
-        StreamPresenterImpl(this, StreamsModelImpl())
+        StreamPresenterImpl(StreamsModelImpl())
 
     override fun inflateViewBinding(
         inflater: LayoutInflater,

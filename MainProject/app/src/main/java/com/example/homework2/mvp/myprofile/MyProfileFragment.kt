@@ -65,7 +65,6 @@ class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBindin
 
     override fun initPresenter(): MyProfilePresenter {
         return MyProfilePresenterImpl(
-            view = this,
             model = MyProfileModelImpl(requireActivity().zulipApp().retrofitService)
         )
     }

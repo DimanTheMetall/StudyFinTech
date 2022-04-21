@@ -3,9 +3,8 @@ package com.example.homework2.mvp.myprofile
 import com.example.homework2.mvp.BasePresenterImpl
 
 class MyProfilePresenterImpl(
-    view: MyProfileView,
     model: MyProfileModel
-) : BasePresenterImpl<MyProfileView, MyProfileModel>(view, model), MyProfilePresenter {
+) : BasePresenterImpl<MyProfileView, MyProfileModel>(model), MyProfilePresenter {
 
     override fun onInit() {
         val disposable = model.loadMyProfile()
@@ -14,4 +13,3 @@ class MyProfilePresenterImpl(
     }
 
 }
-

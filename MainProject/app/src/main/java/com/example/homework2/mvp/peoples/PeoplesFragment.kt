@@ -57,7 +57,6 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
 
     override fun initPresenter(): PeoplesPresenter {
         return PeoplesPresenterImpl(
-            view = this,
             model = PeoplesModelImpl(requireActivity().zulipApp().retrofitService)
         )
     }

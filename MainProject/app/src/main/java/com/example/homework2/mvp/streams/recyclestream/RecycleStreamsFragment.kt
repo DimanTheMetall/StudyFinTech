@@ -67,7 +67,6 @@ class RecycleStreamsFragment :
 
     override fun initPresenter(): RecycleStreamPresenter =
         RecycleStreamPresenterImpl(
-            this,
             RecycleStreamsModelImpl(
                 ZulipDataBase.getInstance(requireContext()),
                 requireActivity().zulipApp().retrofitService

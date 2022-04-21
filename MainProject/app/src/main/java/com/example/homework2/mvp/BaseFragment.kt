@@ -27,6 +27,7 @@ abstract class BaseFragment<P : BasePresenter, VB : ViewBinding> : Fragment(), B
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         presenter = initPresenter()
+        presenter.onAttach(this)
         presenter.onInit()
     }
 

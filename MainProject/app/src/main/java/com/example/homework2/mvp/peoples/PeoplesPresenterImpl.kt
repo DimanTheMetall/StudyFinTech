@@ -3,9 +3,8 @@ package com.example.homework2.mvp.peoples
 import com.example.homework2.mvp.BasePresenterImpl
 
 class PeoplesPresenterImpl(
-    view: PeoplesView,
     model: PeoplesModel
-) : BasePresenterImpl<PeoplesView, PeoplesModel>(view, model), PeoplesPresenter {
+) : BasePresenterImpl<PeoplesView, PeoplesModel>(model), PeoplesPresenter {
 
     override fun onSearchedTextChanged(searchedText: String) {
         view.showProgress()

@@ -8,9 +8,8 @@ import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BasePresenterImpl
 
 class ChatPresenterImpl(
-    view: ChatView,
     model: ChatModel
-) : BasePresenterImpl<ChatView, ChatModel>(view, model), ChatPresenter {
+) : BasePresenterImpl<ChatView, ChatModel>(model), ChatPresenter {
 
     private var loadedIsLast = false
     private val currentMessageList = mutableListOf<SelectViewTypeClass.Chat.Message>()

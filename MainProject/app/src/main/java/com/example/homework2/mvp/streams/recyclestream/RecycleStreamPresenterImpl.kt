@@ -4,9 +4,8 @@ import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.mvp.BasePresenterImpl
 
 class RecycleStreamPresenterImpl(
-    view: RecycleStreamView,
     model: RecycleStreamModel
-) : BasePresenterImpl<RecycleStreamView, RecycleStreamModel>(view, model), RecycleStreamPresenter {
+) : BasePresenterImpl<RecycleStreamView, RecycleStreamModel>(model), RecycleStreamPresenter {
 
     override fun onSearchedTextChangedAllStreams(text: String) {
         view.showProgress()

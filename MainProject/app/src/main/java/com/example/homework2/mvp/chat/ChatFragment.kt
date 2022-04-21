@@ -58,7 +58,6 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     override fun initPresenter(): ChatPresenter {
         return ChatPresenterImpl(
-            view = this,
             model = ChatModelImpl(
                 database = ZulipDataBase.getInstance(context = requireContext()),
                 retrofitService = requireActivity().zulipApp().retrofitService

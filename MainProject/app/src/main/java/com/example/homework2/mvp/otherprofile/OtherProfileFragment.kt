@@ -68,7 +68,6 @@ class OtherProfileFragment : BaseFragment<OtherProfilePresenter, FragmentOtherPr
 
     override fun initPresenter(): OtherProfilePresenter {
         return OtherProfilePresenterImpl(
-            view = this,
             model = OtherProfileModelImpl(requireActivity().zulipApp().retrofitService)
         )
     }
