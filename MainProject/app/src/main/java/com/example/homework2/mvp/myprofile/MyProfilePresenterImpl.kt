@@ -11,5 +11,4 @@ class MyProfilePresenterImpl(
             .subscribe({ view.renderProfile(it) }, {})
         compositeDisposable.add(disposable)
     }
-
 }
