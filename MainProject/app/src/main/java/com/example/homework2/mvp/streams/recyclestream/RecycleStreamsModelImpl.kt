@@ -13,11 +13,12 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class RecycleStreamsModelImpl(
-    private val database: ZulipDataBase,
-    private val retrofitService: RetrofitService
+class RecycleStreamsModelImpl @Inject constructor(
+    val retrofitService: RetrofitService, val database: ZulipDataBase
 ) : BaseModelImpl(), RecycleStreamModel {
+
 
     override fun insertStreamsAndTopics(streamsList: List<Stream>, isSubscribed: Boolean) {
         val entityType = if (isSubscribed) StreamEntity.SUBSCRIBED else StreamEntity.ALL

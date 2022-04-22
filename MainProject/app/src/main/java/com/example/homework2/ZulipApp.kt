@@ -3,6 +3,8 @@ package com.example.homework2
 import android.app.Activity
 import android.app.Application
 import androidx.fragment.app.FragmentActivity
+import com.example.homework2.di.DaggerZulipComponent
+import com.example.homework2.di.ZulipComponent
 import com.example.homework2.retrofit.AuthInterceptor
 import com.example.homework2.retrofit.RetrofitService
 import okhttp3.OkHttpClient
@@ -11,13 +13,19 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 class ZulipApp : Application() {
 
+
     lateinit var retrofitService: RetrofitService
+
+    lateinit var zulipComponent: ZulipComponent
 
     override fun onCreate() {
         super.onCreate()
         configureRetrofit()
+        zulipComponent =
+            DaggerZulipComponent.factory().create(applicationContext)
     }
 
     private fun configureRetrofit() {
@@ -41,10 +49,10 @@ class ZulipApp : Application() {
     }
 }
 
-fun FragmentActivity.zulipApp(): ZulipApp{
+fun FragmentActivity.zulipApp(): ZulipApp {
     return this.application as ZulipApp
 }
 
-fun Activity.zulipApp(): ZulipApp{
+fun Activity.zulipApp(): ZulipApp {
     return this.application as ZulipApp
 }

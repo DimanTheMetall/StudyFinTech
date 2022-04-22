@@ -14,9 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.Constance
 import com.example.homework2.R
-import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
 import com.example.homework2.dataclasses.streamsandtopics.Stream
+import com.example.homework2.di.DaggerRecycleStreamsComponent
+import com.example.homework2.di.RecycleStreamsComponent
 import com.example.homework2.dpToPx
 import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.mvp.chat.ChatFragment
@@ -27,12 +28,16 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class RecycleStreamsFragment :
     BaseFragment<RecycleStreamPresenter, FragmentRecycleChannelsBinding>(), RecycleStreamView {
 
     private lateinit var recycleAdapter: StreamRecycleViewAdapter
     private lateinit var shimmer: ShimmerFrameLayout
+
+    @Inject
+    override lateinit var presenter: RecycleStreamPresenter
 
     private var isSubscribed = false
     private val compositeDisposable = CompositeDisposable()
@@ -41,6 +46,11 @@ class RecycleStreamsFragment :
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val recycleStreamsComponent: RecycleStreamsComponent =
+            DaggerRecycleStreamsComponent.factory()
+                .create(requireActivity().zulipApp().zulipComponent)
+        recycleStreamsComponent.inject(this)
+
         super.onCreateView(inflater, container, savedInstanceState)
         isSubscribed = getIsSubscribedBoolean()
         return binding.root
@@ -52,6 +62,7 @@ class RecycleStreamsFragment :
         initShimmer()
         initSearchTextListener()
         loadStreamsFromZulip()
+
     }
 
     private fun getIsSubscribedBoolean(): Boolean {
@@ -66,12 +77,8 @@ class RecycleStreamsFragment :
     }
 
     override fun initPresenter(): RecycleStreamPresenter =
-        RecycleStreamPresenterImpl(
-            RecycleStreamsModelImpl(
-                ZulipDataBase.getInstance(requireContext()),
-                requireActivity().zulipApp().retrofitService
-            )
-        )
+        presenter
+
 
     private fun initRecycleAdapter() {
         fun openFrag(fragment: Fragment, tag: String? = null) {
