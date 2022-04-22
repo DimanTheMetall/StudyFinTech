@@ -10,7 +10,7 @@ import com.example.homework2.MainActivity
 
 abstract class BaseFragment<P : BasePresenter, VB : ViewBinding> : Fragment(), BaseView {
 
-   open lateinit var presenter: P
+    open lateinit var presenter: P
 
     private var _binding: VB? = null
     val binding get() = _binding!!
@@ -26,7 +26,6 @@ abstract class BaseFragment<P : BasePresenter, VB : ViewBinding> : Fragment(), B
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter = initPresenter()
         presenter.onAttach(this)
         presenter.onInit()
     }
@@ -48,5 +47,4 @@ abstract class BaseFragment<P : BasePresenter, VB : ViewBinding> : Fragment(), B
 
     abstract fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
 
-    abstract fun initPresenter(): P
 }

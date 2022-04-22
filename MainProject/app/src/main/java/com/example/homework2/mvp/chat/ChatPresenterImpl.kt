@@ -6,8 +6,9 @@ import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BasePresenterImpl
+import javax.inject.Inject
 
-class ChatPresenterImpl(
+class ChatPresenterImpl @Inject constructor(
     model: ChatModel
 ) : BasePresenterImpl<ChatView, ChatModel>(model), ChatPresenter {
 

@@ -1,4 +1,4 @@
-package com.example.homework2.di
+package com.example.homework2.di.zulipcomponent
 
 import com.example.homework2.Constance
 import com.example.homework2.retrofit.AuthInterceptor

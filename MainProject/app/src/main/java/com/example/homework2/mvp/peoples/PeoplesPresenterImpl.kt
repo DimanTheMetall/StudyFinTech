@@ -1,8 +1,9 @@
 package com.example.homework2.mvp.peoples
 
 import com.example.homework2.mvp.BasePresenterImpl
+import javax.inject.Inject
 
-class PeoplesPresenterImpl(
+class PeoplesPresenterImpl @Inject constructor(
     model: PeoplesModel
 ) : BasePresenterImpl<PeoplesView, PeoplesModel>(model), PeoplesPresenter {
 

@@ -9,9 +9,10 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class PeoplesModelImpl(
-    private val retrofitService: RetrofitService
+class PeoplesModelImpl @Inject constructor(
+    val retrofitService: RetrofitService
 ) : BaseModelImpl(), PeoplesModel {
 
     override fun loadAllUsersWithOutPresence(): Single<List<Member>> {

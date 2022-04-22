@@ -6,7 +6,6 @@ class StreamPresenterImpl(
     model: StreamsModel
 ) : BasePresenterImpl<StreamsView, StreamsModel>(model), StreamsPresenter {
 
-
     override fun onInit() {
     }
 }

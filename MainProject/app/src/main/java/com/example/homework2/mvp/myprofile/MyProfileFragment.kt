@@ -1,7 +1,9 @@
 package com.example.homework2.mvp.myprofile
 
 import android.graphics.Color
+import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -11,11 +13,25 @@ import com.example.homework2.Constance
 import com.example.homework2.R
 import com.example.homework2.databinding.FragmentProfileBinding
 import com.example.homework2.dataclasses.streamsandtopics.Member
+import com.example.homework2.di.myprofilecomponent.DaggerMyProfileComponent
+import com.example.homework2.di.myprofilecomponent.MyProfileComponent
 import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.zulipApp
 
+import javax.inject.Inject
+
 class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBinding>(),
     MyProfileView {
+
+    @Inject
+    override lateinit var presenter: MyProfilePresenter
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val myProfileComponent: MyProfileComponent =
+            DaggerMyProfileComponent.factory().create(requireActivity().zulipApp().zulipComponent)
+        myProfileComponent.inject(this)
+        super.onViewCreated(view, savedInstanceState)
+    }
 
     override fun renderProfile(member: Member) {
 
@@ -63,9 +79,4 @@ class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBindin
         return FragmentProfileBinding.inflate(inflater, container, false)
     }
 
-    override fun initPresenter(): MyProfilePresenter {
-        return MyProfilePresenterImpl(
-            model = MyProfileModelImpl(requireActivity().zulipApp().retrofitService)
-        )
-    }
 }

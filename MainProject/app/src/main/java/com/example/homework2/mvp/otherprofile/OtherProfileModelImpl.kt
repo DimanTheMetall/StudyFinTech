@@ -7,8 +7,9 @@ import com.example.homework2.retrofit.RetrofitService
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class OtherProfileModelImpl(
+class OtherProfileModelImpl @Inject constructor(
     private val retrofitService: RetrofitService
 ) : BaseModelImpl(), OtherProfileModel {
 

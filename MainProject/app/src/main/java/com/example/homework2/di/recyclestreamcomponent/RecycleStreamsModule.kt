@@ -1,4 +1,4 @@
-package com.example.homework2.di
+package com.example.homework2.di.recyclestreamcomponent
 
 import com.example.homework2.mvp.streams.recyclestream.RecycleStreamModel
 import com.example.homework2.mvp.streams.recyclestream.RecycleStreamPresenter

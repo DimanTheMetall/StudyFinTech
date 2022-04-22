@@ -11,14 +11,16 @@ import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.*
 import com.example.homework2.customviews.CustomBottomSheetDialog
-import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.databinding.FragmentChatBinding
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
+import com.example.homework2.di.chatcomponent.ChatComponent
+import com.example.homework2.di.chatcomponent.DaggerChatComponent
 import com.example.homework2.mvp.BaseFragment
 import com.facebook.shimmer.ShimmerFrameLayout
 import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
 
 class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatView {
 
@@ -27,10 +29,24 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private lateinit var stream: Stream
     private lateinit var shimmer: ShimmerFrameLayout
 
+    @Inject
+    override lateinit var presenter: ChatPresenter
+
     private var messageId = -1L
     private val compositeDisposable = CompositeDisposable()
 
     private var bottomSheetDialog: CustomBottomSheetDialog? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val chatComponent: ChatComponent =
+            DaggerChatComponent.factory().create(requireActivity().zulipApp().zulipComponent)
+        chatComponent.inject(this)
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -54,15 +70,6 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         container: ViewGroup?
     ): FragmentChatBinding {
         return FragmentChatBinding.inflate(inflater, container, false)
-    }
-
-    override fun initPresenter(): ChatPresenter {
-        return ChatPresenterImpl(
-            model = ChatModelImpl(
-                database = ZulipDataBase.getInstance(context = requireContext()),
-                retrofitService = requireActivity().zulipApp().retrofitService
-            )
-        )
     }
 
     override fun configureActionBar() {

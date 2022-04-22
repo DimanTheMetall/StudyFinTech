@@ -33,13 +33,19 @@ class StreamFragment :
     private lateinit var adapter: PagerChannelsAdapter
     private lateinit var viewPager: ViewPager2
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        presenter = StreamPresenterImpl(StreamsModelImpl())
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewPager()
     }
-
-    override fun initPresenter(): StreamsPresenter =
-        StreamPresenterImpl(StreamsModelImpl())
 
     override fun inflateViewBinding(
         inflater: LayoutInflater,

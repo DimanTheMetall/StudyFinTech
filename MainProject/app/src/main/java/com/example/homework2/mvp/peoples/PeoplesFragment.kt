@@ -12,6 +12,8 @@ import com.example.homework2.Constance
 import com.example.homework2.R
 import com.example.homework2.databinding.FragmentPeopleBinding
 import com.example.homework2.dataclasses.streamsandtopics.Member
+import com.example.homework2.di.peoplescomponent.DaggerPeoplesComponent
+import com.example.homework2.di.peoplescomponent.PeoplesComponent
 import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.mvp.otherprofile.OtherProfileFragment
 import com.example.homework2.zulipApp
@@ -20,6 +22,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(), PeoplesView {
 
@@ -27,6 +30,19 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
     private val recycleAdapter = PeopleAdapter { member -> openProfileFrag(member) }
     private lateinit var shimmer: ShimmerFrameLayout
 
+    @Inject
+    override lateinit var presenter: PeoplesPresenter
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val peoplesComponent: PeoplesComponent =
+            DaggerPeoplesComponent.factory().create(requireActivity().zulipApp().zulipComponent)
+        peoplesComponent.inject(this)
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         configureRecycleAdapter()
@@ -53,12 +69,6 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
         container: ViewGroup?
     ): FragmentPeopleBinding {
         return FragmentPeopleBinding.inflate(inflater, container, false)
-    }
-
-    override fun initPresenter(): PeoplesPresenter {
-        return PeoplesPresenterImpl(
-            model = PeoplesModelImpl(requireActivity().zulipApp().retrofitService)
-        )
     }
 
     private fun configureRecycleAdapter() {

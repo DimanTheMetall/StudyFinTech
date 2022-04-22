@@ -14,11 +14,28 @@ import com.example.homework2.R
 import com.example.homework2.databinding.FragmentOtherProfileBinding
 import com.example.homework2.dataclasses.chatdataclasses.Presence
 import com.example.homework2.dataclasses.streamsandtopics.Member
+import com.example.homework2.di.otherprofilecomponent.DaggerOtherProfileComponent
+import com.example.homework2.di.otherprofilecomponent.OtherProfileComponent
 import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.zulipApp
+import javax.inject.Inject
 
 class OtherProfileFragment : BaseFragment<OtherProfilePresenter, FragmentOtherProfileBinding>(),
     OtherProfileView {
+
+    @Inject
+    override lateinit var presenter: OtherProfilePresenter
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val otherProfileComponent: OtherProfileComponent = DaggerOtherProfileComponent.factory()
+            .create(requireActivity().zulipApp().zulipComponent)
+        otherProfileComponent.inject(this)
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,12 +81,6 @@ class OtherProfileFragment : BaseFragment<OtherProfilePresenter, FragmentOtherPr
         container: ViewGroup?
     ): FragmentOtherProfileBinding {
         return FragmentOtherProfileBinding.inflate(inflater, container, false)
-    }
-
-    override fun initPresenter(): OtherProfilePresenter {
-        return OtherProfilePresenterImpl(
-            model = OtherProfileModelImpl(requireActivity().zulipApp().retrofitService)
-        )
     }
 
     companion object {

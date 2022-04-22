@@ -1,4 +1,4 @@
-package com.example.homework2.di
+package com.example.homework2.di.zulipcomponent
 
 import android.content.Context
 import androidx.room.Room

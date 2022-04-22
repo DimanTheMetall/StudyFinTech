@@ -16,8 +16,8 @@ import com.example.homework2.Constance
 import com.example.homework2.R
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
 import com.example.homework2.dataclasses.streamsandtopics.Stream
-import com.example.homework2.di.DaggerRecycleStreamsComponent
-import com.example.homework2.di.RecycleStreamsComponent
+import com.example.homework2.di.recyclestreamcomponent.DaggerRecycleStreamsComponent
+import com.example.homework2.di.recyclestreamcomponent.RecycleStreamsComponent
 import com.example.homework2.dpToPx
 import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.mvp.chat.ChatFragment
@@ -75,10 +75,6 @@ class RecycleStreamsFragment :
     ): FragmentRecycleChannelsBinding {
         return FragmentRecycleChannelsBinding.inflate(layoutInflater, container, false)
     }
-
-    override fun initPresenter(): RecycleStreamPresenter =
-        presenter
-
 
     private fun initRecycleAdapter() {
         fun openFrag(fragment: Fragment, tag: String? = null) {

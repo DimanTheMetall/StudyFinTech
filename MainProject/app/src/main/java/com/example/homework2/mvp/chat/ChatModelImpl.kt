@@ -14,8 +14,9 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class ChatModelImpl(
+class ChatModelImpl @Inject constructor(
     private val database: ZulipDataBase,
     private val retrofitService: RetrofitService
 ) : BaseModelImpl(), ChatModel {
