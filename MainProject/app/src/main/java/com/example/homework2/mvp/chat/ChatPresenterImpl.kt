@@ -13,6 +13,7 @@ class ChatPresenterImpl @Inject constructor(
 ) : BasePresenterImpl<ChatView, ChatModel>(model), ChatPresenter {
 
     private var loadedIsLast = false
+    private var loadedIsFirst = false
     private val currentMessageList = mutableListOf<SelectViewTypeClass.Chat.Message>()
 
     private fun checkAndDelete(stream: Stream, topic: Topic) {
@@ -66,7 +67,7 @@ class ChatPresenterImpl @Inject constructor(
         }
     }
 
-    override fun onMessagesLoadRequested(stream: Stream, topic: Topic) {
+    override fun onMessagesNextPageLoadRequested(stream: Stream, topic: Topic) {
         if (!loadedIsLast) {
             val lastMessageId =
                 if (currentMessageList.isNullOrEmpty()) 1L else currentMessageList.last().id
@@ -74,9 +75,9 @@ class ChatPresenterImpl @Inject constructor(
             @Suppress("UNCHECKED_CAST") val disposable = model.loadTopicMessages(
                 topic = topic,
                 stream = stream,
-                lastMessageId = "$lastMessageId",
+                anchor = "$lastMessageId",
                 numAfter = Constance.MESSAGES_COUNT_PAGINATION,
-                0
+                numBefore = 0
             )
                 .subscribe(
                     { json ->
@@ -96,6 +97,29 @@ class ChatPresenterImpl @Inject constructor(
                     {
                         view.showError(it)
                     })
+
+            compositeDisposable.add(disposable)
+        }
+    }
+
+    override fun onMessagePreviousPageLoadRequest(stream: Stream, topic: Topic) {
+        if (!loadedIsFirst) {
+
+            view.showProgress()
+            val disposable = model.loadTopicMessages(
+                topic = topic,
+                stream = stream,
+                anchor = currentMessageList.first().id.toString(),
+                numAfter = 0,
+                numBefore = Constance.MESSAGES_COUNT_PAGINATION
+            )
+                .subscribe({ json ->
+                    val newList = json.messages
+                        .filterNot { it.id == currentMessageList.first().id }.toMutableList()
+                    newList.addAll(currentMessageList)
+                    loadedIsFirst = json.foundOldest
+                    view.showMessages(newList)
+                }, {})
 
             compositeDisposable.add(disposable)
         }
@@ -127,7 +151,7 @@ class ChatPresenterImpl @Inject constructor(
                     resultMessages.add(message)
                 }
                 if (resultMessages.isNullOrEmpty()) {
-                    onMessagesLoadRequested(stream = stream, topic = topic)
+                    onMessagesNextPageLoadRequested(stream = stream, topic = topic)
                 } else {
                     currentMessageList.addAll(resultMessages)
                     view.showMessages(currentMessageList)

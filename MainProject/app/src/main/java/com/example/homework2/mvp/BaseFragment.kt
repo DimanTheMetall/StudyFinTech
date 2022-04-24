@@ -10,7 +10,7 @@ import com.example.homework2.MainActivity
 
 abstract class BaseFragment<P : BasePresenter, VB : ViewBinding> : Fragment(), BaseView {
 
-    open lateinit var presenter: P
+    abstract var presenter: P
 
     private var _binding: VB? = null
     val binding get() = _binding!!

@@ -13,6 +13,9 @@ class JsonMessages(
     @SerializedName("found_newest")
     val foundNewest: Boolean,
 
+    @SerializedName("found_oldest")
+    val foundOldest: Boolean,
+
     @SerializedName("messages")
     val messages: List<SelectViewTypeClass.Chat.Message>,
 

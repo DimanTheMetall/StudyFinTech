@@ -26,16 +26,25 @@ fun Context.dpToPx(dp: Int): Int {
     return this.dpToPx(dp.toFloat()).toInt()
 }
 
-fun RecyclerView.addOnPageScrollListener(onScrollToNewPage: () -> Unit) {
-    var position = -1
+fun RecyclerView.addOnPageScrollListener(
+    onScrollToNewPage: () -> Unit,
+    onScrollPreviousPage: () -> Unit
+) {
+    var lastPosition = -1
+    var firstPosition = -1
     when (val layoutManager = layoutManager) {
         is LinearLayoutManager -> {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    val visiblePosition = layoutManager.findLastVisibleItemPosition()
-                    if (visiblePosition == adapter?.getLastPosition() && visiblePosition != position) {
+                    val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
+                    val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+                    if (lastVisiblePosition == adapter?.getLastPosition() && lastVisiblePosition != lastPosition) {
                         onScrollToNewPage.invoke()
-                        position = visiblePosition
+                        lastPosition = lastVisiblePosition
+                    }
+                    if (firstVisiblePosition == Constance.MESSAGE_COUNT_FOR_REQUEST_LOAD && firstVisiblePosition != firstPosition) {
+                        onScrollPreviousPage.invoke()
+                        firstPosition = firstVisiblePosition
                     }
                 }
             })

@@ -32,7 +32,9 @@ interface ChatPresenter : BasePresenter {
         isSelected: Boolean
     )
 
-    fun onMessagesLoadRequested(stream: Stream, topic: Topic)
+    fun onMessagesNextPageLoadRequested(stream: Stream, topic: Topic)
+
+    fun onMessagePreviousPageLoadRequest(stream: Stream, topic: Topic)
 
     fun onSendMessageRequest(sentText: String, topic: Topic, stream: Stream)
 
@@ -55,7 +57,7 @@ interface ChatModel : BaseModel {
     fun loadTopicMessages(
         topic: Topic,
         stream: Stream,
-        lastMessageId: String,
+        anchor: String,
         numAfter: Int,
         numBefore: Int
     ): Single<JsonMessages>

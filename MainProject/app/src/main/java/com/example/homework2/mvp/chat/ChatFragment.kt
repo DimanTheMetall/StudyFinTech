@@ -174,9 +174,11 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         }
 
         binding.rcView.apply {
-            addOnPageScrollListener {
-                presenter.onMessagesLoadRequested(stream = stream, topic = topic)
-            }
+            addOnPageScrollListener({
+                presenter.onMessagesNextPageLoadRequested(stream = stream, topic = topic)
+            }, {
+                presenter.onMessagePreviousPageLoadRequest(stream = stream, topic = topic)
+            })
             addItemDecoration(itemDivider)
         }
     }

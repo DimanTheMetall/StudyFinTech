@@ -76,7 +76,7 @@ class ChatModelImpl @Inject constructor(
     override fun loadTopicMessages(
         topic: Topic,
         stream: Stream,
-        lastMessageId: String,
+        anchor: String,
         numAfter: Int,
         numBefore: Int
     ): Single<JsonMessages> {
@@ -87,7 +87,7 @@ class ChatModelImpl @Inject constructor(
                     Filter(operator = Constance.TOPIC, operand = topic.name),
                 )
             ).toJson(),
-            anchor = lastMessageId,
+            anchor = anchor,
             numBefore = numBefore,
             numAfter = numAfter,
             false
