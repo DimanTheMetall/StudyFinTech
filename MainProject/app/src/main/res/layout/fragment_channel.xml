@@ -25,12 +25,20 @@
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/search_streams_edit_text"
-                    android:layout_width="350dp"
+                    android:layout_width="300dp"
                     android:layout_height="60dp"
                     android:hint="@string/search"
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
                     android:textColorHint="@color/white" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/cancel_image"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@color/unselected"
+                    android:src="@drawable/ic_cancel"
+                    android:visibility="invisible" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/search_streams_image_view"

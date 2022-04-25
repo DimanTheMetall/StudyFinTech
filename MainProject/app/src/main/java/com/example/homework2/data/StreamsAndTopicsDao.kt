@@ -58,14 +58,16 @@ interface StreamsAndTopicsDao {
 
     @Query(
         "SELECT * FROM streams " +
-                "INNER JOIN topics " +
-                "ON streams.subscribedOrAll = 'subscribed'"
+                "LEFT JOIN topics " +
+                "ON streams.subscribedOrAll = 'subscribed' " +
+                "WHERE streams.id = topics.stream_id"
     )
     fun getSubscribedStreamsAndTopic(): Single<Map<StreamEntity, List<TopicEntity>>>
 
     @Query(
         "SELECT * FROM streams " +
-                "INNER JOIN topics "
+                "LEFT JOIN topics " +
+                "WHERE streams.id = topics.stream_id"
     )
     fun getAllStreamsAndTopic(): Single<Map<StreamEntity, List<TopicEntity>>>
 

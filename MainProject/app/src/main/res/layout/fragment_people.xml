@@ -21,7 +21,7 @@
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/search_users"
-                android:layout_width="350dp"
+                android:layout_width="300dp"
                 android:layout_height="60dp"
                 android:background="@color/unselected"
                 android:hint="@string/search"
@@ -34,6 +34,17 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/cancel_image"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_cancel"
+                app:layout_constraintTop_toTopOf="@id/search_image"
+                app:layout_constraintBottom_toBottomOf="@id/search_image"
+                app:layout_constraintEnd_toStartOf="@id/search_image"
+                app:layout_constraintStart_toEndOf="@id/search_users"
+                android:visibility="gone" />
+
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/search_image"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -41,7 +52,7 @@
                 android:src="@drawable/ic_search"
                 app:layout_constraintBottom_toBottomOf="@id/search_users"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/search_users"
+                app:layout_constraintStart_toEndOf="@id/cancel_image"
                 app:layout_constraintTop_toTopOf="@id/search_users" />
 
             <androidx.recyclerview.widget.RecyclerView

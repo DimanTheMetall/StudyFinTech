@@ -62,7 +62,7 @@ class RecycleStreamsFragment :
         initShimmer()
         initSearchTextListener()
         loadStreamsFromZulip()
-
+        initCancelCliclListener()
     }
 
     private fun getIsSubscribedBoolean(): Boolean {
@@ -113,13 +113,21 @@ class RecycleStreamsFragment :
         shimmer = (parentFragment as StreamFragment).binding.streamsShimmer
     }
 
+    private fun initCancelCliclListener() {
+        (parentFragment as StreamFragment).binding.cancelImage.setOnClickListener {
+            loadStreamsFromZulip()
+            (parentFragment as StreamFragment).binding.searchStreamsEditText.setText("")
+
+        }
+    }
+
     private fun initSearchTextListener() {
 
         val textSubject = PublishSubject.create<String>()
 
         val disposable = textSubject
             .debounce(1, TimeUnit.SECONDS)
-            .filter { it.isNotEmpty() }
+            .filter { it.isNotBlank() }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 when (isSubscribed) {
@@ -131,10 +139,15 @@ class RecycleStreamsFragment :
                     }
                 }
             }
+
         compositeDisposable.add(disposable)
+
         (parentFragment as StreamFragment).binding.searchStreamsEditText.addTextChangedListener { text: Editable? ->
             if (text.toString().isNotBlank()) {
+                (parentFragment as StreamFragment).binding.cancelImage.visibility = View.VISIBLE
                 textSubject.onNext(text.toString())
+            } else {
+                (parentFragment as StreamFragment).binding.cancelImage.visibility = View.INVISIBLE
             }
         }
     }

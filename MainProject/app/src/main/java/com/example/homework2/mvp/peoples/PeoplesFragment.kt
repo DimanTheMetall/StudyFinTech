@@ -49,6 +49,7 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
         initSearchedTextListener()
         initShimmer()
         super.onViewCreated(view, savedInstanceState)
+        initCancelClickListener()
     }
 
     override fun onDestroyView() {
@@ -79,6 +80,13 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
         )
     }
 
+    private fun initCancelClickListener() {
+        binding.cancelImage.setOnClickListener {
+            presenter.onInit()
+            binding.searchUsers.setText("")
+        }
+    }
+
     private fun initSearchedTextListener() {
         val subject = PublishSubject.create<String>()
         val disposable = subject
@@ -91,6 +99,12 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
 
         binding.searchUsers.addTextChangedListener { text ->
             subject.onNext(text.toString())
+
+            if (!text.isNullOrEmpty()) {
+                binding.cancelImage.visibility = View.VISIBLE
+            } else {
+                binding.cancelImage.visibility = View.GONE
+            }
         }
     }
 
