@@ -14,7 +14,7 @@ class ChatPresenterImpl @Inject constructor(
 
     private var loadedIsLast = false
     private var loadedIsFirst = false
-    private val currentMessageList = mutableListOf<SelectViewTypeClass.Chat.Message>()
+    private var currentMessageList = mutableListOf<SelectViewTypeClass.Chat.Message>()
 
     private fun checkAndDelete(stream: Stream, topic: Topic) {
         if (currentMessageList.size > Constance.LIMIT_MESSAGE_COUNT_FOR_TOPIC) {
@@ -104,7 +104,6 @@ class ChatPresenterImpl @Inject constructor(
 
     override fun onMessagePreviousPageLoadRequest(stream: Stream, topic: Topic) {
         if (!loadedIsFirst) {
-
             view.showProgress()
             val disposable = model.loadTopicMessages(
                 topic = topic,
@@ -117,8 +116,8 @@ class ChatPresenterImpl @Inject constructor(
                     val newList = json.messages
                         .filterNot { it.id == currentMessageList.first().id }.toMutableList()
                     newList.addAll(currentMessageList)
-                    loadedIsFirst = json.foundOldest
-                    view.showMessages(newList)
+                    currentMessageList = newList
+                    view.showMessages(currentMessageList)
                 }, {})
 
             compositeDisposable.add(disposable)

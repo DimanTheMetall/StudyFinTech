@@ -12,9 +12,7 @@ import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
         ForeignKey(
             entity = TopicEntity::class,
             parentColumns = ["stream_id", "name"],
-            childColumns = ["stream_id", "subject"],
-            onDelete = ForeignKey.CASCADE,
-            onUpdate = ForeignKey.CASCADE
+            childColumns = ["stream_id", "subject"]
         )
     ]
 )
@@ -56,8 +54,6 @@ data class MessageEntity(
     @ColumnInfo(name = "type")
     val type: String,
 
-//    @Embedded
-//    val reactions: List<ReactionEntity?>
 ) {
     fun toMessage(): SelectViewTypeClass.Chat.Message = SelectViewTypeClass.Chat.Message(
         id = id,
@@ -89,12 +85,7 @@ data class MessageEntity(
             subject = message.subject,
             timestamp = message.timestamp,
             type = message.type,
-//            reactions = message.reactions.map {
-//                ReactionEntity.toEntity(
-//                    reaction = it,
-//                    messageId = message.id
-//                )
-//            }
-        )
+
+            )
     }
 }

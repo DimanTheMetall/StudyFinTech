@@ -13,6 +13,7 @@ import com.example.homework2.dataclasses.chatdataclasses.Reaction
         parentColumns = ["id"],
         childColumns = ["message_id"],
         onUpdate = ForeignKey.CASCADE,
+        onDelete = ForeignKey.CASCADE
     )]
 )
 data class ReactionEntity(
