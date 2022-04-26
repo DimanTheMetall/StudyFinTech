@@ -7,7 +7,6 @@ import com.example.homework2.mvp.chat.ChatPresenterImpl
 import dagger.Module
 import dagger.Provides
 
-
 @Module
 class ChatModule {
 

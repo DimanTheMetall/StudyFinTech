@@ -18,7 +18,6 @@ interface PeoplesComponent {
     interface Factory {
         fun create(zulipComponent: ZulipComponent): PeoplesComponent
     }
-
 }
 
 @Scope

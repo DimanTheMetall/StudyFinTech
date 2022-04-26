@@ -7,7 +7,6 @@ import com.example.homework2.mvp.otherprofile.OtherProfilePresenterImpl
 import dagger.Module
 import dagger.Provides
 
-
 @Module
 class OtherProfileModule {
 

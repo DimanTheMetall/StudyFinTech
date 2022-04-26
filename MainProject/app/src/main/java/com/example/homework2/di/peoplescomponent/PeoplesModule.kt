@@ -15,7 +15,6 @@ class PeoplesModule {
         return peoplesModelImpl
     }
 
-
     @Provides
     fun providesPresenterImpl(model: PeoplesModel): PeoplesPresenter {
         return PeoplesPresenterImpl(model)

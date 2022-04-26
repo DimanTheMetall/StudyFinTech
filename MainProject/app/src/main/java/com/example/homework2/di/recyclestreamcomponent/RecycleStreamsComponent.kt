@@ -5,7 +5,6 @@ import com.example.homework2.mvp.streams.recyclestream.RecycleStreamsFragment
 import dagger.Component
 import javax.inject.Scope
 
-
 @RecycleStreamsScope
 @Component(
     modules = [RecycleStreamsModule::class],
@@ -20,7 +19,6 @@ interface RecycleStreamsComponent {
 
         fun create(zulipComponent: ZulipComponent): RecycleStreamsComponent
     }
-
 }
 
 @Scope

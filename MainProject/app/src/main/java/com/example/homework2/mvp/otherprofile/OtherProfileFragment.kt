@@ -86,11 +86,11 @@ class OtherProfileFragment : BaseFragment<OtherProfilePresenter, FragmentOtherPr
     companion object {
 
         fun newInstance(member: Member): OtherProfileFragment {
-            val fragment = OtherProfileFragment()
             val argument = Bundle()
             argument.putParcelable(Constance.PROFILE_KEY, member)
-            fragment.arguments = argument
-            return fragment
+            return OtherProfileFragment().apply {
+                arguments = argument
+            }
         }
     }
 }

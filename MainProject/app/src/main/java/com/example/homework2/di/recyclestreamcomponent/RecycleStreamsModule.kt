@@ -21,5 +21,4 @@ class RecycleStreamsModule {
     fun providesPresenterImpl(model: RecycleStreamModel): RecycleStreamPresenter {
         return RecycleStreamPresenterImpl(model = model)
     }
-
 }

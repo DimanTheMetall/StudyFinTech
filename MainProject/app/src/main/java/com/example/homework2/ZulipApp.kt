@@ -1,11 +1,9 @@
 package com.example.homework2
 
-import android.app.Activity
 import android.app.Application
 import androidx.fragment.app.FragmentActivity
 import com.example.homework2.di.zulipcomponent.DaggerZulipComponent
 import com.example.homework2.di.zulipcomponent.ZulipComponent
-
 
 class ZulipApp : Application() {
 
@@ -19,9 +17,5 @@ class ZulipApp : Application() {
 }
 
 fun FragmentActivity.zulipApp(): ZulipApp {
-    return this.application as ZulipApp
-}
-
-fun Activity.zulipApp(): ZulipApp {
     return this.application as ZulipApp
 }

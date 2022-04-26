@@ -18,7 +18,6 @@ interface StreamsAndTopicsDao {
     fun insertStreams(streamsList: List<Stream>, type: String) {
         streamsList.forEach { stream ->
             val streamEntity = StreamEntity.toEntity(stream = stream, type = type)
-
             val cashedStream = getStreamById(streamEntity.id.toLong())
 
             when {
@@ -37,7 +36,6 @@ interface StreamsAndTopicsDao {
                 )
             }).subscribe({}, { Log.e(Constance.LogTag.TOPIC_AND_STREAM, "$it") })
         }
-
     }
 
     fun insertStreamsAsynh(streamsList: List<Stream>, type: String): Completable {

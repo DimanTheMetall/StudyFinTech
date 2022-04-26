@@ -207,12 +207,12 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         const val TAG = "ChatFragment"
 
         fun newInstance(topic: Topic, stream: Stream): ChatFragment {
-            val fragment = ChatFragment()
             val argument = Bundle()
             argument.putParcelable(Constance.TOPIC_KEY, topic)
             argument.putParcelable(Constance.STREAM_KEY, stream)
-            fragment.arguments = argument
-            return fragment
+            return ChatFragment().apply {
+                arguments = argument
+            }
         }
     }
 }
