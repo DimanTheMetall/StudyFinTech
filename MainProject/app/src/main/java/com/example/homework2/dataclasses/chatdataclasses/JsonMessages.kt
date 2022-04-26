@@ -4,12 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 class JsonMessages(
 
-    @SerializedName("anchor")
-    val anchor: Long,
-
-    @SerializedName("found_anchor")
-    val foundAnchor: Boolean,
-
     @SerializedName("found_newest")
     val foundNewest: Boolean,
 
@@ -17,10 +11,7 @@ class JsonMessages(
     val foundOldest: Boolean,
 
     @SerializedName("messages")
-    val messages: List<SelectViewTypeClass.Chat.Message>,
-
-    @SerializedName("msg")
-    val msg: String,
+    val messages: List<SelectViewTypeClass.Message>,
 
     @SerializedName("result")
     val result: String

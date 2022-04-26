@@ -31,8 +31,8 @@ class MessageAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (differ.currentList[position]) {
-            is SelectViewTypeClass.Chat.Date -> MessageType.DATE.ordinal
-            is SelectViewTypeClass.Chat.Message -> MessageType.MESSAGE.ordinal
+            is SelectViewTypeClass.Date -> MessageType.DATE.ordinal
+            is SelectViewTypeClass.Message -> MessageType.MESSAGE.ordinal
         }
     }
 
@@ -47,7 +47,7 @@ class MessageAdapter(
         RecyclerView.ViewHolder(customViewGroup) {
         private val binding = CustomViewGroupLayoutBinding.bind(customViewGroup)
 
-        fun bind(item: SelectViewTypeClass.Chat.Message) = with(binding) {
+        fun bind(item: SelectViewTypeClass.Message) = with(binding) {
             messageTextView.text = item.content
             messageTitleTextView.text = item.senderFullName
 
@@ -141,8 +141,8 @@ class MessageAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
         when (val inform = differ.currentList[position]) {
-            is SelectViewTypeClass.Chat.Date -> (holder as DateHolder).bind(inform.time)
-            is SelectViewTypeClass.Chat.Message -> {
+            is SelectViewTypeClass.Date -> (holder as DateHolder).bind(inform.time)
+            is SelectViewTypeClass.Message -> {
                 (holder as MessageHolder).bind(inform)
             }
         }
@@ -153,14 +153,14 @@ class MessageAdapter(
     }
 
 
-    fun replaceMessageList(newList: List<SelectViewTypeClass.Chat.Message>) {
+    fun replaceMessageList(newList: List<SelectViewTypeClass.Message>) {
         val format = DateTimeFormat.forPattern("d MMMM, yyyy")
-        val listWithTime: MutableList<SelectViewTypeClass.Chat> = mutableListOf()
+        val listWithTime: MutableList<SelectViewTypeClass> = mutableListOf()
 
         for (i in newList.indices) {
             if (i % 10 == 0) {
                 val currentDate = Instant.ofEpochSecond(newList[i].timestamp).toDateTime()
-                val dateView = SelectViewTypeClass.Chat.Date(currentDate.toString(format))
+                val dateView = SelectViewTypeClass.Date(currentDate.toString(format))
                 listWithTime.add(dateView)
                 listWithTime.add(newList[i])
             } else {

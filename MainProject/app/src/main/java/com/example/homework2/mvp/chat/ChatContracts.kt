@@ -19,7 +19,7 @@ interface ChatView : BaseView {
 
     fun showProgress()
 
-    fun showMessages(messages: List<SelectViewTypeClass.Chat.Message>)
+    fun showMessages(messages: List<SelectViewTypeClass.Message>)
 
 }
 
@@ -46,7 +46,7 @@ interface ChatPresenter : BasePresenter {
 
 interface ChatModel : BaseModel {
 
-    fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Chat.Message>
+    fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message>
 
     fun deleteEmoji(messageId: Long, emojiName: String, reactionType: String): Single<JsonResponse>
 
@@ -65,9 +65,9 @@ interface ChatModel : BaseModel {
     fun loadLastMessage(
         topic: Topic,
         stream: Stream
-    ): Single<List<SelectViewTypeClass.Chat.Message>>
+    ): Single<List<SelectViewTypeClass.Message>>
 
-    fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Chat.Message>)
+    fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>)
 
     fun deleteOldestMessagesWhereIdLess(messageIdToSave: Long, stream: Stream, topic: Topic)
 

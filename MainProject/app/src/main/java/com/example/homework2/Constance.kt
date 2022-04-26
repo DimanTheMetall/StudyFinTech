@@ -15,6 +15,8 @@ object Constance {
     const val MESSAGES_COUNT_PAGINATION = 20
     const val MESSAGE_COUNT_FOR_REQUEST_LOAD = 5
     const val LIMIT_MESSAGE_COUNT_FOR_TOPIC = 50
+    const val DOWNLOAD_MESSAGES_PERIOD = 10L
+    const val INIT_REFRESHER_DELAY = 3L
 
     object Status {
         const val ACTIVE = "active"

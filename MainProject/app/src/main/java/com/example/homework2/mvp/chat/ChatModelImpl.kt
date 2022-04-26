@@ -23,7 +23,7 @@ class ChatModelImpl @Inject constructor(
 
     //HTTP operation
 
-    override fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Chat.Message> {
+    override fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message> {
         return retrofitService.getOneMessage(messageId = messageId, false)
             .subscribeOn(Schedulers.io())
             .map { it.message }
@@ -99,7 +99,7 @@ class ChatModelImpl @Inject constructor(
     override fun loadLastMessage(
         topic: Topic,
         stream: Stream
-    ): Single<List<SelectViewTypeClass.Chat.Message>> {
+    ): Single<List<SelectViewTypeClass.Message>> {
         return retrofitService.getMessages(
             narrow = Narrow(
                 listOf(
@@ -120,7 +120,7 @@ class ChatModelImpl @Inject constructor(
 
     //Database operation
 
-    override fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Chat.Message>) {
+    override fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>) {
         val messagesDisposable = database.getMessagesAndReactionDao()
             .insertMessagesFromTopic(messages.map { MessageEntity.toEntity(it) })
             .subscribeOn(Schedulers.io())

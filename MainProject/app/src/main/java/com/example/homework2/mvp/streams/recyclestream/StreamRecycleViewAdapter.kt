@@ -45,7 +45,6 @@ class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
             openStreamTopics(false)
             setTopicList(stream = stream, topicList = stream.topicList, binding = binding)
 
-
             binding.iconOpenStreams.setOnClickListener {
                 when (binding.topicList.visibility) {
                     View.VISIBLE -> {

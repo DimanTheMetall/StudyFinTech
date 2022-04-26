@@ -55,7 +55,7 @@ data class MessageEntity(
     val type: String,
 
 ) {
-    fun toMessage(): SelectViewTypeClass.Chat.Message = SelectViewTypeClass.Chat.Message(
+    fun toMessage(): SelectViewTypeClass.Message = SelectViewTypeClass.Message(
         id = id,
         avatarUrl = avatarUrl ?: "",
         client = client,
@@ -72,7 +72,7 @@ data class MessageEntity(
     )
 
     companion object {
-        fun toEntity(message: SelectViewTypeClass.Chat.Message): MessageEntity = MessageEntity(
+        fun toEntity(message: SelectViewTypeClass.Message): MessageEntity = MessageEntity(
             id = message.id,
             avatarUrl = message.avatarUrl,
             client = message.client,

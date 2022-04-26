@@ -1,11 +1,14 @@
 package com.example.homework2.mvp.chat
 
-import android.util.Log
 import com.example.homework2.Constance
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BasePresenterImpl
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ChatPresenterImpl @Inject constructor(
@@ -14,7 +17,15 @@ class ChatPresenterImpl @Inject constructor(
 
     private var loadedIsLast = false
     private var loadedIsFirst = false
-    private var currentMessageList = mutableListOf<SelectViewTypeClass.Chat.Message>()
+    private var refresherIsSubscribed = false
+    private var currentMessageList = mutableListOf<SelectViewTypeClass.Message>()
+    private val refresherObsevable = Observable.interval(
+        Constance.INIT_REFRESHER_DELAY,
+        Constance.DOWNLOAD_MESSAGES_PERIOD,
+        TimeUnit.SECONDS
+    )
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 
     private fun checkAndDelete(stream: Stream, topic: Topic) {
         if (currentMessageList.size > Constance.LIMIT_MESSAGE_COUNT_FOR_TOPIC) {
@@ -24,6 +35,48 @@ class ChatPresenterImpl @Inject constructor(
                 stream = stream,
                 topic = topic
             )
+        }
+    }
+
+    private fun loadNextMessages(stream: Stream, topic: Topic) {
+        val lastMessageId =
+            if (currentMessageList.isNullOrEmpty()) 1L else currentMessageList.last().id
+        view.showProgress()
+        @Suppress("UNCHECKED_CAST") val disposable = model.loadTopicMessages(
+            topic = topic,
+            stream = stream,
+            anchor = "$lastMessageId",
+            numAfter = Constance.MESSAGES_COUNT_PAGINATION,
+            numBefore = 0
+        )
+            .subscribe(
+                { json ->
+                    val messages =
+                        json.messages.filterNot { it.id == lastMessageId }
+
+                    loadedIsLast = json.foundNewest
+                    if (loadedIsLast) subscribeRefresher(topic = topic, stream = stream)
+
+                    currentMessageList.addAll(messages)
+                    view.showMessages(currentMessageList)
+
+                    model.insertAllMessagesAndReactions(messages = messages)
+                    checkAndDelete(stream = stream, topic = topic)
+                },
+                {
+                    view.showError(it)
+                })
+
+        compositeDisposable.add(disposable)
+    }
+
+    private fun subscribeRefresher(topic: Topic, stream: Stream) {
+        if (!refresherIsSubscribed) {
+            val refreshDisposable = refresherObsevable
+                .subscribe({ loadNextMessages(stream = stream, topic = topic) }, {})
+
+            refresherIsSubscribed = true
+            compositeDisposable.add(refreshDisposable)
         }
     }
 
@@ -69,36 +122,7 @@ class ChatPresenterImpl @Inject constructor(
 
     override fun onMessagesNextPageLoadRequested(stream: Stream, topic: Topic) {
         if (!loadedIsLast) {
-            val lastMessageId =
-                if (currentMessageList.isNullOrEmpty()) 1L else currentMessageList.last().id
-            view.showProgress()
-            @Suppress("UNCHECKED_CAST") val disposable = model.loadTopicMessages(
-                topic = topic,
-                stream = stream,
-                anchor = "$lastMessageId",
-                numAfter = Constance.MESSAGES_COUNT_PAGINATION,
-                numBefore = 0
-            )
-                .subscribe(
-                    { json ->
-                        val messages =
-                            json.messages.filterNot { it.id == lastMessageId }
-                        loadedIsLast = json.foundNewest
-                        currentMessageList.addAll(messages)
-                        view.showMessages(currentMessageList)
-                        try {
-                            model.insertAllMessagesAndReactions(messages = messages)
-                            checkAndDelete(stream = stream, topic = topic)
-                        } catch (e: Exception) {
-                            Log.e(Constance.LogTag.MESSAGES_AND_REACTIONS, e.toString())
-                            view.showError(e)
-                        }
-                    },
-                    {
-                        view.showError(it)
-                    })
-
-            compositeDisposable.add(disposable)
+            loadNextMessages(stream = stream, topic = topic)
         }
     }
 
@@ -118,7 +142,7 @@ class ChatPresenterImpl @Inject constructor(
                     newList.addAll(currentMessageList)
                     currentMessageList = newList
                     view.showMessages(currentMessageList)
-                }, {})
+                }, { view.showError(it) })
 
             compositeDisposable.add(disposable)
         }
@@ -139,7 +163,7 @@ class ChatPresenterImpl @Inject constructor(
     }
 
     override fun onInitMessageRequest(stream: Stream, topic: Topic) {
-        val resultMessages = mutableListOf<SelectViewTypeClass.Chat.Message>()
+        val resultMessages = mutableListOf<SelectViewTypeClass.Message>()
         val disposable = model.selectMessage(stream = stream, topic = topic)
             .subscribe({ map ->
                 map.keys.forEach { messageEntity ->
@@ -150,7 +174,7 @@ class ChatPresenterImpl @Inject constructor(
                     resultMessages.add(message)
                 }
                 if (resultMessages.isNullOrEmpty()) {
-                    onMessagesNextPageLoadRequested(stream = stream, topic = topic)
+                    loadNextMessages(stream = stream, topic = topic)
                 } else {
                     currentMessageList.addAll(resultMessages)
                     view.showMessages(currentMessageList)
@@ -176,9 +200,11 @@ class ChatPresenterImpl @Inject constructor(
                         val newList =
                             currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
                         view.showMessages(newList)
-                    }, {})
+                    }, {
+                        view.showError(it)
+                    })
                 compositeDisposable.add(messageDisposable)
-            }, {})
+            }, { view.showError(it) })
         compositeDisposable.add(emojiDisposable)
     }
 

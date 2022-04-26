@@ -197,7 +197,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         shimmer.showShimmer(true)
     }
 
-    override fun showMessages(messages: List<SelectViewTypeClass.Chat.Message>) {
+    override fun showMessages(messages: List<SelectViewTypeClass.Message>) {
         //Каст на мутабельность из-за ссылочного типа
         messageAdapter.replaceMessageList(newList = messages.toMutableList())
         shimmer.hideShimmer()
