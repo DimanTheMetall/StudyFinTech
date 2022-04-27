@@ -24,7 +24,7 @@ interface PeoplesPresenter : BasePresenter {
 
 interface PeoplesModel : BaseModel {
 
-    fun loadAllUsersWithOutPresence(): Single<List<Member>>
+    fun getUsersWithOutPresence(): Single<List<Member>>
 
-    fun loadAllUsersWithPresence(): Single<List<Member>>
+    fun getAllUsersWithPresence(): Single<List<Member>>
 }

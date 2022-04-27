@@ -9,7 +9,7 @@ class OtherProfilePresenterImpl @Inject constructor(
 ) : BasePresenterImpl<OtherProfileView, OtherProfileModel>(model), OtherProfilePresenter {
 
     override fun onUserNeededUpdate(member: Member) {
-        val disposable = model.loadPresence(member = member)
+        val disposable = model.getPresence(member = member)
             .subscribe({ view.setStatus(member = member, presence = it) }, {})
 
         compositeDisposable.add(disposable)

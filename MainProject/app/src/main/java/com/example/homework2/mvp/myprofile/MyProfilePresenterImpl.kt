@@ -8,7 +8,7 @@ class MyProfilePresenterImpl @Inject constructor(
 ) : BasePresenterImpl<MyProfileView, MyProfileModel>(model), MyProfilePresenter {
 
     override fun onInit() {
-        val disposable = model.loadMyProfile()
+        val disposable = model.getMyProfile()
             .subscribe({ view.renderProfile(it) }, {})
         compositeDisposable.add(disposable)
     }

@@ -16,6 +16,6 @@ interface MyProfilePresenter : BasePresenter
 
 interface MyProfileModel : BaseModel {
 
-    fun loadMyProfile(): Single<Member>
+    fun getMyProfile(): Single<Member>
 
 }

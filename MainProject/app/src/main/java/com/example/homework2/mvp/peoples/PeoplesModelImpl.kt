@@ -1,43 +1,22 @@
 package com.example.homework2.mvp.peoples
 
-import com.example.homework2.Constance
-import com.example.homework2.dataclasses.chatdataclasses.Website
 import com.example.homework2.dataclasses.streamsandtopics.Member
 import com.example.homework2.mvp.BaseModelImpl
-import com.example.homework2.retrofit.RetrofitService
-import io.reactivex.Observable
+import com.example.homework2.repositories.UsersRepository
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class PeoplesModelImpl @Inject constructor(
-    val retrofitService: RetrofitService
+    private val usersRepository: UsersRepository
 ) : BaseModelImpl(), PeoplesModel {
 
-    override fun loadAllUsersWithOutPresence(): Single<List<Member>> {
-        return retrofitService.getUsers()
-            .subscribeOn(Schedulers.io())
-            .map { it.members }
-            .observeOn(AndroidSchedulers.mainThread())
+    override fun getUsersWithOutPresence(): Single<List<Member>> {
+        return usersRepository.loadAllUsersWithOutPresence()
+
     }
 
-    override fun loadAllUsersWithPresence(): Single<List<Member>> {
-        return retrofitService.getUsers()
-            .subscribeOn(Schedulers.io())
-            .flatMapObservable { Observable.fromIterable(it.members) }
-            .flatMap { member ->
-                retrofitService.getPresence(member.userId)
-                    .map { it.presence.website }
-                    .onErrorReturnItem(
-                        Website(Constance.Status.OFFLINE, -1)
-                    )
-                    .map { website ->
-                        member.copy(website = website)
-                    }.toObservable()
-            }
-            .toList()
-            .observeOn(AndroidSchedulers.mainThread())
+    override fun getAllUsersWithPresence(): Single<List<Member>> {
+        return usersRepository.loadAllUsersWithPresence()
 
     }
 

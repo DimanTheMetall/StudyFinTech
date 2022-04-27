@@ -22,5 +22,5 @@ interface OtherProfilePresenter : BasePresenter {
 
 interface OtherProfileModel : BaseModel {
 
-    fun loadPresence(member: Member): Single<Presence>
+    fun getPresence(member: Member): Single<Presence>
 }

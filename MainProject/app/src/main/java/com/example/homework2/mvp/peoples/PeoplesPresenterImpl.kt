@@ -9,7 +9,7 @@ class PeoplesPresenterImpl @Inject constructor(
 
     override fun onSearchedTextChanged(searchedText: String) {
         view.showProgress()
-        val disposable = model.loadAllUsersWithOutPresence()
+        val disposable = model.getUsersWithOutPresence()
             .subscribe({ members ->
                 view.showUsers(members.filter { it.fullName.contains(other = searchedText) })
             }, { view.showError(it) })
@@ -19,7 +19,7 @@ class PeoplesPresenterImpl @Inject constructor(
 
     override fun onInit() {
         view.showProgress()
-        val disposable = model.loadAllUsersWithPresence()
+        val disposable = model.getAllUsersWithPresence()
             .subscribe({ view.showUsers(it) }, { view.showError(it) })
 
         compositeDisposable.add(disposable)
