@@ -42,7 +42,7 @@ class ChatPresenterImpl @Inject constructor(
         val lastMessageId =
             if (currentMessageList.isNullOrEmpty()) 1L else currentMessageList.last().id
         view.showProgress()
-        @Suppress("UNCHECKED_CAST") val disposable = model.loadTopicMessages(
+        @Suppress("UNCHECKED_CAST") val disposable = model.getTopicMessages(
             topic = topic,
             stream = stream,
             anchor = "$lastMessageId",
@@ -92,7 +92,7 @@ class ChatPresenterImpl @Inject constructor(
                 emojiName = emojiName,
                 reactionType = reactionType
             ).subscribe({
-                val deleteDisposable = model.loadMessageById(messageId = messageId)
+                val deleteDisposable = model.getMessageById(messageId = messageId)
                     .subscribe({ message ->
                         val newList =
                             currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
@@ -108,7 +108,7 @@ class ChatPresenterImpl @Inject constructor(
                 reactionType = reactionType
             )
                 .subscribe({
-                    val addDisposable = model.loadMessageById(messageId = messageId)
+                    val addDisposable = model.getMessageById(messageId = messageId)
                         .subscribe({ message ->
                             val newList =
                                 currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
@@ -129,7 +129,7 @@ class ChatPresenterImpl @Inject constructor(
     override fun onMessagePreviousPageLoadRequest(stream: Stream, topic: Topic) {
         if (!loadedIsFirst) {
             view.showProgress()
-            val disposable = model.loadTopicMessages(
+            val disposable = model.getTopicMessages(
                 topic = topic,
                 stream = stream,
                 anchor = currentMessageList.first().id.toString(),
@@ -151,7 +151,7 @@ class ChatPresenterImpl @Inject constructor(
     override fun onSendMessageRequest(sentText: String, topic: Topic, stream: Stream) {
         val sendDisposable = model.sendMessage(sentText = sentText, topic = topic, stream = stream)
             .subscribe({
-                val loadDisposable = model.loadLastMessage(topic = topic, stream = stream)
+                val loadDisposable = model.getLastMessage(topic = topic, stream = stream)
                     .subscribe({ messages ->
                         currentMessageList.addAll(messages)
                         checkAndDelete(stream = stream, topic = topic)
@@ -164,7 +164,7 @@ class ChatPresenterImpl @Inject constructor(
 
     override fun onInitMessageRequest(stream: Stream, topic: Topic) {
         val resultMessages = mutableListOf<SelectViewTypeClass.Message>()
-        val disposable = model.selectMessage(stream = stream, topic = topic)
+        val disposable = model.getMessage(stream = stream, topic = topic)
             .subscribe({ map ->
                 map.keys.forEach { messageEntity ->
                     val message = messageEntity.toMessage()
@@ -195,7 +195,7 @@ class ChatPresenterImpl @Inject constructor(
             reactionType = reactionType
         )
             .subscribe({
-                val messageDisposable = model.loadMessageById(messageId = messageId)
+                val messageDisposable = model.getMessageById(messageId = messageId)
                     .subscribe({ message ->
                         val newList =
                             currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }

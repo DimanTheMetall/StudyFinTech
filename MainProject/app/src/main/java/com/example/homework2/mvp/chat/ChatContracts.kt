@@ -46,7 +46,7 @@ interface ChatPresenter : BasePresenter {
 
 interface ChatModel : BaseModel {
 
-    fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message>
+    fun getMessageById(messageId: Long): Single<SelectViewTypeClass.Message>
 
     fun deleteEmoji(messageId: Long, emojiName: String, reactionType: String): Single<JsonResponse>
 
@@ -54,7 +54,7 @@ interface ChatModel : BaseModel {
 
     fun sendMessage(sentText: String, topic: Topic, stream: Stream): Single<ResponseFromSendMessage>
 
-    fun loadTopicMessages(
+    fun getTopicMessages(
         topic: Topic,
         stream: Stream,
         anchor: String,
@@ -62,7 +62,7 @@ interface ChatModel : BaseModel {
         numBefore: Int
     ): Single<JsonMessages>
 
-    fun loadLastMessage(
+    fun getLastMessage(
         topic: Topic,
         stream: Stream
     ): Single<List<SelectViewTypeClass.Message>>
@@ -71,7 +71,7 @@ interface ChatModel : BaseModel {
 
     fun deleteOldestMessagesWhereIdLess(messageIdToSave: Long, stream: Stream, topic: Topic)
 
-    fun selectMessage(
+    fun getMessage(
         stream: Stream,
         topic: Topic
     ): Single<Map<MessageEntity, List<ReactionEntity>>>

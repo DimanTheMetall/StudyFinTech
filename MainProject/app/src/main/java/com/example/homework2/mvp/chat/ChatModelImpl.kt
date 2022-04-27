@@ -2,32 +2,27 @@ package com.example.homework2.mvp.chat
 
 import android.util.Log
 import com.example.homework2.Constance
-import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.data.local.entity.MessageEntity
 import com.example.homework2.data.local.entity.ReactionEntity
-import com.example.homework2.dataclasses.chatdataclasses.*
+import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
+import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
+import com.example.homework2.dataclasses.chatdataclasses.ResponseFromSendMessage
+import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseModelImpl
-import com.example.homework2.retrofit.RetrofitService
-import io.reactivex.Observable
+import com.example.homework2.repositories.ChatRepository
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class ChatModelImpl @Inject constructor(
-    private val database: ZulipDataBase,
-    private val retrofitService: RetrofitService
+    private val chatRepository: ChatRepository
 ) : BaseModelImpl(), ChatModel {
 
     //HTTP operation
 
-    override fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message> {
-        return retrofitService.getOneMessage(messageId = messageId, false)
-            .subscribeOn(Schedulers.io())
-            .map { it.message }
-            .observeOn(AndroidSchedulers.mainThread())
+    override fun getMessageById(messageId: Long): Single<SelectViewTypeClass.Message> {
+        return chatRepository.loadMessageById(messageId = messageId)
     }
 
     override fun deleteEmoji(
@@ -35,9 +30,11 @@ class ChatModelImpl @Inject constructor(
         emojiName: String,
         reactionType: String
     ): Single<JsonResponse> {
-        return retrofitService.deleteEmoji(messageId, emojiName, reactionType)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+        return chatRepository.deleteEmoji(
+            messageId = messageId,
+            emojiName = emojiName,
+            reactionType = reactionType
+        )
     }
 
     override fun addEmoji(
@@ -45,9 +42,11 @@ class ChatModelImpl @Inject constructor(
         emojiName: String,
         reactionType: String
     ): Single<JsonResponse> {
-        return retrofitService.addEmoji(messageId, emojiName, reactionType, null)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+        return chatRepository.addEmoji(
+            messageId = messageId,
+            emojiName = emojiName,
+            reactionType = reactionType
+        )
 
     }
 
@@ -56,96 +55,43 @@ class ChatModelImpl @Inject constructor(
         topic: Topic,
         stream: Stream
     ): Single<ResponseFromSendMessage> {
-        val sentMessage = SendMessage(
-            type = Constance.STREAM,
-            to = stream.name,
-            content = sentText,
-            topic = topic.name
-        )
-
-        return retrofitService.sendMessage(
-            type = sentMessage.type,
-            to = sentMessage.to,
-            content = sentMessage.content,
-            topic = sentMessage.topic
-        )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+        return chatRepository.sendMessage(sentText = sentText, topic = topic, stream = stream)
     }
 
-    override fun loadTopicMessages(
+    override fun getTopicMessages(
         topic: Topic,
         stream: Stream,
         anchor: String,
         numAfter: Int,
         numBefore: Int
     ): Single<JsonMessages> {
-        return retrofitService.getMessages(
-            narrow = Narrow(
-                listOf(
-                    Filter(operator = Constance.STREAM, operand = stream.name),
-                    Filter(operator = Constance.TOPIC, operand = topic.name),
-                )
-            ).toJson(),
+        return chatRepository.loadTopicMessages(
+            topic = topic,
+            stream = stream,
             anchor = anchor,
-            numBefore = numBefore,
             numAfter = numAfter,
-            false
+            numBefore = numBefore
         )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override fun loadLastMessage(
+    override fun getLastMessage(
         topic: Topic,
         stream: Stream
     ): Single<List<SelectViewTypeClass.Message>> {
-        return retrofitService.getMessages(
-            narrow = Narrow(
-                listOf(
-                    Filter(operator = Constance.STREAM, operand = stream.name),
-                    Filter(operator = Constance.TOPIC, operand = topic.name),
-                )
-            ).toJson(),
-            anchor = Constance.Anchors.NEWEST,
-            numBefore = 1,
-            numAfter = 1,
-            false
-        )
-            .subscribeOn(Schedulers.io())
-            .map { it.messages }
-            .observeOn(AndroidSchedulers.mainThread())
-
+        return getLastMessage(topic = topic, stream = stream)
     }
 
     //Database operation
 
     override fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>) {
-        val messagesDisposable = database.getMessagesAndReactionDao()
-            .insertMessagesFromTopic(messages.map { MessageEntity.toEntity(it) })
-            .subscribeOn(Schedulers.io())
-            .andThen(
-                Observable.fromIterable(messages)
-                    .flatMapCompletable { message ->
-                        database.getMessagesAndReactionDao()
-                            .insertAllReactionOnMessages(
-                                message.reactions
-                                    .map { reaction ->
-                                        ReactionEntity.toEntity(
-                                            reaction = reaction,
-                                            messageId = message.id
-                                        )
-                                    }
-                            )
-                    }
-            )
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                Log.d(
-                    Constance.LogTag.MESSAGES_AND_REACTIONS,
-                    "INSERT MESSAGE AND REACTION COMPLETE"
-                )
-            },
+        val disposable = chatRepository.insertAllMessagesAndReactions(messages = messages)
+            .subscribe(
+                {
+                    Log.d(
+                        Constance.LogTag.MESSAGES_AND_REACTIONS,
+                        "INSERT MESSAGE AND REACTION COMPLETE"
+                    )
+                },
                 {
                     Log.e(
                         Constance.LogTag.MESSAGES_AND_REACTIONS,
@@ -154,7 +100,7 @@ class ChatModelImpl @Inject constructor(
                     )
                 })
 
-        compositeDisposable.add(messagesDisposable)
+        compositeDisposable.add(disposable)
     }
 
     override fun deleteOldestMessagesWhereIdLess(
@@ -162,14 +108,10 @@ class ChatModelImpl @Inject constructor(
         stream: Stream,
         topic: Topic
     ) {
-        val disposable = database.getMessagesAndReactionDao()
-            .deleteOldestMessages(
-                oldestMessagedItAfterDeleted = messageIdToSave,
-                streamId = stream.stream_id,
-                topicName = topic.name
-            )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+        val disposable = chatRepository.deleteOldestMessagesWhereIdLess(
+            messageIdToSave = messageIdToSave,
+            stream = stream, topic = topic
+        )
             .subscribe({
                 Log.d(
                     Constance.LogTag.MESSAGES_AND_REACTIONS,
@@ -181,13 +123,10 @@ class ChatModelImpl @Inject constructor(
         compositeDisposable.add(disposable)
     }
 
-    override fun selectMessage(
+    override fun getMessage(
         stream: Stream,
         topic: Topic
     ): Single<Map<MessageEntity, List<ReactionEntity>>> {
-        return database.getMessagesAndReactionDao()
-            .selectMessagesAndReactionFromTopic(topicName = topic.name, streamId = stream.stream_id)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+        return chatRepository.selectMessage(stream = stream, topic = topic)
     }
 }
