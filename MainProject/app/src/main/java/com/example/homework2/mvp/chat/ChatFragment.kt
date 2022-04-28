@@ -149,7 +149,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         }, { reaction, isSelected, messageId ->
             presenter.onEmojiInMessageClick(
                 messageId = messageId,
-                emojiName = reaction.emoji_name,
+                emojiName = reaction.emojiName,
                 reactionType = getString(R.string.unicodeEmoji),
                 isSelected = isSelected
             )

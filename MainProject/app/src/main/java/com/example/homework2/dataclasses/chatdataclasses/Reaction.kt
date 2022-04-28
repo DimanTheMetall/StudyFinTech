@@ -1,10 +1,19 @@
 package com.example.homework2.dataclasses.chatdataclasses
 
+import com.google.gson.annotations.SerializedName
+
 data class Reaction(
-    var emoji_code: String,
-    val emoji_name: String,
-    val user_id: Int = 0,
-    val reaction_type: String
+    @SerializedName("emoji_code")
+    var emojiCode: String,
+
+    @SerializedName("emoji_name")
+    val emojiName: String,
+
+    @SerializedName("user_id")
+    val userId: Int = 0,
+
+    @SerializedName("reaction_type")
+    val reactionType: String
 
 ) {
 
@@ -14,15 +23,15 @@ data class Reaction(
 
         other as Reaction
 
-        if (emoji_code != other.emoji_code) return false
-        if (user_id != other.user_id) return false
+        if (emojiCode != other.emojiCode) return false
+        if (userId != other.userId) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = emoji_code.hashCode()
-        result = 31 * result + user_id
+        var result = emojiCode.hashCode()
+        result = 31 * result + userId
         return result
     }
 }

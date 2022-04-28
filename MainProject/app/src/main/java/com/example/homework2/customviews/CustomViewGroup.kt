@@ -199,7 +199,7 @@ class CustomViewGroup @JvmOverloads constructor(
                     }
 
                     setEmojiNumberOnView(count)
-                    setEmojiOnView(String(Character.toChars(reaction.emoji_code.toInt(16))))
+                    setEmojiOnView(String(Character.toChars(reaction.emojiCode.toInt(16))))
                 }, flexBox.childCount - 1
         )
     }

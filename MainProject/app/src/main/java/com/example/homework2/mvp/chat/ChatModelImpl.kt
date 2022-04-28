@@ -78,7 +78,7 @@ class ChatModelImpl @Inject constructor(
         topic: Topic,
         stream: Stream
     ): Single<List<SelectViewTypeClass.Message>> {
-        return getLastMessage(topic = topic, stream = stream)
+        return chatRepository.loadLastMessage(topic = topic, stream = stream)
     }
 
     //Database operation

@@ -74,12 +74,12 @@ class MessageAdapter(
 
             customViewGroup.clearEmoji()
 
-            val byEmojiName = item.reactions.groupBy { it.emoji_name }
+            val byEmojiName = item.reactions.groupBy { it.emojiName }
 
             for (reactions in byEmojiName) {
                 var meIsAdded = false
                 reactions.value.forEach {
-                    meIsAdded = it.user_id == 490112
+                    meIsAdded = it.userId == 490112
                 }
                 val emojiCount: Int = reactions.value.size
 
