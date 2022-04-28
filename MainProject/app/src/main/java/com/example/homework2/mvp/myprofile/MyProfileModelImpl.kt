@@ -7,9 +7,9 @@ import io.reactivex.Single
 import javax.inject.Inject
 
 class MyProfileModelImpl @Inject constructor(
-    private val usersRepository: UsersRepository
+    private val usersRepositoryImpl: UsersRepository
 ) : BaseModelImpl(), MyProfileModel {
 
     override fun getMyProfile(): Single<Member> =
-        usersRepository.loadMyProfile()
+        usersRepositoryImpl.loadMyProfile()
 }

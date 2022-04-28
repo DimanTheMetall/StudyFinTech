@@ -15,20 +15,69 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class ChatRepository @Inject constructor(
+interface ChatRepository {
+
+    fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message>
+
+    fun deleteEmoji(
+        messageId: Long,
+        emojiName: String,
+        reactionType: String
+    ): Single<JsonResponse>
+
+    fun addEmoji(
+        messageId: Long,
+        emojiName: String,
+        reactionType: String
+    ): Single<JsonResponse>
+
+    fun sendMessage(
+        sentText: String,
+        topic: Topic,
+        stream: Stream
+    ): Single<ResponseFromSendMessage>
+
+    fun loadTopicMessages(
+        topic: Topic,
+        stream: Stream,
+        anchor: String,
+        numAfter: Int,
+        numBefore: Int
+    ): Single<JsonMessages>
+
+    fun loadLastMessage(
+        topic: Topic,
+        stream: Stream
+    ): Single<List<SelectViewTypeClass.Message>>
+
+    fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>): Completable
+
+    fun deleteOldestMessagesWhereIdLess(
+        messageIdToSave: Long,
+        stream: Stream,
+        topic: Topic
+    ): Completable
+
+    fun selectMessage(
+        stream: Stream,
+        topic: Topic
+    ): Single<Map<MessageEntity, List<ReactionEntity>>>
+}
+
+class ChatRepositoryImpl @Inject constructor(
     private val retrofitService: RetrofitService,
     private val database: ZulipDataBase
-) {
+) : ChatRepository {
 //HTTP operation
 
-    fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message> {
+    override fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message> {
         return retrofitService.getOneMessage(messageId = messageId, false)
             .subscribeOn(Schedulers.io())
             .map { it.message }
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun deleteEmoji(
+    override fun deleteEmoji(
         messageId: Long,
         emojiName: String,
         reactionType: String
@@ -38,7 +87,7 @@ class ChatRepository @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun addEmoji(
+    override fun addEmoji(
         messageId: Long,
         emojiName: String,
         reactionType: String
@@ -49,7 +98,7 @@ class ChatRepository @Inject constructor(
 
     }
 
-    fun sendMessage(
+    override fun sendMessage(
         sentText: String,
         topic: Topic,
         stream: Stream
@@ -71,7 +120,7 @@ class ChatRepository @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun loadTopicMessages(
+    override fun loadTopicMessages(
         topic: Topic,
         stream: Stream,
         anchor: String,
@@ -94,7 +143,7 @@ class ChatRepository @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun loadLastMessage(
+    override fun loadLastMessage(
         topic: Topic,
         stream: Stream
     ): Single<List<SelectViewTypeClass.Message>> {
@@ -118,7 +167,7 @@ class ChatRepository @Inject constructor(
 
     //Database operation
 
-    fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>): Completable {
+    override fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>): Completable {
         return database.getMessagesAndReactionDao()
             .insertMessagesFromTopic(messages.map { MessageEntity.toEntity(it) })
             .subscribeOn(Schedulers.io())
@@ -140,7 +189,7 @@ class ChatRepository @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun deleteOldestMessagesWhereIdLess(
+    override fun deleteOldestMessagesWhereIdLess(
         messageIdToSave: Long,
         stream: Stream,
         topic: Topic
@@ -157,7 +206,7 @@ class ChatRepository @Inject constructor(
 
     }
 
-    fun selectMessage(
+    override fun selectMessage(
         stream: Stream,
         topic: Topic
     ): Single<Map<MessageEntity, List<ReactionEntity>>> {

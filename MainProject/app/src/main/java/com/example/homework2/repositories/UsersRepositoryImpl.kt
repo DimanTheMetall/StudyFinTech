@@ -11,16 +11,28 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class UsersRepository @Inject constructor(val retrofitService: RetrofitService) {
+interface UsersRepository {
 
-    fun loadAllUsersWithOutPresence(): Single<List<Member>> {
+    fun loadAllUsersWithOutPresence(): Single<List<Member>>
+
+    fun loadAllUsersWithPresence(): Single<List<Member>>
+
+    fun loadMyProfile(): Single<Member>
+
+    fun loadPresence(member: Member): Single<Presence>
+}
+
+class UsersRepositoryImpl @Inject constructor(val retrofitService: RetrofitService) :
+    UsersRepository {
+
+    override fun loadAllUsersWithOutPresence(): Single<List<Member>> {
         return retrofitService.getUsers()
             .subscribeOn(Schedulers.io())
             .map { it.members }
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun loadAllUsersWithPresence(): Single<List<Member>> {
+    override fun loadAllUsersWithPresence(): Single<List<Member>> {
         return retrofitService.getUsers()
             .subscribeOn(Schedulers.io())
             .flatMapObservable { Observable.fromIterable(it.members) }
@@ -39,7 +51,7 @@ class UsersRepository @Inject constructor(val retrofitService: RetrofitService) 
 
     }
 
-    fun loadMyProfile(): Single<Member> =
+    override fun loadMyProfile(): Single<Member> =
         retrofitService.getOwnUser()
             .subscribeOn(Schedulers.io())
             .flatMap { member ->
@@ -48,7 +60,7 @@ class UsersRepository @Inject constructor(val retrofitService: RetrofitService) 
             }
             .observeOn(AndroidSchedulers.mainThread())
 
-    fun loadPresence(member: Member): Single<Presence> {
+    override fun loadPresence(member: Member): Single<Presence> {
         return retrofitService.getPresence(member.email)
             .subscribeOn(Schedulers.io())
             .map { it.presence }

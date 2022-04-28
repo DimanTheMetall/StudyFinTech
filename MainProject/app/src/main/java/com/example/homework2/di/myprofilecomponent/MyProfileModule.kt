@@ -5,6 +5,7 @@ import com.example.homework2.mvp.myprofile.MyProfileModelImpl
 import com.example.homework2.mvp.myprofile.MyProfilePresenter
 import com.example.homework2.mvp.myprofile.MyProfilePresenterImpl
 import com.example.homework2.repositories.UsersRepository
+import com.example.homework2.repositories.UsersRepositoryImpl
 import com.example.homework2.retrofit.RetrofitService
 import dagger.Module
 import dagger.Provides
@@ -24,6 +25,6 @@ class MyProfileModule {
 
     @Provides
     fun provideUsersRepository(retrofitService: RetrofitService): UsersRepository {
-        return UsersRepository(retrofitService = retrofitService)
+        return UsersRepositoryImpl(retrofitService = retrofitService)
     }
 }

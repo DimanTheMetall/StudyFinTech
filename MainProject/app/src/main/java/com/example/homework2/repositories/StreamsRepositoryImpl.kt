@@ -13,19 +13,36 @@ import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class StreamsRepository @Inject constructor(
+interface StreamRepository {
+
+    fun insertStreamsAndTopics(streamsList: List<Stream>, isSubscribed: Boolean): Completable
+
+    fun loadSubscribedStreams(): Single<List<Stream>>
+
+    fun loadAllStreams(): Single<List<Stream>>
+
+    fun selectAllStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>>
+
+    fun selectSubscribedStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>>
+}
+
+
+class StreamsRepositoryImpl @Inject constructor(
     private val retrofitService: RetrofitService,
     private val database: ZulipDataBase
-) {
+) : StreamRepository {
 
-    fun insertStreamsAndTopics(streamsList: List<Stream>, isSubscribed: Boolean): Completable {
+    override fun insertStreamsAndTopics(
+        streamsList: List<Stream>,
+        isSubscribed: Boolean
+    ): Completable {
         val entityType = if (isSubscribed) StreamEntity.SUBSCRIBED else StreamEntity.ALL
         return database.getStreamsAndTopicsDao().insertStreamsAsynh(streamsList, entityType)
             .subscribeOn(Schedulers.io())
     }
 
 
-    fun loadSubscribedStreams(): Single<List<Stream>> {
+    override fun loadSubscribedStreams(): Single<List<Stream>> {
         return retrofitService.getSubscribedStreams()
             .delay(1, TimeUnit.SECONDS)
             .subscribeOn(Schedulers.io())
@@ -38,7 +55,7 @@ class StreamsRepository @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun loadAllStreams(): Single<List<Stream>> {
+    override fun loadAllStreams(): Single<List<Stream>> {
         return retrofitService.getAllStreams()
             .delay(1, TimeUnit.SECONDS)
             .subscribeOn(Schedulers.io())
@@ -51,13 +68,13 @@ class StreamsRepository @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun selectAllStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>> =
+    override fun selectAllStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>> =
         database.getStreamsAndTopicsDao().getAllStreamsAndTopic()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
 
-    fun selectSubscribedStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>> =
+    override fun selectSubscribedStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>> =
         database.getStreamsAndTopicsDao().getSubscribedStreamsAndTopic()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

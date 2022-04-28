@@ -8,11 +8,11 @@ import io.reactivex.Single
 import javax.inject.Inject
 
 class OtherProfileModelImpl @Inject constructor(
-    private val usersRepository: UsersRepository
+    private val usersRepositoryImpl: UsersRepository
 ) : BaseModelImpl(), OtherProfileModel {
 
     override fun getPresence(member: Member): Single<Presence> {
-        return usersRepository.loadPresence(member = member)
+        return usersRepositoryImpl.loadPresence(member = member)
     }
 
 }

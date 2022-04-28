@@ -5,7 +5,8 @@ import com.example.homework2.mvp.streams.recyclestream.RecycleStreamModel
 import com.example.homework2.mvp.streams.recyclestream.RecycleStreamPresenter
 import com.example.homework2.mvp.streams.recyclestream.RecycleStreamPresenterImpl
 import com.example.homework2.mvp.streams.recyclestream.RecycleStreamsModelImpl
-import com.example.homework2.repositories.StreamsRepository
+import com.example.homework2.repositories.StreamRepository
+import com.example.homework2.repositories.StreamsRepositoryImpl
 import com.example.homework2.retrofit.RetrofitService
 import dagger.Module
 import dagger.Provides
@@ -29,7 +30,7 @@ class RecycleStreamsModule {
     fun providesStreamsRepository(
         retrofitService: RetrofitService,
         dataBase: ZulipDataBase
-    ): StreamsRepository {
-        return StreamsRepository(retrofitService = retrofitService, database = dataBase)
+    ): StreamRepository {
+        return StreamsRepositoryImpl(retrofitService = retrofitService, database = dataBase)
     }
 }

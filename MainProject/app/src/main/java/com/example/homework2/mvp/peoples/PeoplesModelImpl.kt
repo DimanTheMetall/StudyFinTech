@@ -7,16 +7,16 @@ import io.reactivex.Single
 import javax.inject.Inject
 
 class PeoplesModelImpl @Inject constructor(
-    private val usersRepository: UsersRepository
+    private val usersRepositoryImpl: UsersRepository
 ) : BaseModelImpl(), PeoplesModel {
 
     override fun getUsersWithOutPresence(): Single<List<Member>> {
-        return usersRepository.loadAllUsersWithOutPresence()
+        return usersRepositoryImpl.loadAllUsersWithOutPresence()
 
     }
 
     override fun getAllUsersWithPresence(): Single<List<Member>> {
-        return usersRepository.loadAllUsersWithPresence()
+        return usersRepositoryImpl.loadAllUsersWithPresence()
 
     }
 

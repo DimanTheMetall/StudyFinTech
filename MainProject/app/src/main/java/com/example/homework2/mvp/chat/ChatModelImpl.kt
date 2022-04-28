@@ -11,18 +11,18 @@ import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseModelImpl
-import com.example.homework2.repositories.ChatRepository
+import com.example.homework2.repositories.ChatRepositoryImpl
 import io.reactivex.Single
 import javax.inject.Inject
 
 class ChatModelImpl @Inject constructor(
-    private val chatRepository: ChatRepository
+    private val chatRepositoryImpl: ChatRepositoryImpl
 ) : BaseModelImpl(), ChatModel {
 
     //HTTP operation
 
     override fun getMessageById(messageId: Long): Single<SelectViewTypeClass.Message> {
-        return chatRepository.loadMessageById(messageId = messageId)
+        return chatRepositoryImpl.loadMessageById(messageId = messageId)
     }
 
     override fun deleteEmoji(
@@ -30,7 +30,7 @@ class ChatModelImpl @Inject constructor(
         emojiName: String,
         reactionType: String
     ): Single<JsonResponse> {
-        return chatRepository.deleteEmoji(
+        return chatRepositoryImpl.deleteEmoji(
             messageId = messageId,
             emojiName = emojiName,
             reactionType = reactionType
@@ -42,7 +42,7 @@ class ChatModelImpl @Inject constructor(
         emojiName: String,
         reactionType: String
     ): Single<JsonResponse> {
-        return chatRepository.addEmoji(
+        return chatRepositoryImpl.addEmoji(
             messageId = messageId,
             emojiName = emojiName,
             reactionType = reactionType
@@ -55,7 +55,7 @@ class ChatModelImpl @Inject constructor(
         topic: Topic,
         stream: Stream
     ): Single<ResponseFromSendMessage> {
-        return chatRepository.sendMessage(sentText = sentText, topic = topic, stream = stream)
+        return chatRepositoryImpl.sendMessage(sentText = sentText, topic = topic, stream = stream)
     }
 
     override fun getTopicMessages(
@@ -65,7 +65,7 @@ class ChatModelImpl @Inject constructor(
         numAfter: Int,
         numBefore: Int
     ): Single<JsonMessages> {
-        return chatRepository.loadTopicMessages(
+        return chatRepositoryImpl.loadTopicMessages(
             topic = topic,
             stream = stream,
             anchor = anchor,
@@ -78,13 +78,13 @@ class ChatModelImpl @Inject constructor(
         topic: Topic,
         stream: Stream
     ): Single<List<SelectViewTypeClass.Message>> {
-        return chatRepository.loadLastMessage(topic = topic, stream = stream)
+        return chatRepositoryImpl.loadLastMessage(topic = topic, stream = stream)
     }
 
     //Database operation
 
     override fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>) {
-        val disposable = chatRepository.insertAllMessagesAndReactions(messages = messages)
+        val disposable = chatRepositoryImpl.insertAllMessagesAndReactions(messages = messages)
             .subscribe(
                 {
                     Log.d(
@@ -108,7 +108,7 @@ class ChatModelImpl @Inject constructor(
         stream: Stream,
         topic: Topic
     ) {
-        val disposable = chatRepository.deleteOldestMessagesWhereIdLess(
+        val disposable = chatRepositoryImpl.deleteOldestMessagesWhereIdLess(
             messageIdToSave = messageIdToSave,
             stream = stream, topic = topic
         )
@@ -127,6 +127,6 @@ class ChatModelImpl @Inject constructor(
         stream: Stream,
         topic: Topic
     ): Single<Map<MessageEntity, List<ReactionEntity>>> {
-        return chatRepository.selectMessage(stream = stream, topic = topic)
+        return chatRepositoryImpl.selectMessage(stream = stream, topic = topic)
     }
 }
