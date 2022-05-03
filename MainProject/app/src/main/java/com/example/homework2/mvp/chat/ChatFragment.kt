@@ -187,9 +187,13 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         shimmer = binding.chatShimmer
     }
 
-    override fun showError(throwable: Throwable) {
-        Log.e(Constance.LogTag.MESSAGES_AND_REACTIONS, getString(R.string.error), throwable)
-        Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_SHORT).show()
+    override fun showError(throwable: Throwable, error: Errors) {
+        val messageText = when (error) {
+            Errors.INTERNET -> getString(R.string.internetError)
+            Errors.SYSTEM -> getString(R.string.systemError)
+        }
+        Log.e(Constance.LogTag.MESSAGES_AND_REACTIONS, messageText, throwable)
+        Toast.makeText(requireContext(), messageText, Toast.LENGTH_SHORT).show()
         shimmer.hideShimmer()
     }
 

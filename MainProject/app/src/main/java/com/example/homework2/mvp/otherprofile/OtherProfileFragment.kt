@@ -2,14 +2,17 @@ package com.example.homework2.mvp.otherprofile
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.homework2.Constance
+import com.example.homework2.Errors
 import com.example.homework2.R
 import com.example.homework2.databinding.FragmentOtherProfileBinding
 import com.example.homework2.dataclasses.chatdataclasses.Presence
@@ -42,6 +45,14 @@ class OtherProfileFragment : BaseFragment<OtherProfilePresenter, FragmentOtherPr
         updateUser()
     }
 
+    override fun showError(throwable: Throwable, error: Errors) {
+        val textMessage = when (error) {
+            Errors.INTERNET -> getString(R.string.internetError)
+            Errors.SYSTEM -> getString(R.string.systemError)
+        }
+        Log.e(Constance.LogTag.PEOPLES, textMessage, throwable)
+        Toast.makeText(requireContext(), textMessage, Toast.LENGTH_SHORT).show()
+    }
 
     override fun updateUser() {
         val member: Member = requireArguments().getParcelable(Constance.PROFILE_KEY)

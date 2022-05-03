@@ -1,5 +1,6 @@
 package com.example.homework2.mvp.peoples
 
+import com.example.homework2.Errors
 import com.example.homework2.mvp.BasePresenterImpl
 import javax.inject.Inject
 
@@ -12,7 +13,7 @@ class PeoplesPresenterImpl @Inject constructor(
         val disposable = model.getUsersWithOutPresence()
             .subscribe({ members ->
                 view.showUsers(members.filter { it.fullName.contains(other = searchedText) })
-            }, { view.showError(it) })
+            }, { view.showError(throwable = it, error = Errors.INTERNET) })
 
         compositeDisposable.add(disposable)
     }
@@ -20,7 +21,12 @@ class PeoplesPresenterImpl @Inject constructor(
     override fun onInit() {
         view.showProgress()
         val disposable = model.getAllUsersWithPresence()
-            .subscribe({ view.showUsers(it) }, { view.showError(it) })
+            .subscribe({ view.showUsers(userList = it) }, {
+                view.showError(
+                    throwable = it,
+                    error = Errors.INTERNET
+                )
+            })
 
         compositeDisposable.add(disposable)
     }

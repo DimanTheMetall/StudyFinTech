@@ -1,5 +1,8 @@
 package com.example.homework2.mvp.streams.recyclestream
 
+import com.example.homework2.Errors
+import com.example.homework2.data.local.entity.StreamEntity
+import com.example.homework2.data.local.entity.TopicEntity
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.mvp.BasePresenterImpl
 
@@ -14,7 +17,7 @@ class RecycleStreamPresenterImpl(
                 val searchedStreams: List<Stream> = streams.filter { it.name.contains(text) }
                 view.showStreams(streamList = searchedStreams)
             }, {
-                view.showError(it)
+                view.showError(it, Errors.INTERNET)
             })
         compositeDisposable.add(disposable)
     }
@@ -26,62 +29,64 @@ class RecycleStreamPresenterImpl(
                 val searchedStreams: List<Stream> = streams.filter { it.name.contains(text) }
                 view.showStreams(streamList = searchedStreams)
             }, {
-                view.showError(it)
+                view.showError(it, Errors.INTERNET)
             })
         compositeDisposable.add(disposable)
     }
 
     override fun onAllStreamsNeeded() {
         val selectDisposable = model.selectAllStreamsAndTopics()
-            .doOnSubscribe { view.showProgress() }
             .subscribe { map ->
-                val streamList = mutableListOf<Stream>()
-                map.keys.forEach { streamEntity ->
-                    val stream = streamEntity.toStream()
-                    val topicList = map.getValue(streamEntity).map { it.toTopic() }
-                    stream.topicList = topicList.toMutableList()
-                    streamList.add(stream)
-                }
-                view.showStreams(streamList = streamList)
+                view.showStreams(streamList = mapStreams(map = map))
+                loadStreams(true)
             }
-
-        val disposable = model.loadAllStreams()
-            .doOnSubscribe { view.showProgress() }
-            .subscribe({
-                view.showStreams(it)
-                model.insertStreamsAndTopics(streamsList = it, isSubscribed = false)
-            }, { view.showError(it) })
-
-        compositeDisposable.add(disposable)
         compositeDisposable.add(selectDisposable)
     }
 
     override fun onSubscribedStreamsNeeded() {
         val selectDisposable = model.selectSubscribedStreamsAndTopics()
-            .doOnSubscribe { view.showProgress() }
             .subscribe { map ->
-                val streamList = mutableListOf<Stream>()
-                map.keys.forEach { streamEntity ->
-                    val stream = streamEntity.toStream()
-                    val topicList = map.getValue(streamEntity).map { it.toTopic() }
-                    stream.topicList = topicList.toMutableList()
-                    streamList.add(stream)
-                }
-                view.showStreams(streamList = streamList)
+                view.showStreams(streamList = mapStreams(map = map))
+                loadStreams(false)
             }
-
-        val disposable = model.loadSubscribedStreams()
-            .doOnSubscribe { view.showProgress() }
-            .subscribe({
-                view.showStreams(it)
-                model.insertStreamsAndTopics(streamsList = it, isSubscribed = true)
-            }, { view.showError(it) })
-
         compositeDisposable.add(selectDisposable)
-        compositeDisposable.add(disposable)
     }
 
-    override fun onInit() {
+    override fun onInit() {}
+
+    private fun mapStreams(map: Map<StreamEntity, List<TopicEntity>>): List<Stream> {
+        val streamList = mutableListOf<Stream>()
+        map.keys.forEach { streamEntity ->
+            val stream = streamEntity.toStream()
+            val topicList = map.getValue(streamEntity).map { it.toTopic() }
+            stream.topicList = topicList.toMutableList()
+            streamList.add(stream)
+        }
+        return streamList
+    }
+
+    private fun loadStreams(isAllNeeded: Boolean) {
+        view.showProgress()
+        when (isAllNeeded) {
+            true -> {
+                val disposable = model.loadAllStreams()
+                    .subscribe({
+                        view.showStreams(it)
+                        model.insertStreamsAndTopics(streamsList = it, isSubscribed = false)
+                    }, { view.showError(it, Errors.INTERNET) })
+
+                compositeDisposable.add(disposable)
+            }
+            false -> {
+                val disposable = model.loadSubscribedStreams()
+                    .subscribe({
+                        view.showStreams(it)
+                        model.insertStreamsAndTopics(streamsList = it, isSubscribed = true)
+                    }, { view.showError(it, Errors.INTERNET) })
+
+                compositeDisposable.add(disposable)
+            }
+        }
     }
 
 }

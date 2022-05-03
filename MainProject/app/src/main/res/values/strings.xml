@@ -34,6 +34,9 @@
     <string name="mess">\"mess %1$s\"</string>
     <string name="search">Search...</string>
 
-    <string name="error">ERROR</string>
+
+    <string name="systemError">System error</string>
+    <string name="internetError">Internet error. Check internet connection</string>
+
 
 </resources>

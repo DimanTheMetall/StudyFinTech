@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.homework2.Constance
+import com.example.homework2.PeoplesDiffCallback
 import com.example.homework2.R
 import com.example.homework2.databinding.ProfileLayoutBinding
 import com.example.homework2.dataclasses.streamsandtopics.Member
@@ -15,7 +17,7 @@ import com.example.homework2.dataclasses.streamsandtopics.Member
 class PeopleAdapter(private val openFrag: (Member) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var peopleList = mutableListOf<Member>()
+    private val differ = AsyncListDiffer(this, PeoplesDiffCallback())
 
     @SuppressLint("InflateParams")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -36,10 +38,9 @@ class PeopleAdapter(private val openFrag: (Member) -> Unit) :
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+
     fun updateProfileList(list: List<Member>) {
-        peopleList = list.toMutableList()
-        notifyDataSetChanged()
+        differ.submitList(list)
     }
 
     private fun setAvatar(member: Member, binding: ProfileLayoutBinding, itemView: View) {
@@ -74,9 +75,9 @@ class PeopleAdapter(private val openFrag: (Member) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ProfileHolder).bind(peopleList[position])
+        (holder as ProfileHolder).bind(differ.currentList[position])
     }
 
-    override fun getItemCount(): Int = peopleList.size
+    override fun getItemCount(): Int = differ.currentList.size
 
 }

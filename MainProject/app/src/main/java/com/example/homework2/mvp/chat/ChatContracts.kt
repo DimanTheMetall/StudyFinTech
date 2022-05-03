@@ -1,5 +1,6 @@
 package com.example.homework2.mvp.chat
 
+import com.example.homework2.Errors
 import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
 import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
 import com.example.homework2.dataclasses.chatdataclasses.ResponseFromSendMessage
@@ -9,11 +10,12 @@ import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseModel
 import com.example.homework2.mvp.BasePresenter
 import com.example.homework2.mvp.BaseView
+import io.reactivex.Completable
 import io.reactivex.Single
 
 interface ChatView : BaseView {
 
-    fun showError(throwable: Throwable)
+    fun showError(throwable: Throwable, error: Errors)
 
     fun showProgress()
 
@@ -65,7 +67,7 @@ interface ChatModel : BaseModel {
         stream: Stream
     ): Single<List<SelectViewTypeClass.Message>>
 
-    fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>)
+    fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>): Completable
 
     fun deleteOldestMessagesWhereIdLess(messageIdToSave: Long, stream: Stream, topic: Topic)
 

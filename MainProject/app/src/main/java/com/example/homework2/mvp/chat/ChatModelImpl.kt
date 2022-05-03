@@ -10,6 +10,7 @@ import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseModelImpl
 import com.example.homework2.repositories.ChatRepositoryImpl
+import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -81,24 +82,8 @@ class ChatModelImpl @Inject constructor(
 
     //Database operation
 
-    override fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>) {
-        val disposable = chatRepositoryImpl.insertAllMessagesAndReactions(messages = messages)
-            .subscribe(
-                {
-                    Log.d(
-                        Constance.LogTag.MESSAGES_AND_REACTIONS,
-                        "INSERT MESSAGE AND REACTION COMPLETE"
-                    )
-                },
-                {
-                    Log.e(
-                        Constance.LogTag.MESSAGES_AND_REACTIONS,
-                        "INSERT MESSAGE AND REACTION FAILED",
-                        it
-                    )
-                })
-
-        compositeDisposable.add(disposable)
+    override fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>): Completable {
+        return chatRepositoryImpl.insertAllMessagesAndReactions(messages = messages)
     }
 
     override fun deleteOldestMessagesWhereIdLess(

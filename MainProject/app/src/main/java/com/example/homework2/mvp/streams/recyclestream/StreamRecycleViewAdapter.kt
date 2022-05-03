@@ -17,7 +17,6 @@ import com.example.homework2.dataclasses.streamsandtopics.Topic
 class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    //    private var streamList: List<Stream> = mutableListOf()
     private val differ = AsyncListDiffer(this, StreamsDiffCallback())
 
     @SuppressLint("InflateParams")

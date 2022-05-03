@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homework2.Constance
+import com.example.homework2.Errors
 import com.example.homework2.R
 import com.example.homework2.databinding.FragmentPeopleBinding
 import com.example.homework2.dataclasses.streamsandtopics.Member
@@ -112,14 +113,18 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
         shimmer = binding.shimmerPeople
     }
 
-
     override fun showProgress() {
         shimmer.showShimmer(true)
     }
 
-    override fun showError(throwable: Throwable) {
-        Log.e(Constance.LogTag.PEOPLES, getString(R.string.error), throwable)
-        Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_SHORT).show()
+    override fun showError(throwable: Throwable, error: Errors) {
+        val textMessage = when (error) {
+            Errors.INTERNET -> getString(R.string.internetError)
+            Errors.SYSTEM -> getString(R.string.systemError)
+        }
+
+        Log.e(Constance.LogTag.PEOPLES, textMessage, throwable)
+        Toast.makeText(requireContext(), textMessage, Toast.LENGTH_SHORT).show()
         shimmer.hideShimmer()
     }
 

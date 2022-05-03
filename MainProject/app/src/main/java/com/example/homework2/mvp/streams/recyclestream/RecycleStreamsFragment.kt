@@ -12,17 +12,14 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.Constance
-import com.example.homework2.R
+import com.example.homework2.*
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.di.recyclestreamcomponent.DaggerRecycleStreamsComponent
 import com.example.homework2.di.recyclestreamcomponent.RecycleStreamsComponent
-import com.example.homework2.dpToPx
 import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.mvp.chat.ChatFragment
 import com.example.homework2.mvp.streams.StreamFragment
-import com.example.homework2.zulipApp
 import com.facebook.shimmer.ShimmerFrameLayout
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -167,10 +164,14 @@ class RecycleStreamsFragment :
         shimmer.showShimmer(true)
     }
 
-    override fun showError(throwable: Throwable) {
+    override fun showError(throwable: Throwable, error: Errors) {
+        val textMessage = when (error) {
+            Errors.INTERNET -> getString(R.string.internetError)
+            Errors.SYSTEM -> getString(R.string.systemError)
+        }
         shimmer.hideShimmer()
-        Log.e(Constance.LogTag.TOPIC_AND_STREAM, getString(R.string.error), throwable)
-        Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_SHORT).show()
+        Log.e(Constance.LogTag.TOPIC_AND_STREAM, textMessage, throwable)
+        Toast.makeText(requireContext(), textMessage, Toast.LENGTH_SHORT).show()
     }
 
     override fun showStreams(streamList: List<Stream>) {
@@ -182,12 +183,12 @@ class RecycleStreamsFragment :
     companion object {
 
         fun newInstance(isSubscribed: Boolean): RecycleStreamsFragment {
-            val fragment = RecycleStreamsFragment()
             val arguments = Bundle()
             arguments.putBoolean(Constance.ALL_OR_SUBSCRIBED_KEY, isSubscribed)
-            fragment.arguments = arguments
 
-            return fragment
+            return RecycleStreamsFragment().also {
+                it.arguments = arguments
+            }
         }
     }
 }

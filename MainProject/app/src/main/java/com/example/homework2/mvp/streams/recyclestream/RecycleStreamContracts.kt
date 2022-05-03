@@ -1,5 +1,6 @@
 package com.example.homework2.mvp.streams.recyclestream
 
+import com.example.homework2.Errors
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
 import com.example.homework2.dataclasses.streamsandtopics.Stream
@@ -12,7 +13,7 @@ interface RecycleStreamView : BaseView {
 
     fun showProgress()
 
-    fun showError(throwable: Throwable)
+    fun showError(throwable: Throwable, error: Errors)
 
     fun showStreams(streamList: List<Stream>)
 

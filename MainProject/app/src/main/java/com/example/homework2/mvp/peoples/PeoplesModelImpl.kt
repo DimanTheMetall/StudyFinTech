@@ -12,12 +12,10 @@ class PeoplesModelImpl @Inject constructor(
 
     override fun getUsersWithOutPresence(): Single<List<Member>> {
         return usersRepositoryImpl.loadAllUsersWithOutPresence()
-
     }
 
     override fun getAllUsersWithPresence(): Single<List<Member>> {
         return usersRepositoryImpl.loadAllUsersWithPresence()
-
     }
 
 }

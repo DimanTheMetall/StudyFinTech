@@ -1,5 +1,6 @@
 package com.example.homework2.mvp.peoples
 
+import com.example.homework2.Errors
 import com.example.homework2.dataclasses.streamsandtopics.Member
 import com.example.homework2.mvp.BaseModel
 import com.example.homework2.mvp.BasePresenter
@@ -10,7 +11,7 @@ interface PeoplesView : BaseView {
 
     fun showProgress()
 
-    fun showError(throwable: Throwable)
+    fun showError(throwable: Throwable, error: Errors)
 
     fun showUsers(userList: List<Member>)
 }

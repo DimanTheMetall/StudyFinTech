@@ -68,6 +68,7 @@ class ChatRepositoryImpl @Inject constructor(
     private val retrofitService: RetrofitService,
     private val database: ZulipDataBase
 ) : ChatRepository {
+
 //HTTP operation
 
     override fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message> {
