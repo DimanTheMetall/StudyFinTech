@@ -48,7 +48,7 @@ class StreamsRepositoryImpl @Inject constructor(
             .subscribeOn(Schedulers.io())
             .flatMapObservable { Observable.fromIterable(it.streams) }
             .flatMap { stream ->
-                retrofitService.getTopicList(stream.stream_id)
+                retrofitService.getTopicList(stream.streamId)
                     .flatMapObservable { Observable.just(stream.copy(topicList = it.topics.toMutableList())) }
             }
             .toList()
@@ -61,7 +61,7 @@ class StreamsRepositoryImpl @Inject constructor(
             .subscribeOn(Schedulers.io())
             .flatMapObservable { Observable.fromIterable(it.streams) }
             .flatMap { stream ->
-                retrofitService.getTopicList(stream.stream_id)
+                retrofitService.getTopicList(stream.streamId)
                     .flatMapObservable { Observable.just(stream.copy(topicList = it.topics.toMutableList())) }
             }
             .toList()

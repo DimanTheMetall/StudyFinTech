@@ -21,7 +21,7 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/icon_open_streams"
-        android:layout_width="wrap_content"
+        android:layout_width="40dp"
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/channel_name"

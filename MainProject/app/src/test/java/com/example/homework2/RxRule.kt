@@ -1,3 +1,5 @@
+package com.example.homework2
+
 import io.reactivex.Scheduler
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
@@ -6,7 +8,7 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 class RxRule(
-    val scheduler: Scheduler = Schedulers.trampoline()
+    private val scheduler: Scheduler = Schedulers.trampoline()
 ) : TestWatcher() {
 
     override fun starting(description: Description?) {

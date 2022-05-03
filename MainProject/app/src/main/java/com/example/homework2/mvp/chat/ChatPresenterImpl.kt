@@ -163,20 +163,12 @@ class ChatPresenterImpl @Inject constructor(
     }
 
     override fun onInitMessageRequest(stream: Stream, topic: Topic) {
-        val resultMessages = mutableListOf<SelectViewTypeClass.Message>()
         val disposable = model.getMessage(stream = stream, topic = topic)
-            .subscribe({ map ->
-                map.keys.forEach { messageEntity ->
-                    val message = messageEntity.toMessage()
-                    val reactionList =
-                        map.getValue(messageEntity).map { it.toReaction() }
-                    message.reactions = reactionList
-                    resultMessages.add(message)
-                }
-                if (resultMessages.isNullOrEmpty()) {
+            .subscribe({ messages ->
+                if (messages.isNullOrEmpty()) {
                     loadNextMessages(stream = stream, topic = topic)
                 } else {
-                    currentMessageList.addAll(resultMessages)
+                    currentMessageList.addAll(messages)
                     view.showMessages(currentMessageList)
                 }
             }, {})

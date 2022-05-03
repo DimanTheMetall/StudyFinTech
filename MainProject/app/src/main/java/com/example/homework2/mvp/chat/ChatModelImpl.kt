@@ -2,8 +2,6 @@ package com.example.homework2.mvp.chat
 
 import android.util.Log
 import com.example.homework2.Constance
-import com.example.homework2.data.local.entity.MessageEntity
-import com.example.homework2.data.local.entity.ReactionEntity
 import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
 import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
 import com.example.homework2.dataclasses.chatdataclasses.ResponseFromSendMessage
@@ -126,7 +124,7 @@ class ChatModelImpl @Inject constructor(
     override fun getMessage(
         stream: Stream,
         topic: Topic
-    ): Single<Map<MessageEntity, List<ReactionEntity>>> {
+    ): Single<MutableList<SelectViewTypeClass.Message>> {
         return chatRepositoryImpl.selectMessage(stream = stream, topic = topic)
     }
 }

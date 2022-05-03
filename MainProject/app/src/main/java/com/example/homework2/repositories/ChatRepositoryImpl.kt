@@ -61,7 +61,7 @@ interface ChatRepository {
     fun selectMessage(
         stream: Stream,
         topic: Topic
-    ): Single<Map<MessageEntity, List<ReactionEntity>>>
+    ): Single<MutableList<SelectViewTypeClass.Message>>
 }
 
 class ChatRepositoryImpl @Inject constructor(
@@ -197,7 +197,7 @@ class ChatRepositoryImpl @Inject constructor(
         return database.getMessagesAndReactionDao()
             .deleteOldestMessages(
                 oldestMessagedItAfterDeleted = messageIdToSave,
-                streamId = stream.stream_id,
+                streamId = stream.streamId,
                 topicName = topic.name
             )
             .subscribeOn(Schedulers.io())
@@ -209,10 +209,21 @@ class ChatRepositoryImpl @Inject constructor(
     override fun selectMessage(
         stream: Stream,
         topic: Topic
-    ): Single<Map<MessageEntity, List<ReactionEntity>>> {
+    ): Single<MutableList<SelectViewTypeClass.Message>> {
         return database.getMessagesAndReactionDao()
-            .selectMessagesAndReactionFromTopic(topicName = topic.name, streamId = stream.stream_id)
+            .selectMessagesAndReactionFromTopic(topicName = topic.name, streamId = stream.streamId)
             .subscribeOn(Schedulers.io())
+            .map { map ->
+                val resultMessages = mutableListOf<SelectViewTypeClass.Message>()
+                map.keys.forEach { messageEntity ->
+                    val message = messageEntity.toMessage()
+                    val reactionList =
+                        map.getValue(messageEntity).map { it.toReaction() }
+                    message.reactions = reactionList
+                    resultMessages.add(message)
+                }
+                resultMessages
+            }
             .observeOn(AndroidSchedulers.mainThread())
     }
 

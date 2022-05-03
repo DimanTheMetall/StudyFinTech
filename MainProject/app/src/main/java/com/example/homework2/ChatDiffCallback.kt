@@ -3,7 +3,7 @@ package com.example.homework2
 import androidx.recyclerview.widget.DiffUtil
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 
-class DiffCallback : DiffUtil.ItemCallback<SelectViewTypeClass>() {
+class ChatDiffCallback : DiffUtil.ItemCallback<SelectViewTypeClass>() {
     override fun areItemsTheSame(
         oldItem: SelectViewTypeClass,
         newItem: SelectViewTypeClass

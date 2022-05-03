@@ -32,7 +32,7 @@ interface StreamsAndTopicsDao {
             insertTopicList(stream.topicList.map {
                 TopicEntity.toEntity(
                     topic = it,
-                    streamId = stream.stream_id
+                    streamId = stream.streamId
                 )
             }).subscribe({}, { Log.e(Constance.LogTag.TOPIC_AND_STREAM, "$it") })
         }

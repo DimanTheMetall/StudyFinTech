@@ -21,7 +21,7 @@ data class StreamEntity(
 ) {
 
     fun toStream(): Stream = Stream(
-        stream_id = id,
+        streamId = id,
         name = streamName,
         topicList = mutableListOf()
     )
@@ -49,7 +49,7 @@ data class StreamEntity(
         const val ALL = "all"
 
         fun toEntity(stream: Stream, type: String): StreamEntity = StreamEntity(
-            id = stream.stream_id,
+            id = stream.streamId,
             streamName = stream.name,
             subscribedOrAll = type
         )

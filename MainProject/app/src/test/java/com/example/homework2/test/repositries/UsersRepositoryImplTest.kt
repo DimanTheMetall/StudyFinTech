@@ -1,7 +1,7 @@
-package test.repositries
+package com.example.homework2.test.repositries
 
-import RxRule
 import android.annotation.SuppressLint
+import com.example.homework2.RxRule
 import com.example.homework2.dataclasses.chatdataclasses.Website
 import com.example.homework2.dataclasses.streamsandtopics.JsonUsers
 import com.example.homework2.dataclasses.streamsandtopics.Member
@@ -27,7 +27,7 @@ class UsersRepositoryImplTest() {
 
     @SuppressLint("CheckResult")
     @Test
-    fun `test loadAllUsersWithOutPresence `() {
+    fun `should load all users return members list `() {
         val member = createMember(
             avatarURL = "avatar",
             email = "email",
@@ -72,17 +72,6 @@ class UsersRepositoryImplTest() {
             userId = userid,
             msg = msg,
             website = website
-        )
-    }
-
-    private fun createJsonUsers(
-        member: Member,
-        result: String = ""
-    ): JsonUsers {
-        return JsonUsers(
-            createMembersList(
-                member
-            ), result
         )
     }
 

@@ -42,7 +42,9 @@
                 app:layout_constraintBottom_toBottomOf="@id/search_image"
                 app:layout_constraintEnd_toStartOf="@id/search_image"
                 app:layout_constraintStart_toEndOf="@id/search_users"
-                android:visibility="gone" />
+                android:background="@color/unselected"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/search_image"

@@ -7,7 +7,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.homework2.DiffCallback
+import com.example.homework2.ChatDiffCallback
 import com.example.homework2.R
 import com.example.homework2.customviews.CustomViewGroup
 import com.example.homework2.databinding.CustomViewGroupLayoutBinding
@@ -23,7 +23,7 @@ class MessageAdapter(
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val differ = AsyncListDiffer(this, DiffCallback())
+    private val differ = AsyncListDiffer(this, ChatDiffCallback())
 
     private enum class MessageType {
         MESSAGE, DATE

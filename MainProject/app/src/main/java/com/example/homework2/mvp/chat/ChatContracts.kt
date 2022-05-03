@@ -1,7 +1,5 @@
 package com.example.homework2.mvp.chat
 
-import com.example.homework2.data.local.entity.MessageEntity
-import com.example.homework2.data.local.entity.ReactionEntity
 import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
 import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
 import com.example.homework2.dataclasses.chatdataclasses.ResponseFromSendMessage
@@ -74,6 +72,6 @@ interface ChatModel : BaseModel {
     fun getMessage(
         stream: Stream,
         topic: Topic
-    ): Single<Map<MessageEntity, List<ReactionEntity>>>
+    ): Single<MutableList<SelectViewTypeClass.Message>>
 
 }

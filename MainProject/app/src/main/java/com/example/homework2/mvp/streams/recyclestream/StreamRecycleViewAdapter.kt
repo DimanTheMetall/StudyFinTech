@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.R
+import com.example.homework2.StreamsDiffCallback
 import com.example.homework2.databinding.ChannelItemBinding
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
@@ -15,7 +17,8 @@ import com.example.homework2.dataclasses.streamsandtopics.Topic
 class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var streamList: List<Stream> = mutableListOf()
+    //    private var streamList: List<Stream> = mutableListOf()
+    private val differ = AsyncListDiffer(this, StreamsDiffCallback())
 
     @SuppressLint("InflateParams")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -45,7 +48,7 @@ class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
             openStreamTopics(false)
             setTopicList(stream = stream, topicList = stream.topicList, binding = binding)
 
-            binding.iconOpenStreams.setOnClickListener {
+            itemView.setOnClickListener {
                 when (binding.topicList.visibility) {
                     View.VISIBLE -> {
                         openStreamTopics(false)
@@ -111,15 +114,13 @@ class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
         }
     }
 
-    override fun getItemCount(): Int = streamList.size
+    override fun getItemCount(): Int = differ.currentList.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ChannelHolder).bind(streamList[position])
+        (holder as ChannelHolder).bind(differ.currentList[position])
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun updateList(list: List<Stream>) {
-        streamList = list.sortedBy { it.stream_id }
-        notifyDataSetChanged()
+        differ.submitList(list.sortedBy { it.name })
     }
 }

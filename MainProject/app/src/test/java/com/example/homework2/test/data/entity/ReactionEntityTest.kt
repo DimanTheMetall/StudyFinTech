@@ -1,4 +1,4 @@
-package test.data.entity
+package com.example.homework2.test.data.entity
 
 import com.example.homework2.data.local.entity.ReactionEntity
 import com.example.homework2.dataclasses.chatdataclasses.Reaction
