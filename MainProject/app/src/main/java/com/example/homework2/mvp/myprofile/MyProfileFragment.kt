@@ -20,7 +20,7 @@ import com.example.homework2.di.myprofilecomponent.DaggerMyProfileComponent
 import com.example.homework2.di.myprofilecomponent.MyProfileComponent
 import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.zulipApp
-
+import org.joda.time.DateTime
 import javax.inject.Inject
 
 class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBinding>(),
@@ -37,7 +37,7 @@ class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBindin
     }
 
     override fun renderProfile(member: Member) {
-
+        val currentTime = DateTime().millis
         var requestOptions = RequestOptions()
         requestOptions = requestOptions.transform(CenterCrop(), RoundedCorners(32))
 
@@ -50,7 +50,7 @@ class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBindin
         with(binding) {
             profileName.text = member.fullName
 
-            if (member.website != null && member.website.timestamp > Constance.Status.TIME_FOR_ON_ACTIVE_STATUS) {
+            if (member.website != null && currentTime - member.website.timestamp > Constance.Status.TIME_FOR_ON_ACTIVE_STATUS) {
                 profileStatusOnline.text = Constance.Status.OFFLINE
                 profileStatusOnline.setTextColor(Color.RED)
             }
