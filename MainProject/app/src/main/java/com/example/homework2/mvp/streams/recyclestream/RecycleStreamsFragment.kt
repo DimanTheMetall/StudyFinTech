@@ -131,6 +131,14 @@ class RecycleStreamsFragment :
         bottomSheetDialog?.hide()
     }
 
+    override fun showProgressInDialog() {
+        bottomSheetDialog?.startShimmer()
+    }
+
+    override fun stopShowingProgressInDialog() {
+        bottomSheetDialog?.hideShimmer()
+    }
+
     private fun loadStreamsFromZulip() {
         when (isSubscribed) {
             true -> {
@@ -158,9 +166,11 @@ class RecycleStreamsFragment :
         bottomSheetDialog = StreamsCustomBottomSheetDialog(
             context = requireContext(),
             { streamName, streamDescription ->
-
+                presenter.onCreateButtonCLick(streamName, streamDescription)
             },
-            { })
+            {
+                presenter.onCancelButtonClick()
+            })
     }
 
     private fun getIsSubscribedBoolean(): Boolean {

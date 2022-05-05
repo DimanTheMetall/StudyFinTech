@@ -4,7 +4,10 @@ import com.example.homework2.Errors
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
 import com.example.homework2.dataclasses.streamsandtopics.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Subscriptions
 import com.example.homework2.mvp.BasePresenterImpl
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class RecycleStreamPresenterImpl(
     model: RecycleStreamModel
@@ -54,6 +57,32 @@ class RecycleStreamPresenterImpl(
 
     override fun onLastStreamClick() {
         view.showBottomSheetDialog()
+    }
+
+    override fun onCreateButtonCLick(streamName: String, streamDescription: String?) {
+        view.showProgressInDialog()
+        val disposable = model.createOrSubscribeStream(
+            Subscriptions(
+                name = streamName,
+                description = streamDescription
+            )
+        )
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                view.stopShowingProgressInDialog()
+                view.hideBottomSheetDialog()
+            }, {
+                view.stopShowingProgressInDialog()
+                view.showError(it, Errors.SYSTEM)
+            })
+
+        compositeDisposable.add(disposable)
+    }
+
+    override fun onCancelButtonClick() {
+        view.hideBottomSheetDialog()
+        view.stopShowingProgressInDialog()
     }
 
     override fun onInit() {}

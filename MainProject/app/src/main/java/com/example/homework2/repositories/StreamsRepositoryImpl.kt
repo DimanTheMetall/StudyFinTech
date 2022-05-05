@@ -3,7 +3,9 @@ package com.example.homework2.repositories
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
+import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
 import com.example.homework2.dataclasses.streamsandtopics.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Subscriptions
 import com.example.homework2.retrofit.RetrofitService
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -24,6 +26,8 @@ interface StreamRepository {
     fun selectAllStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>>
 
     fun selectSubscribedStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>>
+
+    fun createOrSubscribeStream(subscriptions: Subscriptions): Single<JsonResponse>
 }
 
 
@@ -78,4 +82,8 @@ class StreamsRepositoryImpl @Inject constructor(
         database.getStreamsAndTopicsDao().getSubscribedStreamsAndTopic()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+
+    override fun createOrSubscribeStream(subscriptions: Subscriptions): Single<JsonResponse> {
+        return retrofitService.createOrSubscribeStream(subscriptions = listOf(subscriptions))
+    }
 }

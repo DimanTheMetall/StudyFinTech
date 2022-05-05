@@ -4,7 +4,9 @@ import android.util.Log
 import com.example.homework2.Constance
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
+import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
 import com.example.homework2.dataclasses.streamsandtopics.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Subscriptions
 import com.example.homework2.mvp.BaseModelImpl
 import com.example.homework2.repositories.StreamRepository
 import io.reactivex.Single
@@ -43,5 +45,8 @@ class RecycleStreamsModelImpl @Inject constructor(
     override fun selectSubscribedStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>> =
         streamsRepositoryImpl.selectSubscribedStreamsAndTopics()
 
-}
+    override fun createOrSubscribeStream(subscriptions: Subscriptions): Single<JsonResponse> {
+        return streamsRepositoryImpl.createOrSubscribeStream(subscriptions = subscriptions)
+    }
 
+}

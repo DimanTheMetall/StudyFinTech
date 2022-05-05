@@ -2,7 +2,7 @@ package com.example.homework2.customviews
 
 import android.content.Context
 import android.widget.Button
-import android.widget.TextView
+import android.widget.EditText
 import android.widget.Toast
 import com.example.homework2.R
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -14,25 +14,25 @@ class StreamsCustomBottomSheetDialog(
     private val onCancelClick: () -> Unit
 ) : BottomSheetDialog(context) {
 
-
     init {
         setContentView(R.layout.streams_bottom_sheet_dialog_layout)
         hideShimmer()
         setOnCancelClickListener()
-        setOnCreateClickListener(
-            streamName = findViewById<TextView>(R.id.stream_name_edit_text)?.text.toString(),
-            streamDescription = findViewById<TextView>(R.id.stream_description_edit_text)?.text.toString()
-        )
+        setOnCreateClickListener()
+
 
     }
 
     private fun setOnCreateClickListener(
-        streamName: String?,
-        streamDescription: String?
-    ) {
 
+    ) {
         findViewById<Button>(R.id.create_stream_button)?.setOnClickListener {
-            if (streamName.isNullOrEmpty()) {
+            val streamName =
+                findViewById<EditText>(R.id.stream_name_edit_text)?.text.toString()
+            val streamDescription =
+                findViewById<EditText>(R.id.stream_description_edit_text)?.text.toString()
+
+            if (streamName.isNullOrBlank()) {
                 Toast.makeText(
                     context,
                     context.getString(R.string.please_write_stream_name),

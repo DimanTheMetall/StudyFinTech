@@ -3,7 +3,9 @@ package com.example.homework2.mvp.streams.recyclestream
 import com.example.homework2.Errors
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
+import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
 import com.example.homework2.dataclasses.streamsandtopics.Stream
+import com.example.homework2.dataclasses.streamsandtopics.Subscriptions
 import com.example.homework2.mvp.BaseModel
 import com.example.homework2.mvp.BasePresenter
 import com.example.homework2.mvp.BaseView
@@ -21,6 +23,10 @@ interface RecycleStreamView : BaseView {
 
     fun hideBottomSheetDialog()
 
+    fun showProgressInDialog()
+
+    fun stopShowingProgressInDialog()
+
 }
 
 interface RecycleStreamPresenter : BasePresenter {
@@ -35,6 +41,10 @@ interface RecycleStreamPresenter : BasePresenter {
 
     fun onLastStreamClick()
 
+    fun onCreateButtonCLick(streamName: String, streamDescription: String?)
+
+    fun onCancelButtonClick()
+
 }
 
 interface RecycleStreamModel : BaseModel {
@@ -48,4 +58,6 @@ interface RecycleStreamModel : BaseModel {
     fun selectAllStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>>
 
     fun selectSubscribedStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>>
+
+    fun createOrSubscribeStream(subscriptions: Subscriptions): Single<JsonResponse>
 }
