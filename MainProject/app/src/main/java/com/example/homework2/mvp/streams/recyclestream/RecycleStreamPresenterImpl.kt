@@ -52,6 +52,10 @@ class RecycleStreamPresenterImpl(
         compositeDisposable.add(selectDisposable)
     }
 
+    override fun onLastStreamClick() {
+        view.showBottomSheetDialog()
+    }
+
     override fun onInit() {}
 
     private fun mapStreams(map: Map<StreamEntity, List<TopicEntity>>): List<Stream> {

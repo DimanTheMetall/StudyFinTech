@@ -17,6 +17,10 @@ interface RecycleStreamView : BaseView {
 
     fun showStreams(streamList: List<Stream>)
 
+    fun showBottomSheetDialog()
+
+    fun hideBottomSheetDialog()
+
 }
 
 interface RecycleStreamPresenter : BasePresenter {
@@ -28,6 +32,8 @@ interface RecycleStreamPresenter : BasePresenter {
     fun onAllStreamsNeeded()
 
     fun onSubscribedStreamsNeeded()
+
+    fun onLastStreamClick()
 
 }
 

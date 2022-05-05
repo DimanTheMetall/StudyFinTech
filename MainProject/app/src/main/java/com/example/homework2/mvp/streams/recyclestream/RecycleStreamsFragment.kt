@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.*
+import com.example.homework2.customviews.StreamsCustomBottomSheetDialog
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.di.recyclestreamcomponent.DaggerRecycleStreamsComponent
@@ -32,6 +33,7 @@ class RecycleStreamsFragment :
 
     private lateinit var recycleAdapter: StreamRecycleViewAdapter
     private lateinit var shimmer: ShimmerFrameLayout
+    private var bottomSheetDialog: StreamsCustomBottomSheetDialog? = null
 
     @Inject
     override lateinit var presenter: RecycleStreamPresenter
@@ -60,10 +62,7 @@ class RecycleStreamsFragment :
         initSearchTextListener()
         loadStreamsFromZulip()
         initCancelCliclListener()
-    }
-
-    private fun getIsSubscribedBoolean(): Boolean {
-        return requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)
+        initBottomSheetDialog()
     }
 
     override fun inflateViewBinding(
@@ -71,51 +70,6 @@ class RecycleStreamsFragment :
         container: ViewGroup?
     ): FragmentRecycleChannelsBinding {
         return FragmentRecycleChannelsBinding.inflate(layoutInflater, container, false)
-    }
-
-    private fun initRecycleAdapter() {
-        fun openFrag(fragment: Fragment, tag: String? = null) {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_holder, fragment, tag)
-                .addToBackStack(null)
-                .commit()
-        }
-
-        val itemDivider = object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(
-                outRect: Rect,
-                view: View,
-                parent: RecyclerView,
-                state: RecyclerView.State
-            ) {
-                outRect.apply {
-                    top += requireContext().dpToPx(2)
-                    bottom += requireContext().dpToPx(2)
-                }
-            }
-        }
-
-        recycleAdapter = StreamRecycleViewAdapter { topic, stream ->
-            openFrag(ChatFragment.newInstance(topic, stream), ChatFragment.TAG)
-        }
-        binding.recycleChannel.adapter = recycleAdapter
-        binding.recycleChannel.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.VERTICAL, false
-        )
-        binding.recycleChannel.addItemDecoration(itemDivider)
-    }
-
-    private fun initShimmer() {
-        shimmer = (parentFragment as StreamFragment).binding.streamsShimmer
-    }
-
-    private fun initCancelCliclListener() {
-        (parentFragment as StreamFragment).binding.cancelImage.setOnClickListener {
-            loadStreamsFromZulip()
-            (parentFragment as StreamFragment).binding.searchStreamsEditText.setText("")
-
-        }
     }
 
     private fun initSearchTextListener() {
@@ -149,17 +103,6 @@ class RecycleStreamsFragment :
         }
     }
 
-    private fun loadStreamsFromZulip() {
-        when (isSubscribed) {
-            true -> {
-                presenter.onSubscribedStreamsNeeded()
-            }
-            false -> {
-                presenter.onAllStreamsNeeded()
-            }
-        }
-    }
-
     override fun showProgress() {
         shimmer.showShimmer(true)
     }
@@ -178,6 +121,84 @@ class RecycleStreamsFragment :
         val sortedList = streamList.sortedBy { it.name }
         recycleAdapter.updateList(list = sortedList)
         shimmer.hideShimmer()
+    }
+
+    override fun showBottomSheetDialog() {
+        bottomSheetDialog?.show()
+    }
+
+    override fun hideBottomSheetDialog() {
+        bottomSheetDialog?.hide()
+    }
+
+    private fun loadStreamsFromZulip() {
+        when (isSubscribed) {
+            true -> {
+                presenter.onSubscribedStreamsNeeded()
+            }
+            false -> {
+                presenter.onAllStreamsNeeded()
+            }
+        }
+    }
+
+    private fun initShimmer() {
+        shimmer = (parentFragment as StreamFragment).binding.streamsShimmer
+    }
+
+    private fun initCancelCliclListener() {
+        (parentFragment as StreamFragment).binding.cancelImage.setOnClickListener {
+            loadStreamsFromZulip()
+            (parentFragment as StreamFragment).binding.searchStreamsEditText.setText("")
+
+        }
+    }
+
+    private fun initBottomSheetDialog() {
+        bottomSheetDialog = StreamsCustomBottomSheetDialog(
+            context = requireContext(),
+            { streamName, streamDescription ->
+
+            },
+            { })
+    }
+
+    private fun getIsSubscribedBoolean(): Boolean {
+        return requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)
+    }
+
+    private fun initRecycleAdapter() {
+        fun openFrag(fragment: Fragment, tag: String? = null) {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_holder, fragment, tag)
+                .addToBackStack(null)
+                .commit()
+        }
+
+        val itemDivider = object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
+                outRect.apply {
+                    top += requireContext().dpToPx(2)
+                    bottom += requireContext().dpToPx(2)
+                }
+            }
+        }
+
+        recycleAdapter = StreamRecycleViewAdapter({ topic, stream ->
+            openFrag(ChatFragment.newInstance(topic, stream), ChatFragment.TAG)
+        }, { presenter.onLastStreamClick() })
+
+        binding.recycleChannel.adapter = recycleAdapter
+        binding.recycleChannel.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.VERTICAL, false
+        )
+        binding.recycleChannel.addItemDecoration(itemDivider)
     }
 
     companion object {

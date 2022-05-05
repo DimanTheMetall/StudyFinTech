@@ -37,6 +37,14 @@
 
     <string name="systemError">System error</string>
     <string name="internetError">Internet error. Check internet connection</string>
+    <string name="write_stream_name">Write stream name</string>
+    <string name="write_stream_name_tint">Stream name...</string>
+    <string name="write_stream_description">Write stream description</string>
+    <string name="stream_description_hint">Stream description...</string>
+    <string name="create">Create</string>
+    <string name="cancel">cancel</string>
+    <string name="please_write_stream_name">Please write stream name</string>
+    <string name="create_channel">Create channel</string>
 
 
 </resources>

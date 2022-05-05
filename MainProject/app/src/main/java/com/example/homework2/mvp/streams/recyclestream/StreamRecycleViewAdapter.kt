@@ -14,25 +14,58 @@ import com.example.homework2.databinding.ChannelItemBinding
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 
-class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
+class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit, val openDialog: () -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val differ = AsyncListDiffer(this, StreamsDiffCallback())
 
+    private enum class SelectTypeStream {
+        STREAM, CREATESTREAM
+    }
+
     @SuppressLint("InflateParams")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(
-            R.layout.channel_item,
-            null,
-            false
-        ).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+        when (SelectTypeStream.values()[viewType]) {
+            SelectTypeStream.STREAM -> {
+                val view = LayoutInflater.from(parent.context).inflate(
+                    R.layout.channel_item,
+                    null,
+                    false
+                ).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+                return ChannelHolder(view)
+            }
+            else -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.create_channel_item, null, false).apply {
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    }
+
+                return CreateStreamHolder(view)
+            }
         }
 
-        return ChannelHolder(view)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (position == differ.currentList.lastIndex) SelectTypeStream.CREATESTREAM.ordinal
+        else SelectTypeStream.STREAM.ordinal
+    }
+
+    inner class CreateStreamHolder(view: View) : RecyclerView.ViewHolder(view) {
+        fun bind() {
+            itemView.setOnClickListener {
+                openDialog.invoke()
+            }
+        }
     }
 
     inner class ChannelHolder(item: View) : RecyclerView.ViewHolder(item) {
@@ -116,10 +149,19 @@ class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit) :
     override fun getItemCount(): Int = differ.currentList.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ChannelHolder).bind(differ.currentList[position])
+        if (holder is ChannelHolder) {
+            holder.bind(differ.currentList[position])
+        } else {
+            (holder as CreateStreamHolder).bind()
+        }
+
     }
 
     fun updateList(list: List<Stream>) {
-        differ.submitList(list.sortedBy { it.name })
+        val lastStreamForCreate = Stream(streamId = -1, name = "createStreams")
+        val newList = list.sortedBy { it.name }.toMutableList()
+        newList.add(lastStreamForCreate)
+
+        differ.submitList(newList)
     }
 }
