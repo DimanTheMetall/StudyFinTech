@@ -72,9 +72,14 @@ class RecycleStreamPresenterImpl(
             .subscribe({
                 view.stopShowingProgressInDialog()
                 view.hideBottomSheetDialog()
+                if (view.getIsSubscribeBoolean()) {
+                    onSubscribedStreamsNeeded()
+                } else {
+                    onAllStreamsNeeded()
+                }
             }, {
                 view.stopShowingProgressInDialog()
-                view.showError(it, Errors.SYSTEM)
+                view.showError(it, Errors.INTERNET)
             })
 
         compositeDisposable.add(disposable)

@@ -27,6 +27,8 @@ interface RecycleStreamView : BaseView {
 
     fun stopShowingProgressInDialog()
 
+    fun getIsSubscribeBoolean(): Boolean
+
 }
 
 interface RecycleStreamPresenter : BasePresenter {

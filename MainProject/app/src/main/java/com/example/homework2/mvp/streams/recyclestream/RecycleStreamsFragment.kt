@@ -38,7 +38,7 @@ class RecycleStreamsFragment :
     @Inject
     override lateinit var presenter: RecycleStreamPresenter
 
-    private var isSubscribed = false
+     var isSubscribed = false
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreateView(
@@ -138,6 +138,8 @@ class RecycleStreamsFragment :
     override fun stopShowingProgressInDialog() {
         bottomSheetDialog?.hideShimmer()
     }
+
+    override fun getIsSubscribeBoolean(): Boolean = isSubscribed
 
     private fun loadStreamsFromZulip() {
         when (isSubscribed) {

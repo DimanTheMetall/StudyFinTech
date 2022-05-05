@@ -1,7 +1,10 @@
 package com.example.homework2.retrofit
 
 import com.example.homework2.dataclasses.chatdataclasses.*
-import com.example.homework2.dataclasses.streamsandtopics.*
+import com.example.homework2.dataclasses.streamsandtopics.JsonStreams
+import com.example.homework2.dataclasses.streamsandtopics.JsonTopic
+import com.example.homework2.dataclasses.streamsandtopics.JsonUsers
+import com.example.homework2.dataclasses.streamsandtopics.Member
 import io.reactivex.Single
 import retrofit2.http.*
 
@@ -66,6 +69,6 @@ interface RetrofitService {
     ): Single<JsonResponse>
 
     @POST("users/me/subscriptions")
-    fun createOrSubscribeStream(@Query("subscriptions") subscriptions: List<Subscriptions>): Single<JsonResponse>
+    fun createOrSubscribeStream(@Query("subscriptions") subscriptions: String): Single<JsonResponse>
 
 }

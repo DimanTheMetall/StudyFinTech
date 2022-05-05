@@ -3,18 +3,18 @@
     <item
         android:id="@+id/item_channels"
         android:icon="@drawable/ic_channels"
-        android:title="Channels"
+        android:title="@string/channels"
         android:orderInCategory="1"/>
     <item
         android:id="@+id/item_people"
         android:icon="@drawable/ic_people"
-        android:title="People"
+        android:title="@string/people"
         android:orderInCategory="2"/>
 
     <item
         android:id="@+id/item_profile"
-        android:icon="@drawable/ic_channels"
-        android:title="Profile"
-        android:orderInCategory="3"/>
+        android:icon="@drawable/ic_profile"
+        android:title="@string/profile"
+        android:orderInCategory="3" />
 
 </menu>
