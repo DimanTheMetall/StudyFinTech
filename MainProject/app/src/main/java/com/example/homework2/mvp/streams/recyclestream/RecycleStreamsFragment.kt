@@ -60,7 +60,7 @@ class RecycleStreamsFragment :
         initShimmer()
         initSearchTextListener()
         loadStreamsFromZulip()
-        initCancelCliclListener()
+        initCancelClickListener()
         initBottomSheetDialog()
     }
 
@@ -162,7 +162,7 @@ class RecycleStreamsFragment :
         shimmer = (parentFragment as StreamFragment).binding.streamsShimmer
     }
 
-    private fun initCancelCliclListener() {
+    private fun initCancelClickListener() {
         (parentFragment as StreamFragment).binding.cancelImage.setOnClickListener {
             loadStreamsFromZulip()
             (parentFragment as StreamFragment).binding.searchStreamsEditText.setText("")

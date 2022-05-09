@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.*
 import com.example.homework2.customviews.CustomBottomSheetDialog
@@ -25,9 +26,11 @@ import javax.inject.Inject
 class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatView {
 
     private lateinit var messageAdapter: MessageAdapter
+    private lateinit var helpAdapter: TopicsHelpAdapter
+    private lateinit var shimmer: ShimmerFrameLayout
+
     private lateinit var topic: Topic
     private lateinit var stream: Stream
-    private lateinit var shimmer: ShimmerFrameLayout
 
     @Inject
     override lateinit var presenter: ChatPresenter
@@ -60,6 +63,9 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         initShimmer()
         initClickListenerOnMessageTranslateImage()
         initMessageRequest(isStreamChat)
+        initHelpRecycleAdapter()
+        initHelpListener()
+        setCLickListenerOnCancelHelpBtn()
     }
 
     override fun onDestroyView() {
@@ -80,6 +86,24 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
             setDisplayHomeAsUpEnabled(true)
             title = "#${stream.name}"
         }
+    }
+
+    override fun showProgress() {
+        shimmer.showShimmer(true)
+    }
+
+    override fun showMessages(messages: List<SelectViewTypeClass.Message>) {
+        //Каст на мутабельность из-за ссылочного типа
+        messageAdapter.replaceMessageList(newList = messages.toMutableList())
+        shimmer.hideShimmer()
+    }
+
+    override fun changeHelpVisibility(visibility: Int) {
+        binding.help.root.visibility = visibility
+    }
+
+    override fun fillTopicField(topic: Topic) {
+        binding.topicField.setText(topic.name)
     }
 
     private fun initBottomSheetDialog() {
@@ -161,16 +185,43 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         }
     }
 
-    private fun initHelpRecycleAdapter() {
+    private fun setCLickListenerOnCancelHelpBtn() {
+        binding.help.closeHelpBtn.setOnClickListener {
+            presenter.onCancelHelpBtnCLick()
+        }
+    }
 
+    private fun initHelpRecycleAdapter() {
+        val itemDivider = object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
+                outRect.apply {
+                    top += requireContext().dpToPx(2)
+                    bottom += requireContext().dpToPx(2)
+                }
+            }
+        }
+
+        helpAdapter = TopicsHelpAdapter { topicItem ->
+            presenter.onHelpTopicItemCLick(topic = topicItem)
+        }
+        with(binding.help.helpRecycle) {
+            adapter = helpAdapter
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(itemDivider)
+        }
+        helpAdapter.setTopicsList(stream.topicList)
     }
 
     private fun initHelpListener() {
-        binding.topicField.setOnTouchListener { v, event ->
-
-            true
+        binding.topicField.setOnFocusChangeListener { v, hasFocus ->
+            presenter.onFocusChanged(hasFocus)
         }
-
 
     }
 
@@ -245,15 +296,6 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         shimmer.hideShimmer()
     }
 
-    override fun showProgress() {
-        shimmer.showShimmer(true)
-    }
-
-    override fun showMessages(messages: List<SelectViewTypeClass.Message>) {
-        //Каст на мутабельность из-за ссылочного типа
-        messageAdapter.replaceMessageList(newList = messages.toMutableList())
-        shimmer.hideShimmer()
-    }
 
     companion object {
         const val TAG = "ChatFragment"

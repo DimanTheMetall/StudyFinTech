@@ -53,7 +53,7 @@ class StreamRecycleViewAdapter(
                         )
                     }
 
-                return CreateStreamHolder(view)
+                return LastStreamHolder(view)
             }
         }
 
@@ -64,7 +64,7 @@ class StreamRecycleViewAdapter(
         else SelectTypeStream.STREAM.ordinal
     }
 
-    inner class CreateStreamHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class LastStreamHolder(view: View) : RecyclerView.ViewHolder(view) {
         fun bind() {
             itemView.setOnClickListener {
                 openDialog.invoke()
@@ -161,7 +161,7 @@ class StreamRecycleViewAdapter(
         if (holder is ChannelHolder) {
             holder.bind(differ.currentList[position])
         } else {
-            (holder as CreateStreamHolder).bind()
+            (holder as LastStreamHolder).bind()
         }
 
     }

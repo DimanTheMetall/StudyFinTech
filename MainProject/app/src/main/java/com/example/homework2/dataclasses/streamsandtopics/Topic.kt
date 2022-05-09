@@ -4,6 +4,6 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class Topic(
+data class Topic(
     val name: String
 ) : Parcelable

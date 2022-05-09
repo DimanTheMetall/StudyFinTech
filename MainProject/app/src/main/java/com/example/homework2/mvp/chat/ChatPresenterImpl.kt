@@ -1,5 +1,6 @@
 package com.example.homework2.mvp.chat
 
+import android.view.View
 import com.example.homework2.Constance
 import com.example.homework2.Errors
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
@@ -139,6 +140,23 @@ class ChatPresenterImpl @Inject constructor(
             }, { view.showError(throwable = it, error = Errors.INTERNET) })
 
         compositeDisposable.add(emojiDisposable)
+    }
+
+    override fun onHelpTopicItemCLick(topic: Topic) {
+        view.changeHelpVisibility(visibility = View.INVISIBLE)
+        view.fillTopicField(topic = topic)
+    }
+
+    override fun onCancelHelpBtnCLick() {
+        view.changeHelpVisibility(View.GONE)
+    }
+
+    override fun onFocusChanged(isFocused: Boolean) {
+        if (isFocused) {
+            view.changeHelpVisibility(View.VISIBLE)
+        } else {
+            view.changeHelpVisibility(View.GONE)
+        }
     }
 
     override fun onInit() {

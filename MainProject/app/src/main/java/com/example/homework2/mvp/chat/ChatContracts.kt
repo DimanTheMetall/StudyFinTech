@@ -20,6 +20,10 @@ interface ChatView : BaseView {
 
     fun showMessages(messages: List<SelectViewTypeClass.Message>)
 
+    fun changeHelpVisibility(visibility: Int)
+
+    fun fillTopicField(topic: Topic)
+
 }
 
 interface ChatPresenter : BasePresenter {
@@ -46,6 +50,12 @@ interface ChatPresenter : BasePresenter {
     fun onInitMessageForStreamRequest(stream: Stream)
 
     fun onEmojiInSheetDialogClick(messageId: Long, emojiName: String, reactionType: String)
+
+    fun onHelpTopicItemCLick(topic: Topic)
+
+    fun onCancelHelpBtnCLick()
+
+    fun onFocusChanged(isFocused: Boolean)
 
 }
 

@@ -63,6 +63,7 @@
         android:layout_marginBottom="10dp" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/help_recycle"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
