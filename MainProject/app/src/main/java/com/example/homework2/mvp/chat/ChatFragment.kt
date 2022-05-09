@@ -36,6 +36,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private val compositeDisposable = CompositeDisposable()
 
     private var bottomSheetDialog: CustomBottomSheetDialog? = null
+    private var isStreamChat = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,11 +54,12 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         initBottomSheetDialog()
         initImageSwitcher()
         initArguments()
+        setVisibilityComponents(isStreamChat)
         initRecycleAdapter()
         configureRecycleAdapter()
         initShimmer()
         initClickListenerOnMessageTranslateImage()
-        presenter.onInitMessageRequest(stream = stream, topic = topic)
+        initMessageRequest(isStreamChat)
     }
 
     override fun onDestroyView() {
@@ -104,6 +106,14 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         }
     }
 
+    private fun initMessageRequest(isStreamChat: Boolean) {
+        if (isStreamChat) {
+            presenter.onInitMessageForStreamRequest(stream = stream)
+        } else {
+            presenter.onInitMessageForTopicRequest(stream = stream, topic = topic)
+        }
+    }
+
     private fun initImageSwitcher() {
 
         fun switchImageOnTextChanged(isTextEmpty: Boolean) {
@@ -136,10 +146,25 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         }
     }
 
+    private fun setVisibilityComponents(isStreamChat: Boolean) {
+        if (isStreamChat) {
+            with(binding) {
+                topicName.visibility = View.VISIBLE
+                topicField.visibility = View.VISIBLE
+            }
+        } else {
+            with(binding) {
+                topicName.visibility = View.GONE
+                topicField.visibility = View.GONE
+                binding.topicName.text = getString(R.string.topiclable, topic.name)
+            }
+        }
+    }
+
     private fun initArguments() {
         topic = requireArguments().getParcelable(Constance.TOPIC_KEY)!!
         stream = requireArguments().getParcelable(Constance.STREAM_KEY)!!
-        binding.streamName.text = getString(R.string.topiclable, topic.name)
+        isStreamChat = topic.name == Constance.NONEXISTTOPIC
     }
 
     private fun initRecycleAdapter() {
@@ -175,9 +200,19 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
         binding.rcView.apply {
             addOnPageScrollListener({
-                presenter.onMessagesNextPageLoadRequested(stream = stream, topic = topic)
+                if (isStreamChat) {
+                    presenter.onStreamMessageNextPgeLoadRequest(stream = stream)
+                } else {
+                    presenter.onTopicMessagesNextPageLoadRequested(stream = stream, topic = topic)
+                }
+
             }, {
-                presenter.onMessagePreviousPageLoadRequest(stream = stream, topic = topic)
+                if (isStreamChat) {
+                    presenter.onStreamMessagePreviousPgeLoadRequest(stream = stream)
+                } else {
+                    presenter.onTopicMessagePreviousPageLoadRequest(stream = stream, topic = topic)
+                }
+
             })
             addItemDecoration(itemDivider)
         }

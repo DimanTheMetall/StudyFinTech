@@ -3,7 +3,6 @@ package com.example.homework2.mvp.chat
 import com.example.homework2.Errors
 import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
 import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
-import com.example.homework2.dataclasses.chatdataclasses.ResponseFromSendMessage
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
@@ -32,13 +31,19 @@ interface ChatPresenter : BasePresenter {
         isSelected: Boolean
     )
 
-    fun onMessagesNextPageLoadRequested(stream: Stream, topic: Topic)
+    fun onTopicMessagesNextPageLoadRequested(stream: Stream, topic: Topic)
 
-    fun onMessagePreviousPageLoadRequest(stream: Stream, topic: Topic)
+    fun onTopicMessagePreviousPageLoadRequest(stream: Stream, topic: Topic)
+
+    fun onStreamMessageNextPgeLoadRequest(stream: Stream)
+
+    fun onStreamMessagePreviousPgeLoadRequest(stream: Stream)
 
     fun onSendMessageRequest(sentText: String, topic: Topic, stream: Stream)
 
-    fun onInitMessageRequest(stream: Stream, topic: Topic)
+    fun onInitMessageForTopicRequest(stream: Stream, topic: Topic)
+
+    fun onInitMessageForStreamRequest(stream: Stream)
 
     fun onEmojiInSheetDialogClick(messageId: Long, emojiName: String, reactionType: String)
 
@@ -46,15 +51,15 @@ interface ChatPresenter : BasePresenter {
 
 interface ChatModel : BaseModel {
 
-    fun getMessageById(messageId: Long): Single<SelectViewTypeClass.Message>
+    fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message>
 
     fun deleteEmoji(messageId: Long, emojiName: String, reactionType: String): Single<JsonResponse>
 
     fun addEmoji(messageId: Long, emojiName: String, reactionType: String): Single<JsonResponse>
 
-    fun sendMessage(sentText: String, topic: Topic, stream: Stream): Single<ResponseFromSendMessage>
+    fun sendMessage(sentText: String, topic: Topic, stream: Stream): Single<JsonResponse>
 
-    fun getTopicMessages(
+    fun loadTopicMessages(
         topic: Topic,
         stream: Stream,
         anchor: String,
@@ -62,7 +67,14 @@ interface ChatModel : BaseModel {
         numBefore: Int
     ): Single<JsonMessages>
 
-    fun getLastMessage(
+    fun loadStreamMessages(
+        stream: Stream,
+        anchor: String,
+        numAfter: Int,
+        numBefore: Int
+    ): Single<JsonMessages>
+
+    fun loadLastMessage(
         topic: Topic,
         stream: Stream
     ): Single<List<SelectViewTypeClass.Message>>
@@ -71,7 +83,7 @@ interface ChatModel : BaseModel {
 
     fun deleteOldestMessagesWhereIdLess(messageIdToSave: Long, stream: Stream, topic: Topic)
 
-    fun getMessage(
+    fun getMessageFromDataBase(
         stream: Stream,
         topic: Topic
     ): Single<MutableList<SelectViewTypeClass.Message>>

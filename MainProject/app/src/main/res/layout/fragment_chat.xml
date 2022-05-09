@@ -10,7 +10,8 @@
         android:id="@+id/chat_shimmer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/message_field"
+        app:layout_constraintBottom_toTopOf="@id/topic_field"
+        android:layout_marginBottom="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -20,27 +21,40 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/stream_name"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/unselected"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:gravity="center"
-            />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/topic_name"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/unselected"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="24sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toTopOf="@id/message_field" />
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/topic_field"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_message"
+        android:hint="@string/topic"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/message_field" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/message_field"

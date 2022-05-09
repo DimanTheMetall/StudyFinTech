@@ -35,7 +35,7 @@ interface ChatRepository {
         sentText: String,
         topic: Topic,
         stream: Stream
-    ): Single<ResponseFromSendMessage>
+    ): Single<JsonResponse>
 
     fun loadTopicMessages(
         topic: Topic,
@@ -45,7 +45,14 @@ interface ChatRepository {
         numBefore: Int
     ): Single<JsonMessages>
 
-    fun loadLastMessage(
+    fun loadStreamMessages(
+        stream: Stream,
+        anchor: String,
+        numAfter: Int,
+        numBefore: Int
+    ): Single<JsonMessages>
+
+    fun loadLastMessageInTopic(
         topic: Topic,
         stream: Stream
     ): Single<List<SelectViewTypeClass.Message>>
@@ -103,7 +110,7 @@ class ChatRepositoryImpl @Inject constructor(
         sentText: String,
         topic: Topic,
         stream: Stream
-    ): Single<ResponseFromSendMessage> {
+    ): Single<JsonResponse> {
         val sentMessage = SendMessage(
             type = Constance.STREAM,
             to = stream.name,
@@ -111,7 +118,7 @@ class ChatRepositoryImpl @Inject constructor(
             topic = topic.name
         )
 
-        return retrofitService.sendMessage(
+        return retrofitService.sendMessageInTopic(
             type = sentMessage.type,
             to = sentMessage.to,
             content = sentMessage.content,
@@ -144,7 +151,28 @@ class ChatRepositoryImpl @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override fun loadLastMessage(
+    override fun loadStreamMessages(
+        stream: Stream,
+        anchor: String,
+        numAfter: Int,
+        numBefore: Int
+    ): Single<JsonMessages> {
+        return retrofitService.getMessages(
+            narrow = Narrow(
+                listOf(
+                    Filter(operator = Constance.STREAM, operand = stream.name)
+                )
+            ).toJson(),
+            anchor = anchor,
+            numBefore = numBefore,
+            numAfter = numAfter,
+            false
+        )
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun loadLastMessageInTopic(
         topic: Topic,
         stream: Stream
     ): Single<List<SelectViewTypeClass.Message>> {

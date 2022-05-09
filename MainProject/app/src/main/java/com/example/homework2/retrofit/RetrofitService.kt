@@ -1,6 +1,9 @@
 package com.example.homework2.retrofit
 
-import com.example.homework2.dataclasses.chatdataclasses.*
+import com.example.homework2.dataclasses.chatdataclasses.JsonMessage
+import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
+import com.example.homework2.dataclasses.chatdataclasses.JsonPresense
+import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
 import com.example.homework2.dataclasses.streamsandtopics.JsonStreams
 import com.example.homework2.dataclasses.streamsandtopics.JsonTopic
 import com.example.homework2.dataclasses.streamsandtopics.JsonUsers
@@ -43,12 +46,12 @@ interface RetrofitService {
     ): Single<JsonMessages>
 
     @POST("messages")
-    fun sendMessage(
+    fun sendMessageInTopic(
         @Query("type") type: String,
         @Query("to") to: String,
         @Query("content") content: String,
         @Query("topic") topic: String
-    ): Single<ResponseFromSendMessage>
+    ): Single<JsonResponse>
 
     @GET("users/{user_id_or_email}/presence")
     fun getPresence(@Path("user_id_or_email") user_id_or_email: Any): Single<JsonPresense>

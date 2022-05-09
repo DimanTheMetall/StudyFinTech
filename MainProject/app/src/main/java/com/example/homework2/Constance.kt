@@ -18,6 +18,8 @@ object Constance {
     const val DOWNLOAD_MESSAGES_PERIOD = 10L
     const val INIT_REFRESHER_DELAY = 3L
 
+    const val NONEXISTTOPIC = "notexist_key44ffrrtaff"
+
     object Status {
         const val ACTIVE = "active"
         const val IDLE = "idle"

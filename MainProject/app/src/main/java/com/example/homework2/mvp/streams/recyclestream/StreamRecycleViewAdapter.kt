@@ -14,7 +14,11 @@ import com.example.homework2.databinding.ChannelItemBinding
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 
-class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit, val openDialog: () -> Unit) :
+class StreamRecycleViewAdapter(
+    val openFrag: (Topic, Stream) -> Unit,
+    val openDialog: () -> Unit,
+    val onLongTap: (Stream) -> Unit
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val differ = AsyncListDiffer(this, StreamsDiffCallback())
@@ -79,6 +83,11 @@ class StreamRecycleViewAdapter(val openFrag: (Topic, Stream) -> Unit, val openDi
             binding.topicList.removeAllViews()
             openStreamTopics(false)
             setTopicList(stream = stream, topicList = stream.topicList, binding = binding)
+
+            itemView.setOnLongClickListener {
+                onLongTap.invoke(stream)
+                true
+            }
 
             itemView.setOnClickListener {
                 when (binding.topicList.visibility) {

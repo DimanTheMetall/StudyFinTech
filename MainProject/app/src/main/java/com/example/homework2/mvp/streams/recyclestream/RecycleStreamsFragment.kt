@@ -19,7 +19,6 @@ import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.di.recyclestreamcomponent.DaggerRecycleStreamsComponent
 import com.example.homework2.di.recyclestreamcomponent.RecycleStreamsComponent
 import com.example.homework2.mvp.BaseFragment
-import com.example.homework2.mvp.chat.ChatFragment
 import com.example.homework2.mvp.streams.StreamFragment
 import com.facebook.shimmer.ShimmerFrameLayout
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -38,7 +37,7 @@ class RecycleStreamsFragment :
     @Inject
     override lateinit var presenter: RecycleStreamPresenter
 
-     var isSubscribed = false
+    var isSubscribed = false
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreateView(
@@ -141,6 +140,13 @@ class RecycleStreamsFragment :
 
     override fun getIsSubscribeBoolean(): Boolean = isSubscribed
 
+    override fun openFragment(fragment: Fragment, tag: String?) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_holder, fragment, tag)
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun loadStreamsFromZulip() {
         when (isSubscribed) {
             true -> {
@@ -180,12 +186,6 @@ class RecycleStreamsFragment :
     }
 
     private fun initRecycleAdapter() {
-        fun openFrag(fragment: Fragment, tag: String? = null) {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_holder, fragment, tag)
-                .addToBackStack(null)
-                .commit()
-        }
 
         val itemDivider = object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(
@@ -202,8 +202,12 @@ class RecycleStreamsFragment :
         }
 
         recycleAdapter = StreamRecycleViewAdapter({ topic, stream ->
-            openFrag(ChatFragment.newInstance(topic, stream), ChatFragment.TAG)
-        }, { presenter.onLastStreamClick() })
+            presenter.onShortClickOnTopic(topic = topic, stream = stream)
+        }, {
+            presenter.onLastStreamClick()
+        }, { stream ->
+            presenter.onLongTapOnStream(stream = stream)
+        })
 
         binding.recycleChannel.adapter = recycleAdapter
         binding.recycleChannel.layoutManager = LinearLayoutManager(

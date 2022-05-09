@@ -1,11 +1,13 @@
 package com.example.homework2.mvp.streams.recyclestream
 
+import androidx.fragment.app.Fragment
 import com.example.homework2.Errors
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
 import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Subscriptions
+import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseModel
 import com.example.homework2.mvp.BasePresenter
 import com.example.homework2.mvp.BaseView
@@ -29,6 +31,8 @@ interface RecycleStreamView : BaseView {
 
     fun getIsSubscribeBoolean(): Boolean
 
+    fun openFragment(fragment: Fragment, tag: String? = null)
+
 }
 
 interface RecycleStreamPresenter : BasePresenter {
@@ -46,6 +50,10 @@ interface RecycleStreamPresenter : BasePresenter {
     fun onCreateButtonCLick(streamName: String, streamDescription: String?)
 
     fun onCancelButtonClick()
+
+    fun onLongTapOnStream(stream: Stream)
+
+    fun onShortClickOnTopic(topic: Topic, stream: Stream)
 
 }
 

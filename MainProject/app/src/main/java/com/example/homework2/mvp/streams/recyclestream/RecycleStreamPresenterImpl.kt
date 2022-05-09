@@ -1,11 +1,14 @@
 package com.example.homework2.mvp.streams.recyclestream
 
+import com.example.homework2.Constance
 import com.example.homework2.Errors
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Subscriptions
+import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BasePresenterImpl
+import com.example.homework2.mvp.chat.ChatFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -88,6 +91,22 @@ class RecycleStreamPresenterImpl(
     override fun onCancelButtonClick() {
         view.hideBottomSheetDialog()
         view.stopShowingProgressInDialog()
+    }
+
+    override fun onLongTapOnStream(stream: Stream) {
+        view.openFragment(
+            fragment = ChatFragment.newInstance(
+                stream = stream,
+                topic = Topic(name = Constance.NONEXISTTOPIC),
+            ), tag = ChatFragment.TAG
+        )
+    }
+
+    override fun onShortClickOnTopic(topic: Topic, stream: Stream) {
+        view.openFragment(
+            fragment = ChatFragment.newInstance(topic = topic, stream = stream),
+            tag = ChatFragment.TAG
+        )
     }
 
     override fun onInit() {}

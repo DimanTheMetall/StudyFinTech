@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.homework2.Constance
 import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
 import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
-import com.example.homework2.dataclasses.chatdataclasses.ResponseFromSendMessage
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
@@ -20,7 +19,7 @@ class ChatModelImpl @Inject constructor(
 
     //HTTP operation
 
-    override fun getMessageById(messageId: Long): Single<SelectViewTypeClass.Message> {
+    override fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message> {
         return chatRepositoryImpl.loadMessageById(messageId = messageId)
     }
 
@@ -53,11 +52,11 @@ class ChatModelImpl @Inject constructor(
         sentText: String,
         topic: Topic,
         stream: Stream
-    ): Single<ResponseFromSendMessage> {
+    ): Single<JsonResponse> {
         return chatRepositoryImpl.sendMessage(sentText = sentText, topic = topic, stream = stream)
     }
 
-    override fun getTopicMessages(
+    override fun loadTopicMessages(
         topic: Topic,
         stream: Stream,
         anchor: String,
@@ -73,11 +72,25 @@ class ChatModelImpl @Inject constructor(
         )
     }
 
-    override fun getLastMessage(
+    override fun loadStreamMessages(
+        stream: Stream,
+        anchor: String,
+        numAfter: Int,
+        numBefore: Int
+    ): Single<JsonMessages> {
+        return chatRepositoryImpl.loadStreamMessages(
+            stream = stream,
+            anchor = anchor,
+            numAfter = numAfter,
+            numBefore = numBefore
+        )
+    }
+
+    override fun loadLastMessage(
         topic: Topic,
         stream: Stream
     ): Single<List<SelectViewTypeClass.Message>> {
-        return chatRepositoryImpl.loadLastMessage(topic = topic, stream = stream)
+        return chatRepositoryImpl.loadLastMessageInTopic(topic = topic, stream = stream)
     }
 
     //Database operation
@@ -106,7 +119,7 @@ class ChatModelImpl @Inject constructor(
         compositeDisposable.add(disposable)
     }
 
-    override fun getMessage(
+    override fun getMessageFromDataBase(
         stream: Stream,
         topic: Topic
     ): Single<MutableList<SelectViewTypeClass.Message>> {

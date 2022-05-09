@@ -40,7 +40,7 @@ class ChatPresenterImpl @Inject constructor(
                 emojiName = emojiName,
                 reactionType = reactionType
             ).subscribe({
-                val deleteDisposable = model.getMessageById(messageId = messageId)
+                val deleteDisposable = model.loadMessageById(messageId = messageId)
                     .subscribe({ message ->
                         val newList =
                             currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
@@ -56,7 +56,7 @@ class ChatPresenterImpl @Inject constructor(
                 reactionType = reactionType
             )
                 .subscribe({
-                    val addDisposable = model.getMessageById(messageId = messageId)
+                    val addDisposable = model.loadMessageById(messageId = messageId)
                         .subscribe({ message ->
                             val newList =
                                 currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
@@ -68,16 +68,16 @@ class ChatPresenterImpl @Inject constructor(
         }
     }
 
-    override fun onMessagesNextPageLoadRequested(stream: Stream, topic: Topic) {
+    override fun onTopicMessagesNextPageLoadRequested(stream: Stream, topic: Topic) {
         if (!loadedIsLast) {
-            loadNextMessages(stream = stream, topic = topic)
+            loadNextTopicMessages(stream = stream, topic = topic)
         }
     }
 
-    override fun onMessagePreviousPageLoadRequest(stream: Stream, topic: Topic) {
+    override fun onTopicMessagePreviousPageLoadRequest(stream: Stream, topic: Topic) {
         if (!loadedIsFirst) {
             view.showProgress()
-            val disposable = model.getTopicMessages(
+            val disposable = model.loadTopicMessages(
                 topic = topic,
                 stream = stream,
                 anchor = currentMessageList.first().id.toString(),
@@ -96,10 +96,18 @@ class ChatPresenterImpl @Inject constructor(
         }
     }
 
+    override fun onStreamMessageNextPgeLoadRequest(stream: Stream) {
+        if (!loadedIsLast) loadNextStreamMessages(stream = stream)
+    }
+
+    override fun onStreamMessagePreviousPgeLoadRequest(stream: Stream) {
+        if (!loadedIsFirst) loadPreviousStreamMessages(stream = stream)
+    }
+
     override fun onSendMessageRequest(sentText: String, topic: Topic, stream: Stream) {
         val sendDisposable = model.sendMessage(sentText = sentText, topic = topic, stream = stream)
             .subscribe({
-                val loadDisposable = model.getLastMessage(topic = topic, stream = stream)
+                val loadDisposable = model.loadLastMessage(topic = topic, stream = stream)
                     .subscribe({ messages ->
                         currentMessageList.addAll(messages)
                         checkAndDelete(stream = stream, topic = topic)
@@ -110,11 +118,11 @@ class ChatPresenterImpl @Inject constructor(
         compositeDisposable.add(sendDisposable)
     }
 
-    override fun onInitMessageRequest(stream: Stream, topic: Topic) {
-        val disposable = model.getMessage(stream = stream, topic = topic)
+    override fun onInitMessageForTopicRequest(stream: Stream, topic: Topic) {
+        val disposable = model.getMessageFromDataBase(stream = stream, topic = topic)
             .subscribe({ messages ->
                 if (messages.isNullOrEmpty()) {
-                    loadNextMessages(stream = stream, topic = topic)
+                    loadNextTopicMessages(stream = stream, topic = topic)
                 } else {
                     currentMessageList.addAll(messages)
                     view.showMessages(messages = currentMessageList)
@@ -122,6 +130,10 @@ class ChatPresenterImpl @Inject constructor(
             }, { view.showError(throwable = it, error = Errors.SYSTEM) })
 
         compositeDisposable.add(disposable)
+    }
+
+    override fun onInitMessageForStreamRequest(stream: Stream) {
+        loadNextStreamMessages(stream = stream)
     }
 
     override fun onEmojiInSheetDialogClick(
@@ -135,7 +147,7 @@ class ChatPresenterImpl @Inject constructor(
             reactionType = reactionType
         )
             .subscribe({
-                val messageDisposable = model.getMessageById(messageId = messageId)
+                val messageDisposable = model.loadMessageById(messageId = messageId)
                     .subscribe({ message ->
                         val newList =
                             currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
@@ -165,11 +177,52 @@ class ChatPresenterImpl @Inject constructor(
         }
     }
 
-    private fun loadNextMessages(stream: Stream, topic: Topic) {
+    private fun loadPreviousStreamMessages(stream: Stream) {
+        if (!loadedIsFirst) {
+            view.showProgress()
+            val disposable = model.loadStreamMessages(
+                stream = stream,
+                anchor = currentMessageList.first().id.toString(),
+                numAfter = 0,
+                numBefore = Constance.MESSAGES_COUNT_PAGINATION
+            )
+                .subscribe({ json ->
+                    val newList = json.messages
+                        .filterNot { it.id == currentMessageList.first().id }.toMutableList()
+                    newList.addAll(currentMessageList)
+                    currentMessageList = newList
+                    view.showMessages(messages = currentMessageList)
+                }, { view.showError(throwable = it, error = Errors.INTERNET) })
+
+            compositeDisposable.add(disposable)
+        }
+    }
+
+    private fun loadNextStreamMessages(stream: Stream) {
         val lastMessageId =
             if (currentMessageList.isNullOrEmpty()) 1L else currentMessageList.last().id
         view.showProgress()
-        @Suppress("UNCHECKED_CAST") val disposable = model.getTopicMessages(
+        val disposable = model.loadStreamMessages(
+            stream = stream,
+            anchor = lastMessageId.toString(),
+            numAfter = Constance.MESSAGES_COUNT_PAGINATION,
+            numBefore = 0
+        )
+            .subscribe({ json ->
+                val messages = json.messages.filterNot { it.id == lastMessageId }
+                loadedIsLast = json.foundNewest
+                currentMessageList.addAll(messages.sortedBy { it.timestamp })
+                view.showMessages(currentMessageList)
+            }, { view.showError(it, Errors.INTERNET) })
+
+        compositeDisposable.add(disposable)
+    }
+
+    private fun loadNextTopicMessages(stream: Stream, topic: Topic) {
+        val lastMessageId =
+            if (currentMessageList.isNullOrEmpty()) 1L else currentMessageList.last().id
+        view.showProgress()
+        @Suppress("UNCHECKED_CAST") val disposable = model.loadTopicMessages(
             topic = topic,
             stream = stream,
             anchor = "$lastMessageId",
@@ -182,7 +235,7 @@ class ChatPresenterImpl @Inject constructor(
                         json.messages.filterNot { it.id == lastMessageId }
 
                     loadedIsLast = json.foundNewest
-                    if (loadedIsLast) subscribeRefresher(topic = topic, stream = stream)
+                    if (loadedIsLast) subscribeTopicRefresher(topic = topic, stream = stream)
 
                     currentMessageList.addAll(messages)
                     view.showMessages(currentMessageList)
@@ -200,10 +253,10 @@ class ChatPresenterImpl @Inject constructor(
         compositeDisposable.add(disposable)
     }
 
-    private fun subscribeRefresher(topic: Topic, stream: Stream) {
+    private fun subscribeTopicRefresher(topic: Topic, stream: Stream) {
         if (!refresherIsSubscribed) {
             val refreshDisposable = refresherObservable
-                .subscribe({ loadNextMessages(stream = stream, topic = topic) }, {
+                .subscribe({ loadNextTopicMessages(stream = stream, topic = topic) }, {
                     view.showError(throwable = it, error = Errors.INTERNET)
                 })
 
