@@ -161,6 +161,19 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         }
     }
 
+    private fun initHelpRecycleAdapter() {
+
+    }
+
+    private fun initHelpListener() {
+        binding.topicField.setOnTouchListener { v, event ->
+
+            true
+        }
+
+
+    }
+
     private fun initArguments() {
         topic = requireArguments().getParcelable(Constance.TOPIC_KEY)!!
         stream = requireArguments().getParcelable(Constance.STREAM_KEY)!!

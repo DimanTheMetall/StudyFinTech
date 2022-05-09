@@ -49,5 +49,7 @@
     <string name="people">People</string>
     <string name="profile">Profile</string>
     <string name="topic">#topic</string>
+    <string name="topics_in_this_stream">Topics in this stream</string>
+    <string name="close_help">close help</string>
 
 </resources>

@@ -69,31 +69,11 @@ class ChatPresenterImpl @Inject constructor(
     }
 
     override fun onTopicMessagesNextPageLoadRequested(stream: Stream, topic: Topic) {
-        if (!loadedIsLast) {
-            loadNextTopicMessages(stream = stream, topic = topic)
-        }
+        if (!loadedIsLast) loadNextTopicMessages(stream = stream, topic = topic)
     }
 
     override fun onTopicMessagePreviousPageLoadRequest(stream: Stream, topic: Topic) {
-        if (!loadedIsFirst) {
-            view.showProgress()
-            val disposable = model.loadTopicMessages(
-                topic = topic,
-                stream = stream,
-                anchor = currentMessageList.first().id.toString(),
-                numAfter = 0,
-                numBefore = Constance.MESSAGES_COUNT_PAGINATION
-            )
-                .subscribe({ json ->
-                    val newList = json.messages
-                        .filterNot { it.id == currentMessageList.first().id }.toMutableList()
-                    newList.addAll(currentMessageList)
-                    currentMessageList = newList
-                    view.showMessages(messages = currentMessageList)
-                }, { view.showError(throwable = it, error = Errors.INTERNET) })
-
-            compositeDisposable.add(disposable)
-        }
+        if (!loadedIsFirst) loadPreviousTopicsMessages(stream = stream, topic = topic)
     }
 
     override fun onStreamMessageNextPgeLoadRequest(stream: Stream) {
@@ -211,6 +191,8 @@ class ChatPresenterImpl @Inject constructor(
             .subscribe({ json ->
                 val messages = json.messages.filterNot { it.id == lastMessageId }
                 loadedIsLast = json.foundNewest
+                if (loadedIsLast) subscribeStreamsRefresher(stream = stream)
+
                 currentMessageList.addAll(messages.sortedBy { it.timestamp })
                 view.showMessages(currentMessageList)
             }, { view.showError(it, Errors.INTERNET) })
@@ -253,10 +235,42 @@ class ChatPresenterImpl @Inject constructor(
         compositeDisposable.add(disposable)
     }
 
+    private fun loadPreviousTopicsMessages(stream: Stream, topic: Topic) {
+        view.showProgress()
+        val disposable = model.loadTopicMessages(
+            topic = topic,
+            stream = stream,
+            anchor = currentMessageList.first().id.toString(),
+            numAfter = 0,
+            numBefore = Constance.MESSAGES_COUNT_PAGINATION
+        )
+            .subscribe({ json ->
+                val newList = json.messages
+                    .filterNot { it.id == currentMessageList.first().id }.toMutableList()
+                newList.addAll(currentMessageList)
+                currentMessageList = newList
+                view.showMessages(messages = currentMessageList)
+            }, { view.showError(throwable = it, error = Errors.INTERNET) })
+
+        compositeDisposable.add(disposable)
+    }
+
     private fun subscribeTopicRefresher(topic: Topic, stream: Stream) {
         if (!refresherIsSubscribed) {
             val refreshDisposable = refresherObservable
                 .subscribe({ loadNextTopicMessages(stream = stream, topic = topic) }, {
+                    view.showError(throwable = it, error = Errors.INTERNET)
+                })
+
+            refresherIsSubscribed = true
+            compositeDisposable.add(refreshDisposable)
+        }
+    }
+
+    private fun subscribeStreamsRefresher(stream: Stream) {
+        if (!refresherIsSubscribed) {
+            val refreshDisposable = refresherObservable
+                .subscribe({ loadNextStreamMessages(stream = stream) }, {
                     view.showError(throwable = it, error = Errors.INTERNET)
                 })
 
