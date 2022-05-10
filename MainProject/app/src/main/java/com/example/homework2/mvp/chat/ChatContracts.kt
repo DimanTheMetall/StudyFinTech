@@ -1,5 +1,6 @@
 package com.example.homework2.mvp.chat
 
+import androidx.fragment.app.Fragment
 import com.example.homework2.Errors
 import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
 import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
@@ -24,6 +25,8 @@ interface ChatView : BaseView {
 
     fun fillTopicField(topic: Topic)
 
+    fun openFrag(fragment: Fragment, tag: String? = null)
+
 }
 
 interface ChatPresenter : BasePresenter {
@@ -34,6 +37,8 @@ interface ChatPresenter : BasePresenter {
         reactionType: String,
         isSelected: Boolean
     )
+
+    fun onInTopicCLick(topic: Topic, stream: Stream)
 
     fun onTopicMessagesNextPageLoadRequested(stream: Stream, topic: Topic)
 

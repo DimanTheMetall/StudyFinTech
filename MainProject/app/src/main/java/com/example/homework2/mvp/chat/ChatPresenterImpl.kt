@@ -69,6 +69,10 @@ class ChatPresenterImpl @Inject constructor(
         }
     }
 
+    override fun onInTopicCLick(topic: Topic, stream: Stream) {
+        view.openFrag(ChatFragment.newInstance(topic = topic, stream = stream))
+    }
+
     override fun onTopicMessagesNextPageLoadRequested(stream: Stream, topic: Topic) {
         if (!loadedIsLast) loadNextTopicMessages(stream = stream, topic = topic)
     }

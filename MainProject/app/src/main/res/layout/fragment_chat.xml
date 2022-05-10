@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/chat_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,8 +11,8 @@
         android:id="@+id/chat_shimmer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/topic_field"
         android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@id/topic_field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -43,11 +44,11 @@
 
     <include
         android:id="@+id/help"
+        layout="@layout/topics_in_stream_help_layout"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        layout="@layout/topics_in_stream_help_layout"
-        app:layout_constraintBottom_toTopOf="@id/topic_field"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/topic_field" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/topic_field"
@@ -69,12 +70,13 @@
         android:id="@+id/in_topic_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="@id/message_translate_image"
-        app:layout_constraintBottom_toBottomOf="@id/topic_field"
-        app:layout_constraintTop_toTopOf="@id/topic_field"
-        app:layout_constraintEnd_toEndOf="@id/message_translate_image"
         android:src="@drawable/ic_double_arrow_right"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/topic_field"
+        app:layout_constraintEnd_toEndOf="@id/message_translate_image"
+        app:layout_constraintStart_toStartOf="@id/message_translate_image"
+        app:layout_constraintTop_toTopOf="@id/topic_field"
+        tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/message_field"

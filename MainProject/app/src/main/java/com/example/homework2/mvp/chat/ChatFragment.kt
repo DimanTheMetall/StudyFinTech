@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.*
@@ -66,6 +67,8 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         initHelpRecycleAdapter()
         initHelpListener()
         setCLickListenerOnCancelHelpBtn()
+        initInTopicClickListener()
+        initInTopicImageSwitcher()
     }
 
     override fun onDestroyView() {
@@ -116,6 +119,12 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         binding.topicField.setText(topic.name)
     }
 
+    override fun openFrag(fragment: Fragment, tag: String?) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_holder, fragment, tag)
+            .commit()
+    }
+
     private fun initBottomSheetDialog() {
         bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emojiName, emojiCode ->
             presenter.onEmojiInSheetDialogClick(
@@ -142,7 +151,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
                     } else {
                         sendMessage(
                             sentText = messageField.text.toString(),
-                            topic = Topic(topicField.text.toString()),
+                            topic = createTopic(topicField.text.toString()),
                             stream = stream,
                             isStreamChat = isStreamChat
                         )
@@ -160,12 +169,45 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     }
 
     private fun sendMessage(sentText: String, topic: Topic, stream: Stream, isStreamChat: Boolean) {
-        presenter.onSendMessageInTopicRequest(
-            sentText = sentText,
-            topic = topic,
-            stream = stream,
-            isStreamChat = isStreamChat
-        )
+        if (sentText.isBlank()) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.please_write_message_text),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            presenter.onSendMessageInTopicRequest(
+                sentText = sentText,
+                topic = topic,
+                stream = stream,
+                isStreamChat = isStreamChat
+            )
+        }
+    }
+
+    private fun initInTopicClickListener() {
+        binding.inTopicImage.setOnClickListener {
+            presenter.onInTopicCLick(
+                createTopic(binding.topicField.text.toString()),
+                stream = stream
+            )
+        }
+    }
+
+    private fun createTopic(name: String): Topic {
+        return Topic(name = name)
+    }
+
+    private fun initInTopicImageSwitcher() {
+        with(binding) {
+            topicField.doOnTextChanged { text, start, before, count ->
+                if (text.isNullOrBlank()) {
+                    inTopicImage.visibility = View.GONE
+                } else {
+                    inTopicImage.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     private fun initMessageRequest(isStreamChat: Boolean) {
@@ -211,12 +253,12 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private fun setVisibilityComponents(isStreamChat: Boolean) {
         if (isStreamChat) {
             with(binding) {
-                topicName.visibility = View.VISIBLE
+                topicName.visibility = View.GONE
                 topicField.visibility = View.VISIBLE
             }
         } else {
             with(binding) {
-                topicName.visibility = View.GONE
+                topicName.visibility = View.VISIBLE
                 topicField.visibility = View.GONE
                 binding.topicName.text = getString(R.string.topiclable, topic.name)
             }
