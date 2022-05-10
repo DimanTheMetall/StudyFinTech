@@ -51,5 +51,6 @@
     <string name="topic">#topic</string>
     <string name="topics_in_this_stream">Topics in this stream</string>
     <string name="close_help">close help</string>
+    <string name="please_write_topic_name">Please write topic name</string>
 
 </resources>

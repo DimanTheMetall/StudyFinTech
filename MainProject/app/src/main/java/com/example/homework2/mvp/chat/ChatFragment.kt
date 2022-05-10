@@ -92,6 +92,16 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         shimmer.showShimmer(true)
     }
 
+    override fun showError(throwable: Throwable, error: Errors) {
+        val messageText = when (error) {
+            Errors.INTERNET -> getString(R.string.internetError)
+            Errors.SYSTEM -> getString(R.string.systemError)
+        }
+        Log.e(Constance.LogTag.MESSAGES_AND_REACTIONS, messageText, throwable)
+        Toast.makeText(requireContext(), messageText, Toast.LENGTH_SHORT).show()
+        shimmer.hideShimmer()
+    }
+
     override fun showMessages(messages: List<SelectViewTypeClass.Message>) {
         //Каст на мутабельность из-за ссылочного типа
         messageAdapter.replaceMessageList(newList = messages.toMutableList())
@@ -121,13 +131,41 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private fun initClickListenerOnMessageTranslateImage() {
         binding.apply {
             messageTranslateImage.setOnClickListener {
-                presenter.onSendMessageRequest(
-                    sentText = messageField.text.toString(),
-                    topic = topic,
-                    stream = stream,
-                )
+                if (isStreamChat) {
+                    if (topicField.text.isNullOrBlank()) {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.please_write_topic_name),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                    } else {
+                        sendMessage(
+                            sentText = messageField.text.toString(),
+                            topic = Topic(topicField.text.toString()),
+                            stream = stream,
+                            isStreamChat = isStreamChat
+                        )
+                    }
+                } else {
+                    sendMessage(
+                        sentText = messageField.text.toString(),
+                        topic = topic,
+                        stream = stream,
+                        isStreamChat = isStreamChat
+                    )
+                }
             }
         }
+    }
+
+    private fun sendMessage(sentText: String, topic: Topic, stream: Stream, isStreamChat: Boolean) {
+        presenter.onSendMessageInTopicRequest(
+            sentText = sentText,
+            topic = topic,
+            stream = stream,
+            isStreamChat = isStreamChat
+        )
     }
 
     private fun initMessageRequest(isStreamChat: Boolean) {
@@ -219,7 +257,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     }
 
     private fun initHelpListener() {
-        binding.topicField.setOnFocusChangeListener { v, hasFocus ->
+        binding.topicField.setOnFocusChangeListener { _, hasFocus ->
             presenter.onFocusChanged(hasFocus)
         }
 
@@ -285,17 +323,6 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private fun initShimmer() {
         shimmer = binding.chatShimmer
     }
-
-    override fun showError(throwable: Throwable, error: Errors) {
-        val messageText = when (error) {
-            Errors.INTERNET -> getString(R.string.internetError)
-            Errors.SYSTEM -> getString(R.string.systemError)
-        }
-        Log.e(Constance.LogTag.MESSAGES_AND_REACTIONS, messageText, throwable)
-        Toast.makeText(requireContext(), messageText, Toast.LENGTH_SHORT).show()
-        shimmer.hideShimmer()
-    }
-
 
     companion object {
         const val TAG = "ChatFragment"

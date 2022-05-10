@@ -43,7 +43,12 @@ interface ChatPresenter : BasePresenter {
 
     fun onStreamMessagePreviousPgeLoadRequest(stream: Stream)
 
-    fun onSendMessageRequest(sentText: String, topic: Topic, stream: Stream)
+    fun onSendMessageInTopicRequest(
+        sentText: String,
+        topic: Topic,
+        stream: Stream,
+        isStreamChat: Boolean
+    )
 
     fun onInitMessageForTopicRequest(stream: Stream, topic: Topic)
 

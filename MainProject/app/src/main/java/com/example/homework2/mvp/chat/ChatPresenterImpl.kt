@@ -85,13 +85,18 @@ class ChatPresenterImpl @Inject constructor(
         if (!loadedIsFirst) loadPreviousStreamMessages(stream = stream)
     }
 
-    override fun onSendMessageRequest(sentText: String, topic: Topic, stream: Stream) {
+    override fun onSendMessageInTopicRequest(
+        sentText: String,
+        topic: Topic,
+        stream: Stream,
+        isStreamChat: Boolean
+    ) {
         val sendDisposable = model.sendMessage(sentText = sentText, topic = topic, stream = stream)
             .subscribe({
                 val loadDisposable = model.loadLastMessage(topic = topic, stream = stream)
                     .subscribe({ messages ->
                         currentMessageList.addAll(messages)
-                        checkAndDelete(stream = stream, topic = topic)
+                        if (!isStreamChat) checkAndDelete(stream = stream, topic = topic)
                         view.showMessages(currentMessageList)
                     }, { view.showError(throwable = it, error = Errors.INTERNET) })
                 compositeDisposable.add(loadDisposable)
