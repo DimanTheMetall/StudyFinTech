@@ -28,7 +28,8 @@ import javax.inject.Inject
 class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(), PeoplesView {
 
     private val compositeDisposable = CompositeDisposable()
-    private val recycleAdapter = PeopleAdapter { member -> openProfileFrag(member) }
+    private val recycleAdapter =
+        PeopleAdapter { member -> presenter.onProfileCLicked(member = member) }
     private lateinit var shimmer: ShimmerFrameLayout
 
     @Inject
@@ -56,14 +57,6 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
     override fun onDestroyView() {
         super.onDestroyView()
         compositeDisposable.clear()
-    }
-
-    private fun openProfileFrag(member: Member) {
-        requireActivity().supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragment_holder, OtherProfileFragment.newInstance(member))
-            .addToBackStack(null)
-            .commit()
     }
 
     override fun inflateViewBinding(
@@ -111,6 +104,14 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
 
     private fun initShimmer() {
         shimmer = binding.shimmerPeople
+    }
+
+    override fun openProfileFragment(member: Member) {
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_holder, OtherProfileFragment.newInstance(member))
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun showProgress() {

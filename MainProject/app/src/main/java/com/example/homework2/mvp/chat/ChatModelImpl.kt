@@ -5,16 +5,19 @@ import com.example.homework2.Constance
 import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
 import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
+import com.example.homework2.dataclasses.streamsandtopics.JsonTopic
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseModelImpl
 import com.example.homework2.repositories.ChatRepositoryImpl
+import com.example.homework2.repositories.StreamRepository
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
 
 class ChatModelImpl @Inject constructor(
-    private val chatRepositoryImpl: ChatRepositoryImpl
+    private val chatRepositoryImpl: ChatRepositoryImpl,
+    private val streamsRepositoryImpl: StreamRepository
 ) : BaseModelImpl(), ChatModel {
 
     //HTTP operation
@@ -22,6 +25,11 @@ class ChatModelImpl @Inject constructor(
     override fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message> {
         return chatRepositoryImpl.loadMessageById(messageId = messageId)
     }
+
+    override fun loadTopicList(streamId: Int): Single<JsonTopic> {
+        return streamsRepositoryImpl.getTopicList(streamId = streamId)
+    }
+
 
     override fun deleteEmoji(
         messageId: Long,

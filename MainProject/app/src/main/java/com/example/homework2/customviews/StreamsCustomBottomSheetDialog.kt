@@ -19,8 +19,6 @@ class StreamsCustomBottomSheetDialog(
         hideShimmer()
         setOnCancelClickListener()
         setOnCreateClickListener()
-
-
     }
 
     private fun setOnCreateClickListener(

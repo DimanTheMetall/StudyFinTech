@@ -5,6 +5,7 @@ import com.example.homework2.Errors
 import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
 import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
+import com.example.homework2.dataclasses.streamsandtopics.JsonTopic
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseModel
@@ -26,6 +27,8 @@ interface ChatView : BaseView {
     fun fillTopicField(topic: Topic)
 
     fun openFrag(fragment: Fragment, tag: String? = null)
+
+    fun setTopicListInStream(topicList: List<Topic>)
 
 }
 
@@ -70,6 +73,8 @@ interface ChatPresenter : BasePresenter {
 }
 
 interface ChatModel : BaseModel {
+
+    fun loadTopicList(streamId: Int): Single<JsonTopic>
 
     fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message>
 

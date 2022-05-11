@@ -121,8 +121,13 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     override fun openFrag(fragment: Fragment, tag: String?) {
         requireActivity().supportFragmentManager.beginTransaction()
+            .addToBackStack(null)
             .replace(R.id.fragment_holder, fragment, tag)
             .commit()
+    }
+
+    override fun setTopicListInStream(topicList: List<Topic>) {
+        helpAdapter.setTopicsList(topicList)
     }
 
     private fun initBottomSheetDialog() {
@@ -200,7 +205,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     private fun initInTopicImageSwitcher() {
         with(binding) {
-            topicField.doOnTextChanged { text, start, before, count ->
+            topicField.doOnTextChanged { text, _, _, _ ->
                 if (text.isNullOrBlank()) {
                     inTopicImage.visibility = View.GONE
                 } else {
@@ -241,7 +246,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
             }
         }
 
-        binding.messageField.doOnTextChanged { text, start, before, count ->
+        binding.messageField.doOnTextChanged { text, _, _, _ ->
             if (text.isNullOrEmpty()) {
                 switchImageOnTextChanged(true)
             } else {
@@ -295,14 +300,13 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             addItemDecoration(itemDivider)
         }
-        helpAdapter.setTopicsList(stream.topicList)
+        setTopicListInStream(stream.topicList)
     }
 
     private fun initHelpListener() {
         binding.topicField.setOnFocusChangeListener { _, hasFocus ->
             presenter.onFocusChanged(hasFocus)
         }
-
     }
 
     private fun initArguments() {

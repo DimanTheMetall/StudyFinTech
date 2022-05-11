@@ -4,6 +4,7 @@ import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
 import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
+import com.example.homework2.dataclasses.streamsandtopics.JsonTopic
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Subscriptions
 import com.example.homework2.retrofit.RetrofitService
@@ -29,6 +30,8 @@ interface StreamRepository {
     fun selectSubscribedStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>>
 
     fun createOrSubscribeStream(subscriptions: Subscriptions): Single<JsonResponse>
+
+    fun getTopicList(streamId: Int): Single<JsonTopic>
 }
 
 
@@ -42,10 +45,18 @@ class StreamsRepositoryImpl @Inject constructor(
         isSubscribed: Boolean
     ): Completable {
         val entityType = if (isSubscribed) StreamEntity.SUBSCRIBED else StreamEntity.ALL
-        return database.getStreamsAndTopicsDao().insertStreamsAsynh(streamsList, entityType)
+        return database.getStreamsAndTopicsDao().insertStreamsAsynh(
+            streamsList = streamsList,
+            type = entityType
+        )
             .subscribeOn(Schedulers.io())
     }
 
+    override fun getTopicList(streamId: Int): Single<JsonTopic> {
+        return retrofitService.getTopicList(streamId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
 
     override fun loadSubscribedStreams(): Single<List<Stream>> {
         return retrofitService.getSubscribedStreams()
@@ -93,4 +104,5 @@ class StreamsRepositoryImpl @Inject constructor(
             )
         )
     }
+
 }

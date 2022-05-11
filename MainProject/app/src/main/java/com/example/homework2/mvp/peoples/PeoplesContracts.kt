@@ -9,6 +9,8 @@ import io.reactivex.Single
 
 interface PeoplesView : BaseView {
 
+    fun openProfileFragment(member: Member)
+
     fun showProgress()
 
     fun showError(throwable: Throwable, error: Errors)
@@ -18,6 +20,8 @@ interface PeoplesView : BaseView {
 
 
 interface PeoplesPresenter : BasePresenter {
+
+    fun onProfileCLicked(member: Member)
 
     fun onSearchedTextChanged(searchedText: String)
 }

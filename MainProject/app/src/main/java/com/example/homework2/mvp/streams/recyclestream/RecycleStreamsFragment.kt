@@ -209,12 +209,14 @@ class RecycleStreamsFragment :
             presenter.onLongTapOnStream(stream = stream)
         })
 
-        binding.recycleChannel.adapter = recycleAdapter
-        binding.recycleChannel.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.VERTICAL, false
-        )
-        binding.recycleChannel.addItemDecoration(itemDivider)
+        with(binding) {
+            recycleChannel.adapter = recycleAdapter
+            recycleChannel.layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL, false
+            )
+            recycleChannel.addItemDecoration(itemDivider)
+        }
     }
 
     companion object {

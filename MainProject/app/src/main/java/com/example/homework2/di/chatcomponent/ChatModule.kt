@@ -7,6 +7,8 @@ import com.example.homework2.mvp.chat.ChatPresenter
 import com.example.homework2.mvp.chat.ChatPresenterImpl
 import com.example.homework2.repositories.ChatRepository
 import com.example.homework2.repositories.ChatRepositoryImpl
+import com.example.homework2.repositories.StreamRepository
+import com.example.homework2.repositories.StreamsRepositoryImpl
 import com.example.homework2.retrofit.RetrofitService
 import dagger.Module
 import dagger.Provides
@@ -31,4 +33,13 @@ class ChatModule {
     ): ChatRepository {
         return ChatRepositoryImpl(retrofitService = retrofitService, database = dataBase)
     }
+
+    @Provides
+    fun providesStreamsRepository(
+        retrofitService: RetrofitService,
+        dataBase: ZulipDataBase
+    ): StreamRepository {
+        return StreamsRepositoryImpl(retrofitService = retrofitService, database = dataBase)
+    }
+
 }

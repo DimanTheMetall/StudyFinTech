@@ -43,12 +43,13 @@ class ChatPresenterImpl @Inject constructor(
             ).subscribe({
                 val deleteDisposable = model.loadMessageById(messageId = messageId)
                     .subscribe({ message ->
-                        val newList =
-                            currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
-                        view.showMessages(messages = newList)
+                        onReactionUpdateMapList(changedMessage = message)
+                        view.showMessages(messages = currentMessageList)
                     }, { view.showError(throwable = it, error = Errors.INTERNET) })
+
                 compositeDisposable.add(deleteDisposable)
             }, { view.showError(throwable = it, error = Errors.INTERNET) })
+
             compositeDisposable.add(disposable)
         } else {
             val disposable = model.addEmoji(
@@ -59,12 +60,13 @@ class ChatPresenterImpl @Inject constructor(
                 .subscribe({
                     val addDisposable = model.loadMessageById(messageId = messageId)
                         .subscribe({ message ->
-                            val newList =
-                                currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
-                            view.showMessages(messages = newList)
+                            onReactionUpdateMapList(changedMessage = message)
+                            view.showMessages(messages = currentMessageList)
                         }, { view.showError(throwable = it, error = Errors.INTERNET) })
+
                     compositeDisposable.add(addDisposable)
                 }, { view.showError(throwable = it, error = Errors.INTERNET) })
+
             compositeDisposable.add(disposable)
         }
     }
@@ -100,11 +102,17 @@ class ChatPresenterImpl @Inject constructor(
                 val loadDisposable = model.loadLastMessage(topic = topic, stream = stream)
                     .subscribe({ messages ->
                         currentMessageList.addAll(messages)
-                        if (!isStreamChat) checkAndDelete(stream = stream, topic = topic)
+                        if (!isStreamChat) {
+                            checkAndDelete(stream = stream, topic = topic)
+                        } else {
+                            updateHelpTopicList(streamId = stream.streamId)
+                        }
                         view.showMessages(currentMessageList)
                     }, { view.showError(throwable = it, error = Errors.INTERNET) })
+
                 compositeDisposable.add(loadDisposable)
             }, { view.showError(throwable = it, error = Errors.INTERNET) })
+
         compositeDisposable.add(sendDisposable)
     }
 
@@ -182,6 +190,20 @@ class ChatPresenterImpl @Inject constructor(
                 topic = topic
             )
         }
+    }
+
+    private fun updateHelpTopicList(streamId: Int) {
+        val disposable = model.loadTopicList(streamId = streamId)
+            .subscribe({ view.setTopicListInStream(topicList = it.topics) },
+                { view.showError(throwable = it, error = Errors.INTERNET) })
+
+        compositeDisposable.add(disposable)
+    }
+
+    private fun onReactionUpdateMapList(changedMessage: SelectViewTypeClass.Message) {
+        val newList =
+            currentMessageList.map { oldMessage -> if (oldMessage.id == changedMessage.id) changedMessage else oldMessage }
+        currentMessageList = newList.toMutableList()
     }
 
     private fun loadPreviousStreamMessages(stream: Stream) {
