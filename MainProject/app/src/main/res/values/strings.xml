@@ -53,5 +53,7 @@
     <string name="close_help">close help</string>
     <string name="please_write_topic_name">Please write topic name</string>
     <string name="please_write_message_text">Please write message text</string>
+    <string name="edit_message">Edit message</string>
+    <string name="apply">Apply</string>
 
 </resources>

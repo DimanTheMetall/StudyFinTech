@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.*
 import com.example.homework2.customviews.CustomBottomSheetDialog
+import com.example.homework2.customviews.MessageCustomBottomSheetDialog
 import com.example.homework2.databinding.FragmentChatBinding
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.streamsandtopics.Stream
@@ -39,7 +40,9 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private var messageId = -1L
     private val compositeDisposable = CompositeDisposable()
 
-    private var bottomSheetDialog: CustomBottomSheetDialog? = null
+    private var reactionBottomSheetDialog: CustomBottomSheetDialog? = null
+    private var messageBottomSheetDialog: MessageCustomBottomSheetDialog? = null
+
     private var isStreamChat = false
 
     override fun onCreateView(
@@ -55,7 +58,8 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initBottomSheetDialog()
+        initReactionBottomSheetDialog()
+        initMessageBottomSheetDialog()
         initImageSwitcher()
         initArguments()
         setVisibilityComponents(isStreamChat)
@@ -69,6 +73,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         setCLickListenerOnCancelHelpBtn()
         initInTopicClickListener()
         initInTopicImageSwitcher()
+
     }
 
     override fun onDestroyView() {
@@ -130,15 +135,37 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         helpAdapter.setTopicsList(topicList)
     }
 
-    private fun initBottomSheetDialog() {
-        bottomSheetDialog = CustomBottomSheetDialog(requireContext()) { emojiName, emojiCode ->
-            presenter.onEmojiInSheetDialogClick(
-                messageId = messageId,
-                emojiName = emojiName,
-                reactionType = getString(R.string.unicodeEmoji),
-            )
-            bottomSheetDialog?.hide()
-        }
+    override fun showReactionDialog() {
+        reactionBottomSheetDialog?.show()
+    }
+
+    override fun hideReactionDialog() {
+        reactionBottomSheetDialog?.hide()
+    }
+
+    override fun showMessageBottomDialog() {
+        messageBottomSheetDialog?.show()
+    }
+
+    override fun hideMessageBottomDialog() {
+        messageBottomSheetDialog?.hide()
+    }
+
+    private fun initMessageBottomSheetDialog() {
+        messageBottomSheetDialog =
+            MessageCustomBottomSheetDialog(context = requireContext(), {}, {}, {}, {}, {})
+    }
+
+    private fun initReactionBottomSheetDialog() {
+        reactionBottomSheetDialog =
+            CustomBottomSheetDialog(requireContext()) { emojiName, emojiCode ->
+                presenter.onEmojiInSheetDialogClick(
+                    messageId = messageId,
+                    emojiName = emojiName,
+                    reactionType = getString(R.string.unicodeEmoji),
+                )
+                reactionBottomSheetDialog?.hide()
+            }
 
     }
 
@@ -318,7 +345,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private fun initRecycleAdapter() {
         messageAdapter = MessageAdapter({ messageId ->
             this.messageId = messageId
-            bottomSheetDialog?.show()
+            reactionBottomSheetDialog?.show()
         }, { reaction, isSelected, messageId ->
             presenter.onEmojiInMessageClick(
                 messageId = messageId,

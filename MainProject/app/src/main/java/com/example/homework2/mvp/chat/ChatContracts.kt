@@ -30,6 +30,14 @@ interface ChatView : BaseView {
 
     fun setTopicListInStream(topicList: List<Topic>)
 
+    fun showReactionDialog()
+
+    fun hideReactionDialog()
+
+    fun showMessageBottomDialog()
+
+    fun hideMessageBottomDialog()
+
 }
 
 interface ChatPresenter : BasePresenter {
