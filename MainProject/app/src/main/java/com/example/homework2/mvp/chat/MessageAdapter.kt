@@ -18,8 +18,9 @@ import org.joda.time.Instant
 import org.joda.time.format.DateTimeFormat
 
 class MessageAdapter(
-    val onTab: (Long) -> Unit,
-    val onEmoji: (Reaction, Boolean, Long) -> Unit
+    val onMessageLongTab: (SelectViewTypeClass.Message) -> Unit,
+    val onEmoji: (Reaction, Boolean, Long) -> Unit,
+    val onAddCLick: (SelectViewTypeClass.Message) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -64,11 +65,11 @@ class MessageAdapter(
             //Кликер на "+"
             customFlexBox.getChildAt(customFlexBox.childCount - 1)
                 .setOnClickListener {
-                    onTab.invoke(item.id)
+                    onAddCLick.invoke(item)
                 }
 
             binding.root.setOnLongClickListener {
-                onTab.invoke(item.id)
+                onMessageLongTab.invoke(item)
                 true
             }
 

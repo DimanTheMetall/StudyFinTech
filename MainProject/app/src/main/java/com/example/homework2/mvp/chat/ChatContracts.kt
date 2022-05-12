@@ -34,7 +34,7 @@ interface ChatView : BaseView {
 
     fun hideReactionDialog()
 
-    fun showMessageBottomDialog()
+    fun showMessageBottomDialog(message: SelectViewTypeClass.Message)
 
     fun hideMessageBottomDialog()
 
@@ -48,6 +48,14 @@ interface ChatPresenter : BasePresenter {
         reactionType: String,
         isSelected: Boolean
     )
+
+    fun onDeleteMessageClick(message: SelectViewTypeClass.Message)
+
+    fun onAddReactionMessageClick(message: SelectViewTypeClass.Message)
+
+    fun onAddInMessageClick()
+
+    fun onMessageLongClick(message: SelectViewTypeClass.Message)
 
     fun onInTopicCLick(topic: Topic, stream: Stream)
 
@@ -81,6 +89,10 @@ interface ChatPresenter : BasePresenter {
 }
 
 interface ChatModel : BaseModel {
+
+    fun deleteMessageFromDB(message: SelectViewTypeClass.Message): Completable
+
+    fun deleteMessageFromZulip(messageId: Long): Single<JsonResponse>
 
     fun loadTopicList(streamId: Int): Single<JsonTopic>
 

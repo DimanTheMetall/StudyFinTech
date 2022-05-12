@@ -74,4 +74,7 @@ interface RetrofitService {
     @POST("users/me/subscriptions")
     fun createOrSubscribeStream(@Query("subscriptions") subscriptions: String): Single<JsonResponse>
 
+    @DELETE("messages/{msg_id}")
+    fun deleteMessageById(@Path("msg_id") msg_id: Long): Single<JsonResponse>
+
 }

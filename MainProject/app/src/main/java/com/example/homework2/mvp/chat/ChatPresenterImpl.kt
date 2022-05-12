@@ -71,6 +71,36 @@ class ChatPresenterImpl @Inject constructor(
         }
     }
 
+    override fun onDeleteMessageClick(message: SelectViewTypeClass.Message) {
+        val deleteFromZulipDisposable = model.deleteMessageFromZulip(messageId = message.id)
+            .subscribe({
+                view.hideMessageBottomDialog()
+
+                currentMessageList.remove(message)
+                view.showMessages(currentMessageList)
+
+                val deleteFromDBDisposable = model
+                    .deleteMessageFromDB(message = message)
+                    .subscribe({}, {})
+
+                compositeDisposable.add(deleteFromDBDisposable)
+            }, { view.showError(throwable = it, error = Errors.INTERNET) })
+        compositeDisposable.add(deleteFromZulipDisposable)
+    }
+
+    override fun onAddReactionMessageClick(message: SelectViewTypeClass.Message) {
+        view.hideMessageBottomDialog()
+        view.showReactionDialog()
+    }
+
+    override fun onAddInMessageClick() {
+        view.showReactionDialog()
+    }
+
+    override fun onMessageLongClick(message: SelectViewTypeClass.Message) {
+        view.showMessageBottomDialog(message = message)
+    }
+
     override fun onInTopicCLick(topic: Topic, stream: Stream) {
         view.openFrag(ChatFragment.newInstance(topic = topic, stream = stream))
     }

@@ -69,6 +69,10 @@ interface ChatRepository {
         stream: Stream,
         topic: Topic
     ): Single<MutableList<SelectViewTypeClass.Message>>
+
+    fun deleteMessageFromDB(message: SelectViewTypeClass.Message): Completable
+
+    fun deleteMessageFromZulip(messageId: Long): Single<JsonResponse>
 }
 
 class ChatRepositoryImpl @Inject constructor(
@@ -255,5 +259,19 @@ class ChatRepositoryImpl @Inject constructor(
             }
             .observeOn(AndroidSchedulers.mainThread())
     }
+
+    override fun deleteMessageFromDB(message: SelectViewTypeClass.Message): Completable {
+        return database.getMessagesAndReactionDao()
+            .deleteMessage(MessageEntity.toEntity(message = message))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun deleteMessageFromZulip(messageId: Long): Single<JsonResponse> {
+        return retrofitService.deleteMessageById(messageId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
 
 }

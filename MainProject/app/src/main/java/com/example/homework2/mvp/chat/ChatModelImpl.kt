@@ -26,6 +26,14 @@ class ChatModelImpl @Inject constructor(
         return chatRepositoryImpl.loadMessageById(messageId = messageId)
     }
 
+    override fun deleteMessageFromDB(message: SelectViewTypeClass.Message): Completable {
+        return chatRepositoryImpl.deleteMessageFromDB(message = message)
+    }
+
+    override fun deleteMessageFromZulip(messageId: Long): Single<JsonResponse> {
+        return chatRepositoryImpl.deleteMessageFromZulip(messageId = messageId)
+    }
+
     override fun loadTopicList(streamId: Int): Single<JsonTopic> {
         return streamsRepositoryImpl.getTopicList(streamId = streamId)
     }

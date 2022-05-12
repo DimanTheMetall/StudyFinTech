@@ -1,9 +1,6 @@
 package com.example.homework2.data
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.example.homework2.data.local.entity.MessageEntity
 import com.example.homework2.data.local.entity.ReactionEntity
 import io.reactivex.Completable
@@ -42,4 +39,7 @@ interface MessagesAndReactionDao {
 
     @Query("DELETE FROM reactions WHERE reactions.message_id<:messageId")
     fun deleteReactionFromMessagesWhereIdLowes(messageId: Long): Completable
+
+    @Delete
+    fun deleteMessage(messageEntity: MessageEntity): Completable
 }

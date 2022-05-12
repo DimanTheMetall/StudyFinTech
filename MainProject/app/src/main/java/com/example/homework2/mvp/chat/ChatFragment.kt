@@ -143,8 +143,9 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         reactionBottomSheetDialog?.hide()
     }
 
-    override fun showMessageBottomDialog() {
+    override fun showMessageBottomDialog(message: SelectViewTypeClass.Message) {
         messageBottomSheetDialog?.show()
+        messageBottomSheetDialog?.setMessage(message)
     }
 
     override fun hideMessageBottomDialog() {
@@ -153,12 +154,18 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     private fun initMessageBottomSheetDialog() {
         messageBottomSheetDialog =
-            MessageCustomBottomSheetDialog(context = requireContext(), {}, {}, {}, {}, {})
+            MessageCustomBottomSheetDialog(
+                context = requireContext(),
+                { message -> presenter.onAddReactionMessageClick(message = message) },
+                { message -> presenter.onDeleteMessageClick(message = message) },
+                { message -> },
+                { message -> },
+                { message -> })
     }
 
     private fun initReactionBottomSheetDialog() {
         reactionBottomSheetDialog =
-            CustomBottomSheetDialog(requireContext()) { emojiName, emojiCode ->
+            CustomBottomSheetDialog(requireContext()) { emojiName, _ ->
                 presenter.onEmojiInSheetDialogClick(
                     messageId = messageId,
                     emojiName = emojiName,
@@ -343,9 +350,9 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     }
 
     private fun initRecycleAdapter() {
-        messageAdapter = MessageAdapter({ messageId ->
-            this.messageId = messageId
-            reactionBottomSheetDialog?.show()
+        messageAdapter = MessageAdapter({ message ->
+            presenter.onMessageLongClick(message = message)
+            messageId = message.id
         }, { reaction, isSelected, messageId ->
             presenter.onEmojiInMessageClick(
                 messageId = messageId,
@@ -353,6 +360,9 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
                 reactionType = getString(R.string.unicodeEmoji),
                 isSelected = isSelected
             )
+        }, { message ->
+            this.messageId = message.id
+            presenter.onAddInMessageClick()
         })
         binding.rcView.adapter = messageAdapter
     }
