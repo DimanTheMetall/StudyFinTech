@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.*
+import com.example.homework2.customviews.ChangeMessageTopicDialog
 import com.example.homework2.customviews.CustomReactionBottomSheetDialog
 import com.example.homework2.customviews.EditMessageCustomBottomSheetDialog
 import com.example.homework2.customviews.MessageCustomBottomSheetDialog
@@ -44,6 +45,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private var reactionReactionBottomSheetDialog: CustomReactionBottomSheetDialog? = null
     private var messageBottomSheetDialog: MessageCustomBottomSheetDialog? = null
     private var editMessageBottomSheetDialog: EditMessageCustomBottomSheetDialog? = null
+    private var changeTopicBottomSheetDialog: ChangeMessageTopicDialog? = null
 
     private var isStreamChat = false
 
@@ -63,6 +65,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         initReactionBottomSheetDialog()
         initMessageBottomSheetDialog()
         initEditMessageSheetDialog()
+        initChangeTopicDialog()
         initImageSwitcher()
         initArguments()
         setVisibilityComponents(isStreamChat)
@@ -166,6 +169,19 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         editMessageBottomSheetDialog?.hide()
     }
 
+    override fun showChangeTopicDialog(message: SelectViewTypeClass.Message, stream: Stream) {
+        with(changeTopicBottomSheetDialog) {
+            this?.setTopicList(stream.topicList)
+            this?.setMessage(message_ = message)
+            this?.show()
+        }
+
+    }
+
+    override fun hideChangeTopicDialog() {
+        changeTopicBottomSheetDialog?.hide()
+    }
+
     private fun initMessageBottomSheetDialog() {
         messageBottomSheetDialog =
             MessageCustomBottomSheetDialog(
@@ -173,8 +189,14 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
                 onAddReactionClick = { message -> presenter.onAddReactionMessageClick(message = message) },
                 onDeleteMessageClick = { message -> presenter.onDeleteMessageClick(message = message) },
                 onEditMessageClick = { message -> presenter.onEditMessageClick(message = message) },
-                onMoveMessageClick = { message -> },
+                onMoveMessageClick = { message ->
+                    presenter.onChangeTopicClick(
+                        message = message,
+                        stream = stream
+                    )
+                },
                 onCopyMessageClick = { message -> })
+
     }
 
     private fun initEditMessageSheetDialog() {
@@ -426,6 +448,14 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     private fun initShimmer() {
         shimmer = binding.chatShimmer
+    }
+
+    private fun initChangeTopicDialog() {
+        changeTopicBottomSheetDialog = ChangeMessageTopicDialog(requireContext()) { message ->
+            presenter.onApplyEditMessageClick(
+                message = message
+            )
+        }
     }
 
     companion object {

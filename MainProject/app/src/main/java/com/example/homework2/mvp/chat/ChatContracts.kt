@@ -30,6 +30,8 @@ interface ChatView : BaseView {
 
     fun setTopicListInStream(topicList: List<Topic>)
 
+    //Bottom dialogs functions
+
     fun showReactionDialog()
 
     fun hideReactionDialog()
@@ -41,6 +43,10 @@ interface ChatView : BaseView {
     fun showEditMessageDialog(message: SelectViewTypeClass.Message)
 
     fun hideEditMessageDialog()
+
+    fun showChangeTopicDialog(message: SelectViewTypeClass.Message, stream: Stream)
+
+    fun hideChangeTopicDialog()
 
 }
 
@@ -96,6 +102,10 @@ interface ChatPresenter : BasePresenter {
 
     fun onCancelEditMessageClick()
 
+    fun onChangeTopicClick(message: SelectViewTypeClass.Message, stream: Stream)
+
+    fun onApplyChangeTopicForMessage(message: SelectViewTypeClass.Message)
+
 }
 
 interface ChatModel : BaseModel {
@@ -147,6 +157,6 @@ interface ChatModel : BaseModel {
 
     fun updateMessageInDB(message: SelectViewTypeClass.Message): Completable
 
-    fun insertSingleMessageInDB(message: SelectViewTypeClass.Message)
+    fun insertSingleMessageInDB(message: SelectViewTypeClass.Message): Completable
 
 }

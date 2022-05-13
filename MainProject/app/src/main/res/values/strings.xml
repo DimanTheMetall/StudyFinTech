@@ -56,5 +56,7 @@
     <string name="edit_message">Edit EditMessage</string>
     <string name="apply">Apply</string>
     <string name="dont_have_permission">You dont have permission on that operation</string>
+    <string name="current_message_topic">Current message topic:</string>
+    <string name="choose_topic_for_message">Choose topic for message</string>
 
 </resources>

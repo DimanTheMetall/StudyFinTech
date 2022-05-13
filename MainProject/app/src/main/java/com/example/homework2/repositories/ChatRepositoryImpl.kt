@@ -297,6 +297,8 @@ class ChatRepositoryImpl @Inject constructor(
 
     override fun insertMessageInDB(messageEntity: MessageEntity): Completable {
         return database.getMessagesAndReactionDao().insertMessage(messageEntity = messageEntity)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
 

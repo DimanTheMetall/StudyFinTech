@@ -134,7 +134,7 @@ class ChatPresenterImpl @Inject constructor(
                         currentMessageList.addAll(messages)
                         if (!isStreamChat) {
                             //Пофиксить лист
-                            messages.forEach { model.insertSingleMessageInDB(message = it) }
+                            messages.forEach { insertSingleMessageInDB(message = it) }
                             checkAndDelete(stream = stream, topic = topic)
                         } else {
                             updateHelpTopicList(streamId = stream.streamId)
@@ -216,22 +216,22 @@ class ChatPresenterImpl @Inject constructor(
     override fun onApplyEditMessageClick(message: SelectViewTypeClass.Message) {
         view.hideEditMessageDialog()
         view.showProgress()
-        val editDisposable = model.editMessageInZulip(message = message)
-            .subscribe({
-                updateMessageInDB(message = message)
-                view.showMessages(
-                    editMessageInList(
-                        newMessage = message,
-                        list = currentMessageList
-                    )
-                )
-            }, { view.showError(it, Errors.INTERNET) })
-
-        compositeDisposable.add(editDisposable)
+        editMessage(message = message, isTopicChanged = false)
     }
 
     override fun onCancelEditMessageClick() {
         view.hideEditMessageDialog()
+    }
+
+    override fun onChangeTopicClick(message: SelectViewTypeClass.Message, stream: Stream) {
+        view.hideMessageBottomDialog()
+        view.showChangeTopicDialog(message = message, stream = stream)
+    }
+
+    override fun onApplyChangeTopicForMessage(message: SelectViewTypeClass.Message) {
+        view.hideChangeTopicDialog()
+        view.showProgress()
+        editMessage(message = message, isTopicChanged = true)
     }
 
     override fun onInit() {
@@ -388,13 +388,18 @@ class ChatPresenterImpl @Inject constructor(
 
     private fun editMessageInList(
         newMessage: SelectViewTypeClass.Message,
-        list: MutableList<SelectViewTypeClass.Message>
+        list: MutableList<SelectViewTypeClass.Message>,
+        topicIsChanged: Boolean
     ): List<SelectViewTypeClass.Message> {
-        val newList = list.map { oldMessage ->
-            if (newMessage.id != oldMessage.id) oldMessage else oldMessage.copy(
-                subject = newMessage.subject,
-                content = newMessage.content
-            )
+        var newList: List<SelectViewTypeClass.Message> = list
+        if (topicIsChanged) {
+            newList = list.map { oldMessage ->
+                if (newMessage.id != oldMessage.id) oldMessage else oldMessage.copy(
+                    content = newMessage.content
+                )
+            }
+        } else {
+            newList.toMutableList().remove(newMessage)
         }
         return newList
     }
@@ -404,6 +409,29 @@ class ChatPresenterImpl @Inject constructor(
             .subscribe({}, {})
 
         compositeDisposable.add(updateDisposable)
+    }
+
+    private fun insertSingleMessageInDB(message: SelectViewTypeClass.Message) {
+        val disposable = model.insertSingleMessageInDB(message)
+            .subscribe({}, {})
+
+        compositeDisposable.add(disposable)
+    }
+
+    private fun editMessage(message: SelectViewTypeClass.Message, isTopicChanged: Boolean) {
+        val editDisposable = model.editMessageInZulip(message = message)
+            .subscribe({
+                updateMessageInDB(message = message)
+                view.showMessages(
+                    editMessageInList(
+                        newMessage = message,
+                        list = currentMessageList,
+                        topicIsChanged = isTopicChanged
+                    )
+                )
+            }, { view.showError(it, Errors.INTERNET) })
+
+        compositeDisposable.add(editDisposable)
     }
 
 }

@@ -157,8 +157,8 @@ class ChatModelImpl @Inject constructor(
         return chatRepositoryImpl.updateMessageInDB(messageEntity = MessageEntity.toEntity(message))
     }
 
-    override fun insertSingleMessageInDB(message: SelectViewTypeClass.Message) {
-        chatRepositoryImpl.updateMessageInDB(messageEntity = MessageEntity.toEntity(message))
+    override fun insertSingleMessageInDB(message: SelectViewTypeClass.Message): Completable {
+        return chatRepositoryImpl.insertMessageInDB(messageEntity = MessageEntity.toEntity(message))
     }
 
 }
