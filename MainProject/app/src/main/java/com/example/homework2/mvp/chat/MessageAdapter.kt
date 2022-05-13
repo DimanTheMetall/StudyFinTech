@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.homework2.ChatDiffCallback
+import com.example.homework2.Constance
 import com.example.homework2.R
 import com.example.homework2.customviews.CustomViewGroup
 import com.example.homework2.databinding.CustomViewGroupLayoutBinding
@@ -80,7 +81,7 @@ class MessageAdapter(
             for (reactions in byEmojiName) {
                 var meIsAdded = false
                 reactions.value.forEach {
-                    meIsAdded = it.userId == 490112
+                    meIsAdded = it.userId == Constance.myId
                 }
                 val emojiCount: Int = reactions.value.size
 

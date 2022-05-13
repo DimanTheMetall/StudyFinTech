@@ -38,6 +38,10 @@ interface ChatView : BaseView {
 
     fun hideMessageBottomDialog()
 
+    fun showEditMessageDialog(message: SelectViewTypeClass.Message)
+
+    fun hideEditMessageDialog()
+
 }
 
 interface ChatPresenter : BasePresenter {
@@ -86,6 +90,12 @@ interface ChatPresenter : BasePresenter {
 
     fun onFocusChanged(isFocused: Boolean)
 
+    fun onEditMessageClick(message: SelectViewTypeClass.Message)
+
+    fun onApplyEditMessageClick(message: SelectViewTypeClass.Message)
+
+    fun onCancelEditMessageClick()
+
 }
 
 interface ChatModel : BaseModel {
@@ -132,5 +142,11 @@ interface ChatModel : BaseModel {
         stream: Stream,
         topic: Topic
     ): Single<MutableList<SelectViewTypeClass.Message>>
+
+    fun editMessageInZulip(message: SelectViewTypeClass.Message): Single<JsonResponse>
+
+    fun updateMessageInDB(message: SelectViewTypeClass.Message): Completable
+
+    fun insertSingleMessageInDB(message: SelectViewTypeClass.Message)
 
 }

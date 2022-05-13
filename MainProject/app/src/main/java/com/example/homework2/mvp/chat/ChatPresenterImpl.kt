@@ -133,6 +133,8 @@ class ChatPresenterImpl @Inject constructor(
                     .subscribe({ messages ->
                         currentMessageList.addAll(messages)
                         if (!isStreamChat) {
+                            //Пофиксить лист
+                            messages.forEach { model.insertSingleMessageInDB(message = it) }
                             checkAndDelete(stream = stream, topic = topic)
                         } else {
                             updateHelpTopicList(streamId = stream.streamId)
@@ -204,6 +206,32 @@ class ChatPresenterImpl @Inject constructor(
         } else {
             view.changeHelpVisibility(View.GONE)
         }
+    }
+
+    override fun onEditMessageClick(message: SelectViewTypeClass.Message) {
+        view.showEditMessageDialog(message = message)
+        view.hideMessageBottomDialog()
+    }
+
+    override fun onApplyEditMessageClick(message: SelectViewTypeClass.Message) {
+        view.hideEditMessageDialog()
+        view.showProgress()
+        val editDisposable = model.editMessageInZulip(message = message)
+            .subscribe({
+                updateMessageInDB(message = message)
+                view.showMessages(
+                    editMessageInList(
+                        newMessage = message,
+                        list = currentMessageList
+                    )
+                )
+            }, { view.showError(it, Errors.INTERNET) })
+
+        compositeDisposable.add(editDisposable)
+    }
+
+    override fun onCancelEditMessageClick() {
+        view.hideEditMessageDialog()
     }
 
     override fun onInit() {
@@ -356,6 +384,26 @@ class ChatPresenterImpl @Inject constructor(
             refresherIsSubscribed = true
             compositeDisposable.add(refreshDisposable)
         }
+    }
+
+    private fun editMessageInList(
+        newMessage: SelectViewTypeClass.Message,
+        list: MutableList<SelectViewTypeClass.Message>
+    ): List<SelectViewTypeClass.Message> {
+        val newList = list.map { oldMessage ->
+            if (newMessage.id != oldMessage.id) oldMessage else oldMessage.copy(
+                subject = newMessage.subject,
+                content = newMessage.content
+            )
+        }
+        return newList
+    }
+
+    private fun updateMessageInDB(message: SelectViewTypeClass.Message) {
+        val updateDisposable = model.updateMessageInDB(message)
+            .subscribe({}, {})
+
+        compositeDisposable.add(updateDisposable)
     }
 
 }

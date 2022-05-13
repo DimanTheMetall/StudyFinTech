@@ -2,6 +2,8 @@ package com.example.homework2.customviews
 
 import android.content.Context
 import android.widget.ImageView
+import android.widget.Toast
+import com.example.homework2.Constance
 import com.example.homework2.R
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -42,15 +44,34 @@ class MessageCustomBottomSheetDialog(
         val deleteMessageView: ImageView? = findViewById(R.id.delete_message_image_view)
 
         deleteMessageView?.setOnClickListener {
-            onDeleteMessageClick.invoke(message)
+
+            if (message.senderId != Constance.myId) {
+                toastAboutPermission()
+            } else {
+                onDeleteMessageClick.invoke(message)
+            }
+
         }
     }
 
     private fun setOnEditMessageClickListener() {
         val editMessageView: ImageView? = findViewById(R.id.edit_message_image_view)
 
-        editMessageView?.setOnClickListener { onEditMessageClick.invoke(message) }
+        editMessageView?.setOnClickListener {
+            if (message.senderId != Constance.myId) {
+                toastAboutPermission()
+            } else {
+                onEditMessageClick.invoke(message)
+            }
+        }
     }
 
+    private fun toastAboutPermission() {
+        Toast.makeText(
+            context,
+            context.getString(R.string.dont_have_permission),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
 
 }

@@ -9,7 +9,7 @@ import com.example.homework2.R
 import com.example.homework2.dpToPx
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class CustomBottomSheetDialog(context: Context, val getEmoji: (String, String) -> Unit) :
+class CustomReactionBottomSheetDialog(context: Context, val getEmoji: (String, String) -> Unit) :
     BottomSheetDialog(context) {
 
     private val emojiTriple = listOf(

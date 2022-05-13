@@ -2,6 +2,8 @@ package com.example.homework2.mvp.chat
 
 import android.util.Log
 import com.example.homework2.Constance
+import com.example.homework2.data.local.entity.MessageEntity
+import com.example.homework2.dataclasses.chatdataclasses.EditMessage
 import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
 import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
@@ -38,6 +40,15 @@ class ChatModelImpl @Inject constructor(
         return streamsRepositoryImpl.getTopicList(streamId = streamId)
     }
 
+    override fun editMessageInZulip(message: SelectViewTypeClass.Message): Single<JsonResponse> {
+        return chatRepositoryImpl.editMessageInZulip(
+            EditMessage(
+                messageId = message.id,
+                topic = message.subject,
+                content = message.content
+            )
+        )
+    }
 
     override fun deleteEmoji(
         messageId: Long,
@@ -141,4 +152,13 @@ class ChatModelImpl @Inject constructor(
     ): Single<MutableList<SelectViewTypeClass.Message>> {
         return chatRepositoryImpl.selectMessage(stream = stream, topic = topic)
     }
+
+    override fun updateMessageInDB(message: SelectViewTypeClass.Message): Completable {
+        return chatRepositoryImpl.updateMessageInDB(messageEntity = MessageEntity.toEntity(message))
+    }
+
+    override fun insertSingleMessageInDB(message: SelectViewTypeClass.Message) {
+        chatRepositoryImpl.updateMessageInDB(messageEntity = MessageEntity.toEntity(message))
+    }
+
 }

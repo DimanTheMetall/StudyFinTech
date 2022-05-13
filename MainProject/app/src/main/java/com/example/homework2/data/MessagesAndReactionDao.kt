@@ -42,4 +42,10 @@ interface MessagesAndReactionDao {
 
     @Delete
     fun deleteMessage(messageEntity: MessageEntity): Completable
+
+    @Update
+    fun updateMessage(messageEntity: MessageEntity): Completable
+
+    @Insert
+    fun insertMessage(messageEntity: MessageEntity): Completable
 }

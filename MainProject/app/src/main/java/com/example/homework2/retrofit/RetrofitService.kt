@@ -77,4 +77,11 @@ interface RetrofitService {
     @DELETE("messages/{msg_id}")
     fun deleteMessageById(@Path("msg_id") msg_id: Long): Single<JsonResponse>
 
+    @PATCH("messages/{msg_id}")
+    fun editMessage(
+        @Path("msg_id") msg_id: Long,
+        @Query("topic") topic: String,
+        @Query("content") content: String
+    ): Single<JsonResponse>
+
 }

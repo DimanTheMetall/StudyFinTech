@@ -12,7 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.*
-import com.example.homework2.customviews.CustomBottomSheetDialog
+import com.example.homework2.customviews.CustomReactionBottomSheetDialog
+import com.example.homework2.customviews.EditMessageCustomBottomSheetDialog
 import com.example.homework2.customviews.MessageCustomBottomSheetDialog
 import com.example.homework2.databinding.FragmentChatBinding
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
@@ -40,8 +41,9 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private var messageId = -1L
     private val compositeDisposable = CompositeDisposable()
 
-    private var reactionBottomSheetDialog: CustomBottomSheetDialog? = null
+    private var reactionReactionBottomSheetDialog: CustomReactionBottomSheetDialog? = null
     private var messageBottomSheetDialog: MessageCustomBottomSheetDialog? = null
+    private var editMessageBottomSheetDialog: EditMessageCustomBottomSheetDialog? = null
 
     private var isStreamChat = false
 
@@ -60,6 +62,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         super.onViewCreated(view, savedInstanceState)
         initReactionBottomSheetDialog()
         initMessageBottomSheetDialog()
+        initEditMessageSheetDialog()
         initImageSwitcher()
         initArguments()
         setVisibilityComponents(isStreamChat)
@@ -136,11 +139,11 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     }
 
     override fun showReactionDialog() {
-        reactionBottomSheetDialog?.show()
+        reactionReactionBottomSheetDialog?.show()
     }
 
     override fun hideReactionDialog() {
-        reactionBottomSheetDialog?.hide()
+        reactionReactionBottomSheetDialog?.hide()
     }
 
     override fun showMessageBottomDialog(message: SelectViewTypeClass.Message) {
@@ -152,26 +155,44 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         messageBottomSheetDialog?.hide()
     }
 
+    override fun showEditMessageDialog(message: SelectViewTypeClass.Message) {
+        with(editMessageBottomSheetDialog) {
+            this?.setMessage(seatedMessage = message)
+            this?.show()
+        }
+    }
+
+    override fun hideEditMessageDialog() {
+        editMessageBottomSheetDialog?.hide()
+    }
+
     private fun initMessageBottomSheetDialog() {
         messageBottomSheetDialog =
             MessageCustomBottomSheetDialog(
                 context = requireContext(),
-                { message -> presenter.onAddReactionMessageClick(message = message) },
-                { message -> presenter.onDeleteMessageClick(message = message) },
-                { message -> },
-                { message -> },
-                { message -> })
+                onAddReactionClick = { message -> presenter.onAddReactionMessageClick(message = message) },
+                onDeleteMessageClick = { message -> presenter.onDeleteMessageClick(message = message) },
+                onEditMessageClick = { message -> presenter.onEditMessageClick(message = message) },
+                onMoveMessageClick = { message -> },
+                onCopyMessageClick = { message -> })
+    }
+
+    private fun initEditMessageSheetDialog() {
+        editMessageBottomSheetDialog = EditMessageCustomBottomSheetDialog(
+            context = requireContext(),
+            onApplyClick = { message -> presenter.onApplyEditMessageClick(message = message) },
+            onCancelClick = { presenter.onCancelEditMessageClick() })
     }
 
     private fun initReactionBottomSheetDialog() {
-        reactionBottomSheetDialog =
-            CustomBottomSheetDialog(requireContext()) { emojiName, _ ->
+        reactionReactionBottomSheetDialog =
+            CustomReactionBottomSheetDialog(requireContext()) { emojiName, _ ->
                 presenter.onEmojiInSheetDialogClick(
                     messageId = messageId,
                     emojiName = emojiName,
                     reactionType = getString(R.string.unicodeEmoji),
                 )
-                reactionBottomSheetDialog?.hide()
+                reactionReactionBottomSheetDialog?.hide()
             }
 
     }
