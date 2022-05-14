@@ -133,8 +133,6 @@ class ChatPresenterImpl @Inject constructor(
                     .subscribe({ messages ->
                         currentMessageList.addAll(messages)
                         if (!isStreamChat) {
-                            //Пофиксить лист
-                            messages.forEach { insertSingleMessageInDB(message = it) }
                             checkAndDelete(stream = stream, topic = topic)
                         } else {
                             updateHelpTopicList(streamId = stream.streamId)
@@ -232,6 +230,10 @@ class ChatPresenterImpl @Inject constructor(
         view.hideChangeTopicDialog()
         view.showProgress()
         editMessage(message = message, isTopicChanged = true)
+    }
+
+    override fun onCopyCLick() {
+        view.hideMessageBottomDialog()
     }
 
     override fun onInit() {

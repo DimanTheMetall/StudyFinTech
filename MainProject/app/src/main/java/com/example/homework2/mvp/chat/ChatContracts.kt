@@ -106,6 +106,8 @@ interface ChatPresenter : BasePresenter {
 
     fun onApplyChangeTopicForMessage(message: SelectViewTypeClass.Message)
 
+    fun onCopyCLick()
+
 }
 
 interface ChatModel : BaseModel {

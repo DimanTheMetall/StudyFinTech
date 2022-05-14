@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.R
@@ -13,7 +14,7 @@ import com.example.homework2.dpToPx
 import com.example.homework2.mvp.chat.TopicsHelpAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class ChangeMessageTopicDialog(
+class ChangeMessageTopicBottomSheetDialog(
     context: Context,
     private val onTopicCLick: (SelectViewTypeClass.Message) -> Unit
 ) :
@@ -52,19 +53,24 @@ class ChangeMessageTopicDialog(
         }
     }
 
-
     private fun initAdapter() {
         findViewById<RecyclerView?>(R.id.topics_of_this_message_rc_view).apply {
             this?.adapter = topicAdapter
             this?.layoutManager = LinearLayoutManager(context)
             this?.addItemDecoration(itemDivider)
         }
-
     }
 
     private fun editMessage(topic: Topic) {
-        val editedMessage = message.copy(subject = topic.name)
-        onTopicCLick.invoke(editedMessage)
+        if (topic.name == message.subject) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.message_already_in_this_topic),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            onTopicCLick.invoke(message.copy(subject = topic.name))
+        }
     }
 
 }

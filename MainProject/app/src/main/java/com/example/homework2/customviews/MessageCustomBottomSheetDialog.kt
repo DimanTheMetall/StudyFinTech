@@ -18,8 +18,6 @@ class MessageCustomBottomSheetDialog(
 ) : BottomSheetDialog(context) {
 
     private lateinit var message: SelectViewTypeClass.Message
-    private var moveMessageView: ImageView? = null
-    private var copyMessageView: ImageView? = null
 
     init {
         setContentView(R.layout.message_help_layout)
@@ -27,7 +25,7 @@ class MessageCustomBottomSheetDialog(
         setOnAddReactionClickListener()
         setOnDeleteMessageClicker()
         setOnMoveClickListener()
-
+        setOnCopyCLickListener()
     }
 
     fun setMessage(seatedMessage: SelectViewTypeClass.Message) {
@@ -43,7 +41,7 @@ class MessageCustomBottomSheetDialog(
     private fun setOnDeleteMessageClicker() {
         findViewById<ImageView>(R.id.delete_message_image_view)?.apply {
             setOnClickListener {
-                if (isNotYoursMessage()) toastAboutPermission() else onDeleteMessageClick.invoke(
+                if (isNotYoursMessage()) toast(context.getString(R.string.dont_have_permission)) else onDeleteMessageClick.invoke(
                     message
                 )
             }
@@ -53,7 +51,7 @@ class MessageCustomBottomSheetDialog(
     private fun setOnEditMessageClickListener() {
         findViewById<ImageView?>(R.id.edit_message_image_view)?.apply {
             setOnClickListener {
-                if (isNotYoursMessage()) toastAboutPermission() else onEditMessageClick.invoke(
+                if (isNotYoursMessage()) toast(context.getString(R.string.dont_have_permission)) else onEditMessageClick.invoke(
                     message
                 )
             }
@@ -63,22 +61,29 @@ class MessageCustomBottomSheetDialog(
     private fun setOnMoveClickListener() {
         findViewById<ImageView?>(R.id.move_to_topic_image_view)?.apply {
             setOnClickListener {
-                if (isNotYoursMessage()) toastAboutPermission() else onMoveMessageClick.invoke(
+                if (isNotYoursMessage()) toast(context.getString(R.string.dont_have_permission)) else onMoveMessageClick.invoke(
                     message
                 )
             }
         }
     }
 
-    private fun toastAboutPermission() {
+    private fun setOnCopyCLickListener() {
+        findViewById<ImageView?>(R.id.copy_message_image_view).apply {
+            this?.setOnClickListener {
+                onCopyMessageClick.invoke(message)
+                toast(context.getString(R.string.message_copied))
+            }
+        }
+    }
+
+    private fun toast(text: String) {
         Toast.makeText(
             context,
-            context.getString(R.string.dont_have_permission),
+            text,
             Toast.LENGTH_SHORT
         ).show()
     }
 
     private fun isNotYoursMessage(): Boolean = message.senderId != Constance.myId
-
-
 }

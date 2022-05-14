@@ -1,5 +1,8 @@
 package com.example.homework2.mvp.chat
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.*
-import com.example.homework2.customviews.ChangeMessageTopicDialog
+import com.example.homework2.customviews.ChangeMessageTopicBottomSheetDialog
 import com.example.homework2.customviews.CustomReactionBottomSheetDialog
 import com.example.homework2.customviews.EditMessageCustomBottomSheetDialog
 import com.example.homework2.customviews.MessageCustomBottomSheetDialog
@@ -45,7 +48,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private var reactionReactionBottomSheetDialog: CustomReactionBottomSheetDialog? = null
     private var messageBottomSheetDialog: MessageCustomBottomSheetDialog? = null
     private var editMessageBottomSheetDialog: EditMessageCustomBottomSheetDialog? = null
-    private var changeTopicBottomSheetDialog: ChangeMessageTopicDialog? = null
+    private var changeTopicBottomSheetBottomSheetDialog: ChangeMessageTopicBottomSheetDialog? = null
 
     private var isStreamChat = false
 
@@ -170,7 +173,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     }
 
     override fun showChangeTopicDialog(message: SelectViewTypeClass.Message, stream: Stream) {
-        with(changeTopicBottomSheetDialog) {
+        with(changeTopicBottomSheetBottomSheetDialog) {
             this?.setTopicList(stream.topicList)
             this?.setMessage(message_ = message)
             this?.show()
@@ -179,7 +182,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     }
 
     override fun hideChangeTopicDialog() {
-        changeTopicBottomSheetDialog?.hide()
+        changeTopicBottomSheetBottomSheetDialog?.hide()
     }
 
     private fun initMessageBottomSheetDialog() {
@@ -195,7 +198,12 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
                         stream = stream
                     )
                 },
-                onCopyMessageClick = { message -> })
+                onCopyMessageClick = { message ->
+                    val clipData = ClipData.newPlainText("label", message.content)
+                    val clipBoard =
+                        requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    clipBoard.setPrimaryClip(clipData)
+                })
 
     }
 
@@ -451,11 +459,12 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     }
 
     private fun initChangeTopicDialog() {
-        changeTopicBottomSheetDialog = ChangeMessageTopicDialog(requireContext()) { message ->
-            presenter.onApplyEditMessageClick(
-                message = message
-            )
-        }
+        changeTopicBottomSheetBottomSheetDialog =
+            ChangeMessageTopicBottomSheetDialog(requireContext()) { message ->
+                presenter.onApplyEditMessageClick(
+                    message = message
+                )
+            }
     }
 
     companion object {
