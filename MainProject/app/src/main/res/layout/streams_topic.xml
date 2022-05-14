@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:textSize="22sp"
+        android:layout_marginStart="40dp"
         tools:text="stream name"
         android:padding="8dp" />
 

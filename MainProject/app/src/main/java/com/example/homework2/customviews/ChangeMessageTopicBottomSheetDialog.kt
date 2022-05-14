@@ -1,16 +1,15 @@
 package com.example.homework2.customviews
 
 import android.content.Context
-import android.graphics.Rect
-import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.R
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.streamsandtopics.Topic
-import com.example.homework2.dpToPx
 import com.example.homework2.mvp.chat.TopicsHelpAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
@@ -22,20 +21,6 @@ class ChangeMessageTopicBottomSheetDialog(
 
     private val topicAdapter = TopicsHelpAdapter { topic -> editMessage(topic = topic) }
     private lateinit var message: SelectViewTypeClass.Message
-
-    private val itemDivider = object : RecyclerView.ItemDecoration() {
-        override fun getItemOffsets(
-            outRect: Rect,
-            view: View,
-            parent: RecyclerView,
-            state: RecyclerView.State
-        ) {
-            outRect.apply {
-                top += context.dpToPx(2)
-                bottom += context.dpToPx(2)
-            }
-        }
-    }
 
     init {
         setContentView(R.layout.change_topic_layout)
@@ -54,10 +39,13 @@ class ChangeMessageTopicBottomSheetDialog(
     }
 
     private fun initAdapter() {
+        val divider = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+        divider.setDrawable(ContextCompat.getDrawable(context, R.drawable.shape_divider)!!)
+
         findViewById<RecyclerView?>(R.id.topics_of_this_message_rc_view).apply {
             this?.adapter = topicAdapter
             this?.layoutManager = LinearLayoutManager(context)
-            this?.addItemDecoration(itemDivider)
+            this?.addItemDecoration(divider)
         }
     }
 

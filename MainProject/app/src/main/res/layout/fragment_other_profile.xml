@@ -35,8 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/status"
-        android:textColor="@color/white"
-        android:textSize="24sp"
+        style="@style/InformTextView"
         app:layout_constraintEnd_toStartOf="@id/profile_status_online"
         app:layout_constraintStart_toStartOf="@id/profile_name"
         app:layout_constraintTop_toBottomOf="@id/profile_name" />
@@ -46,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/red"
-        android:textSize="22sp"
+        style="@style/InformTextView"
         app:layout_constraintBottom_toBottomOf="@id/profile_status_text_view"
         app:layout_constraintEnd_toEndOf="@id/profile_name"
         app:layout_constraintStart_toEndOf="@id/profile_status_text_view"

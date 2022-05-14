@@ -35,7 +35,8 @@ class TopicsHelpAdapter(
     private inner class TopicHolder(item: View) : RecyclerView.ViewHolder(item) {
         private val binding = HelpTopicItemBinding.bind(item)
         fun bind(topic: Topic) {
-            binding.topicNameHelp.text = topic.name
+            binding.topicNameHelp.text =
+                itemView.context.getString(R.string.item_grille, topic.name)
             itemView.setOnClickListener { onItemCLick.invoke(topic) }
         }
     }

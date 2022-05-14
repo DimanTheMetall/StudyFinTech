@@ -33,6 +33,7 @@
     <string name="topiclable">Topic #%1$s</string>
     <string name="mess">\"mess %1$s\"</string>
     <string name="search">Search…</string>
+    <string name="item_grille">"#%1$s"</string>
 
 
     <string name="systemError">System error</string>
@@ -53,7 +54,7 @@
     <string name="close_help">close help</string>
     <string name="please_write_topic_name">Please write topic name</string>
     <string name="please_write_message_text">Please write EditMessage text</string>
-    <string name="edit_message">Edit EditMessage</string>
+    <string name="edit_message">Edit Message</string>
     <string name="apply">Apply</string>
     <string name="dont_have_permission">You dont have permission on that operation</string>
     <string name="current_message_topic">Current message topic:</string>

@@ -1,6 +1,5 @@
 package com.example.homework2.mvp.streams.recyclestream
 
-import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -8,11 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.*
+import com.example.homework2.Constance
+import com.example.homework2.Errors
+import com.example.homework2.R
 import com.example.homework2.customviews.StreamsCustomBottomSheetDialog
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
 import com.example.homework2.dataclasses.streamsandtopics.Stream
@@ -20,6 +22,7 @@ import com.example.homework2.di.recyclestreamcomponent.DaggerRecycleStreamsCompo
 import com.example.homework2.di.recyclestreamcomponent.RecycleStreamsComponent
 import com.example.homework2.mvp.BaseFragment
 import com.example.homework2.mvp.streams.StreamFragment
+import com.example.homework2.zulipApp
 import com.facebook.shimmer.ShimmerFrameLayout
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -186,20 +189,8 @@ class RecycleStreamsFragment :
     }
 
     private fun initRecycleAdapter() {
-
-        val itemDivider = object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(
-                outRect: Rect,
-                view: View,
-                parent: RecyclerView,
-                state: RecyclerView.State
-            ) {
-                outRect.apply {
-                    top += requireContext().dpToPx(2)
-                    bottom += requireContext().dpToPx(2)
-                }
-            }
-        }
+        val divider = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        divider.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.shape_divider)!!)
 
         recycleAdapter = StreamRecycleViewAdapter({ topic, stream ->
             presenter.onShortClickOnTopic(topic = topic, stream = stream)
@@ -215,7 +206,7 @@ class RecycleStreamsFragment :
                 requireContext(),
                 LinearLayoutManager.VERTICAL, false
             )
-            recycleChannel.addItemDecoration(itemDivider)
+            recycleChannel.addItemDecoration(divider)
         }
     }
 

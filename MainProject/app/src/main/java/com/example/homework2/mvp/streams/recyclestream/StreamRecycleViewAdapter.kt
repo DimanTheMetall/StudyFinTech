@@ -79,7 +79,7 @@ class StreamRecycleViewAdapter(
         @SuppressLint("InflateParams")
         fun bind(stream: Stream) {
 
-            binding.channelName.text = stream.name
+            binding.channelName.text = itemView.context.getString(R.string.item_grille, stream.name)
             binding.topicList.removeAllViews()
             openStreamTopics(false)
             setTopicList(stream = stream, topicList = stream.topicList, binding = binding)

@@ -10,8 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.*
@@ -362,19 +364,8 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     }
 
     private fun initHelpRecycleAdapter() {
-        val itemDivider = object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(
-                outRect: Rect,
-                view: View,
-                parent: RecyclerView,
-                state: RecyclerView.State
-            ) {
-                outRect.apply {
-                    top += requireContext().dpToPx(2)
-                    bottom += requireContext().dpToPx(2)
-                }
-            }
-        }
+        val divider = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        divider.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.shape_divider)!!)
 
         helpAdapter = TopicsHelpAdapter { topicItem ->
             presenter.onHelpTopicItemCLick(topic = topicItem)
@@ -383,7 +374,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
             adapter = helpAdapter
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(itemDivider)
+            addItemDecoration(divider)
         }
         setTopicListInStream(stream.topicList)
     }

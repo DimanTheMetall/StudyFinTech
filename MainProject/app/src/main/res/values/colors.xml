@@ -15,6 +15,7 @@
     <color name="bg_main">#141417</color>
     <color name="green">#4CAF50</color>
     <color name="red">#B61212</color>
+    <color name="transparent">#00ffffff</color>
 
     <color name="first_stream">#19658E</color>
     <color name="second_stream">#AF8722</color>
