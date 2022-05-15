@@ -1,7 +1,6 @@
 package com.example.homework2.mvp.streams.recyclestream
 
 import com.example.homework2.Constance
-import com.example.homework2.Errors
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
 import com.example.homework2.dataclasses.streamsandtopics.Stream
@@ -9,6 +8,7 @@ import com.example.homework2.dataclasses.streamsandtopics.Subscriptions
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BasePresenterImpl
 import com.example.homework2.mvp.chat.ChatFragment
+import com.example.homework2.toErrorType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -23,7 +23,7 @@ class RecycleStreamPresenterImpl(
                 val searchedStreams: List<Stream> = streams.filter { it.name.contains(text) }
                 view.showStreams(streamList = searchedStreams)
             }, {
-                view.showError(it, Errors.INTERNET)
+                view.showError(throwable = it, error = it.toErrorType())
             })
         compositeDisposable.add(disposable)
     }
@@ -35,7 +35,7 @@ class RecycleStreamPresenterImpl(
                 val searchedStreams: List<Stream> = streams.filter { it.name.contains(text) }
                 view.showStreams(streamList = searchedStreams)
             }, {
-                view.showError(it, Errors.INTERNET)
+                view.showError(throwable = it, error = it.toErrorType())
             })
         compositeDisposable.add(disposable)
     }
@@ -82,7 +82,7 @@ class RecycleStreamPresenterImpl(
                 }
             }, {
                 view.stopShowingProgressInDialog()
-                view.showError(it, Errors.INTERNET)
+                view.showError(throwable = it, error = it.toErrorType())
             })
 
         compositeDisposable.add(disposable)
@@ -98,7 +98,8 @@ class RecycleStreamPresenterImpl(
             fragment = ChatFragment.newInstance(
                 stream = stream,
                 topic = Topic(name = Constance.NONEXISTTOPIC),
-            ), tag = ChatFragment.TAG
+            ),
+            tag = ChatFragment.TAG
         )
     }
 
@@ -128,18 +129,20 @@ class RecycleStreamPresenterImpl(
             true -> {
                 val disposable = model.loadAllStreams()
                     .subscribe({
-                        view.showStreams(it)
+                        view.showStreams(streamList = it)
                         model.insertStreamsAndTopics(streamsList = it, isSubscribed = false)
-                    }, { view.showError(it, Errors.INTERNET) })
+                    }, {
+                        view.showError(throwable = it, error = it.toErrorType())
+                    })
 
                 compositeDisposable.add(disposable)
             }
             false -> {
                 val disposable = model.loadSubscribedStreams()
                     .subscribe({
-                        view.showStreams(it)
+                        view.showStreams(streamList = it)
                         model.insertStreamsAndTopics(streamsList = it, isSubscribed = true)
-                    }, { view.showError(it, Errors.INTERNET) })
+                    }, { view.showError(throwable = it, error = it.toErrorType()) })
 
                 compositeDisposable.add(disposable)
             }

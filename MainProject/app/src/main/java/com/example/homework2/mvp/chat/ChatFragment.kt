@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework2.*
+import com.example.homework2.Errors.*
 import com.example.homework2.customviews.ChangeMessageTopicBottomSheetDialog
 import com.example.homework2.customviews.CustomReactionBottomSheetDialog
 import com.example.homework2.customviews.EditMessageCustomBottomSheetDialog
@@ -113,9 +114,11 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     override fun showError(throwable: Throwable, error: Errors) {
         val messageText = when (error) {
-            Errors.INTERNET -> getString(R.string.internetError)
-            Errors.SYSTEM -> getString(R.string.systemError)
+            INTERNET -> getString(R.string.internetError)
+            SYSTEM -> getString(R.string.systemError)
+            BACKEND -> getString(R.string.backend_error)
         }
+
         Log.e(Constance.LogTag.MESSAGES_AND_REACTIONS, messageText, throwable)
         Toast.makeText(requireContext(), messageText, Toast.LENGTH_SHORT).show()
         shimmer.hideShimmer()

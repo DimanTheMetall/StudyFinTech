@@ -13,6 +13,7 @@
     <color name="background_1">#3F3F47</color>
     <color name="unselected">#2F2F33</color>
     <color name="bg_main">#141417</color>
+    <color name="bg_main_2">#1D1D1D</color>
     <color name="green">#4CAF50</color>
     <color name="red">#B61212</color>
     <color name="transparent">#00ffffff</color>

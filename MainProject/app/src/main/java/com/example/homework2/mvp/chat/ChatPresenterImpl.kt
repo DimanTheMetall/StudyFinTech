@@ -7,6 +7,7 @@ import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BasePresenterImpl
+import com.example.homework2.toErrorType
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -45,10 +46,10 @@ class ChatPresenterImpl @Inject constructor(
                     .subscribe({ message ->
                         onReactionUpdateMapList(changedMessage = message)
                         view.showMessages(messages = currentMessageList)
-                    }, { view.showError(throwable = it, error = Errors.INTERNET) })
+                    }, { view.showError(throwable = it, error = it.toErrorType()) })
 
                 compositeDisposable.add(deleteDisposable)
-            }, { view.showError(throwable = it, error = Errors.INTERNET) })
+            }, { view.showError(throwable = it, error = it.toErrorType()) })
 
             compositeDisposable.add(disposable)
         } else {
@@ -62,10 +63,10 @@ class ChatPresenterImpl @Inject constructor(
                         .subscribe({ message ->
                             onReactionUpdateMapList(changedMessage = message)
                             view.showMessages(messages = currentMessageList)
-                        }, { view.showError(throwable = it, error = Errors.INTERNET) })
+                        }, { view.showError(throwable = it, error = it.toErrorType()) })
 
                     compositeDisposable.add(addDisposable)
-                }, { view.showError(throwable = it, error = Errors.INTERNET) })
+                }, { view.showError(throwable = it, error = it.toErrorType()) })
 
             compositeDisposable.add(disposable)
         }
@@ -84,7 +85,7 @@ class ChatPresenterImpl @Inject constructor(
                     .subscribe({}, {})
 
                 compositeDisposable.add(deleteFromDBDisposable)
-            }, { view.showError(throwable = it, error = Errors.INTERNET) })
+            }, { view.showError(throwable = it, error = it.toErrorType()) })
         compositeDisposable.add(deleteFromZulipDisposable)
     }
 
@@ -106,7 +107,9 @@ class ChatPresenterImpl @Inject constructor(
     }
 
     override fun onTopicMessagesNextPageLoadRequested(stream: Stream, topic: Topic) {
-        if (!loadedIsLast) loadNextTopicMessages(stream = stream, topic = topic)
+        if (!loadedIsLast) for (i in 1..100) {
+            loadNextTopicMessages(stream = stream, topic = topic)
+        }
     }
 
     override fun onTopicMessagePreviousPageLoadRequest(stream: Stream, topic: Topic) {
@@ -138,10 +141,10 @@ class ChatPresenterImpl @Inject constructor(
                             updateHelpTopicList(streamId = stream.streamId)
                         }
                         view.showMessages(currentMessageList)
-                    }, { view.showError(throwable = it, error = Errors.INTERNET) })
+                    }, { view.showError(throwable = it, error = it.toErrorType()) })
 
                 compositeDisposable.add(loadDisposable)
-            }, { view.showError(throwable = it, error = Errors.INTERNET) })
+            }, { view.showError(throwable = it, error = it.toErrorType()) })
 
         compositeDisposable.add(sendDisposable)
     }
@@ -181,10 +184,10 @@ class ChatPresenterImpl @Inject constructor(
                             currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
                         view.showMessages(messages = newList)
                     }, {
-                        view.showError(throwable = it, error = Errors.INTERNET)
+                        view.showError(throwable = it, error = it.toErrorType())
                     })
                 compositeDisposable.add(messageDisposable)
-            }, { view.showError(throwable = it, error = Errors.INTERNET) })
+            }, { view.showError(throwable = it, error = it.toErrorType()) })
 
         compositeDisposable.add(emojiDisposable)
     }
@@ -255,7 +258,7 @@ class ChatPresenterImpl @Inject constructor(
     private fun updateHelpTopicList(streamId: Int) {
         val disposable = model.loadTopicList(streamId = streamId)
             .subscribe({ view.setTopicListInStream(topicList = it.topics) },
-                { view.showError(throwable = it, error = Errors.INTERNET) })
+                { view.showError(throwable = it, error = it.toErrorType()) })
 
         compositeDisposable.add(disposable)
     }
@@ -281,7 +284,7 @@ class ChatPresenterImpl @Inject constructor(
                     newList.addAll(currentMessageList)
                     currentMessageList = newList
                     view.showMessages(messages = currentMessageList)
-                }, { view.showError(throwable = it, error = Errors.INTERNET) })
+                }, { view.showError(throwable = it, error = it.toErrorType()) })
 
             compositeDisposable.add(disposable)
         }
@@ -304,7 +307,9 @@ class ChatPresenterImpl @Inject constructor(
 
                 currentMessageList.addAll(messages.sortedBy { it.timestamp })
                 view.showMessages(currentMessageList)
-            }, { view.showError(it, Errors.INTERNET) })
+            }, {
+                view.showError(throwable = it, error = it.toErrorType())
+            })
 
         compositeDisposable.add(disposable)
     }
@@ -338,7 +343,7 @@ class ChatPresenterImpl @Inject constructor(
                     compositeDisposable.add(insertDisposable)
                 },
                 {
-                    view.showError(throwable = it, error = Errors.INTERNET)
+                    view.showError(throwable = it, error = it.toErrorType())
                 })
 
         compositeDisposable.add(disposable)
@@ -359,7 +364,7 @@ class ChatPresenterImpl @Inject constructor(
                 newList.addAll(currentMessageList)
                 currentMessageList = newList
                 view.showMessages(messages = currentMessageList)
-            }, { view.showError(throwable = it, error = Errors.INTERNET) })
+            }, { view.showError(throwable = it, error = it.toErrorType()) })
 
         compositeDisposable.add(disposable)
     }
@@ -368,7 +373,7 @@ class ChatPresenterImpl @Inject constructor(
         if (!refresherIsSubscribed) {
             val refreshDisposable = refresherObservable
                 .subscribe({ loadNextTopicMessages(stream = stream, topic = topic) }, {
-                    view.showError(throwable = it, error = Errors.INTERNET)
+                    view.showError(throwable = it, error = it.toErrorType())
                 })
 
             refresherIsSubscribed = true
@@ -380,7 +385,7 @@ class ChatPresenterImpl @Inject constructor(
         if (!refresherIsSubscribed) {
             val refreshDisposable = refresherObservable
                 .subscribe({ loadNextStreamMessages(stream = stream) }, {
-                    view.showError(throwable = it, error = Errors.INTERNET)
+                    view.showError(throwable = it, error = it.toErrorType())
                 })
 
             refresherIsSubscribed = true
@@ -431,7 +436,7 @@ class ChatPresenterImpl @Inject constructor(
                         topicIsChanged = isTopicChanged
                     )
                 )
-            }, { view.showError(it, Errors.INTERNET) })
+            }, { view.showError(throwable = it, error = it.toErrorType()) })
 
         compositeDisposable.add(editDisposable)
     }

@@ -61,5 +61,6 @@
     <string name="choose_topic_for_message">Choose topic for message</string>
     <string name="message_copied">Message copied</string>
     <string name="message_already_in_this_topic">Message already in this topic</string>
+    <string name="backend_error">Something went wrong</string>
 
 </resources>

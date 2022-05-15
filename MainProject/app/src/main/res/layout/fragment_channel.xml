@@ -9,56 +9,60 @@
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/streams_shimmer"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:background="@color/unselected">
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/search_streams_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:hint="@string/search"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:textColorHint="@color/white"
+                app:layout_constraintEnd_toStartOf="@id/cancel_image"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/cancel_image"
+                android:layout_width="40dp"
+                android:layout_height="60dp"
                 android:background="@color/unselected"
-                android:orientation="horizontal">
+                android:src="@drawable/ic_cancel"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toStartOf="@id/search_streams_image_view"
+                app:layout_constraintStart_toEndOf="@id/search_streams_edit_text"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/search_streams_edit_text"
-                    android:layout_width="300dp"
-                    android:layout_height="60dp"
-                    android:hint="@string/search"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
-                    android:textColorHint="@color/white" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/cancel_image"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:background="@color/unselected"
-                    android:src="@drawable/ic_cancel"
-                    android:visibility="invisible" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/search_streams_image_view"
-                    android:layout_width="60dp"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_search" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/search_streams_image_view"
+                android:layout_width="60dp"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_search"
+                app:layout_constraintBottom_toBottomOf="@id/cancel_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cancel_image"
+                app:layout_constraintTop_toTopOf="@id/cancel_image" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_channels"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:background="@color/unselected"
                 android:padding="8dp"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/search_streams_edit_text"
                 app:tabIndicatorColor="@color/green"
                 app:tabMode="fixed"
-                app:tabTextColor="@color/white">
+                app:tabTextColor="@color/white"
+                android:background="@color/unselected">
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
@@ -71,7 +75,7 @@
                     android:text="@string/tab_item_all" />
 
             </com.google.android.material.tabs.TabLayout>
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <androidx.viewpager2.widget.ViewPager2

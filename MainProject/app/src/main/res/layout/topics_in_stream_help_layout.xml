@@ -7,7 +7,7 @@
 
     <View
         android:id="@+id/help_shape_top"
-        android:layout_width="200dp"
+        android:layout_width="60dp"
         android:layout_height="10dp"
         android:layout_marginTop="14dp"
         android:background="@drawable/bottom_sheet_shape_background"
@@ -22,9 +22,7 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="@string/topics_in_this_stream"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        style="@style/InformTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/help_shape_top" />
@@ -57,9 +55,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@drawable/bg_message"
+        style="@style/MainButton"
+        android:background="@drawable/bg_rounded_rect_gray"
         android:text="@string/close_help"
-        android:textColor="@color/white"
         android:layout_marginBottom="10dp" />
 
     <androidx.recyclerview.widget.RecyclerView

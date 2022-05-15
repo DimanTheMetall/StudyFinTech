@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.HttpException
 
 val View.measuredWidthWithMargins: Int
     get() {
@@ -62,4 +63,9 @@ fun RecyclerView.addOnPageScrollListener(
 
 fun RecyclerView.Adapter<*>.getLastPosition(): Int {
     return itemCount - 1
+}
+
+fun Throwable.toErrorType() = when (this) {
+    is HttpException -> Errors.BACKEND
+    else -> Errors.INTERNET
 }

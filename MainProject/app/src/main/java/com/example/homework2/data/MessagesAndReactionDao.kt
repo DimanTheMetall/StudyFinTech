@@ -27,7 +27,7 @@ interface MessagesAndReactionDao {
 
     @Query(
         "DELETE FROM messages " +
-                "WHERE messages.id<:oldestMessagedItAfterDeleted " +
+                "WHERE messages.id<=:oldestMessagedItAfterDeleted " +
                 "AND messages.stream_id=:streamId " +
                 "AND messages.subject =:topicName"
     )

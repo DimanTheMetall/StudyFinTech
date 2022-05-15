@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homework2.Constance
 import com.example.homework2.Errors
+import com.example.homework2.Errors.*
 import com.example.homework2.R
 import com.example.homework2.customviews.StreamsCustomBottomSheetDialog
 import com.example.homework2.databinding.FragmentRecycleChannelsBinding
@@ -100,7 +101,7 @@ class RecycleStreamsFragment :
                 (parentFragment as StreamFragment).binding.cancelImage.visibility = View.VISIBLE
                 textSubject.onNext(text.toString())
             } else {
-                (parentFragment as StreamFragment).binding.cancelImage.visibility = View.INVISIBLE
+                (parentFragment as StreamFragment).binding.cancelImage.visibility = View.GONE
             }
         }
     }
@@ -111,8 +112,9 @@ class RecycleStreamsFragment :
 
     override fun showError(throwable: Throwable, error: Errors) {
         val textMessage = when (error) {
-            Errors.INTERNET -> getString(R.string.internetError)
-            Errors.SYSTEM -> getString(R.string.systemError)
+            INTERNET -> getString(R.string.internetError)
+            SYSTEM -> getString(R.string.systemError)
+            BACKEND -> getString(R.string.backend_error)
         }
         shimmer.hideShimmer()
         Log.e(Constance.LogTag.TOPIC_AND_STREAM, textMessage, throwable)
