@@ -1,8 +1,8 @@
 package com.example.homework2.mvp.peoples
 
-import com.example.homework2.Errors
 import com.example.homework2.dataclasses.streamsandtopics.Member
 import com.example.homework2.mvp.BasePresenterImpl
+import com.example.homework2.toErrorType
 import javax.inject.Inject
 
 class PeoplesPresenterImpl @Inject constructor(
@@ -18,7 +18,7 @@ class PeoplesPresenterImpl @Inject constructor(
         val disposable = model.getUsersWithOutPresence()
             .subscribe({ members ->
                 view.showUsers(members.filter { it.fullName.contains(other = searchedText) })
-            }, { view.showError(throwable = it, error = Errors.INTERNET) })
+            }, { view.showError(throwable = it, error = it.toErrorType()) })
 
         compositeDisposable.add(disposable)
     }
@@ -29,7 +29,7 @@ class PeoplesPresenterImpl @Inject constructor(
             .subscribe({ view.showUsers(userList = it) }, {
                 view.showError(
                     throwable = it,
-                    error = Errors.INTERNET
+                    error = it.toErrorType()
                 )
             })
 

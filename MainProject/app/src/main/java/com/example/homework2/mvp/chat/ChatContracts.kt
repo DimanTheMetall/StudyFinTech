@@ -116,6 +116,8 @@ interface ChatModel : BaseModel {
 
     fun deleteMessageFromZulip(messageId: Long): Single<JsonResponse>
 
+    fun deleteMessagesFromTopic(topic: Topic, stream: Stream): Completable
+
     fun loadTopicList(streamId: Int): Single<JsonTopic>
 
     fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message>

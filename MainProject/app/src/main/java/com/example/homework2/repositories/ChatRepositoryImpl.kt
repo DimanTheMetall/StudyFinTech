@@ -1,5 +1,6 @@
 package com.example.homework2.repositories
 
+import androidx.room.Transaction
 import com.example.homework2.Constance
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.data.local.entity.MessageEntity
@@ -79,6 +80,8 @@ interface ChatRepository {
     fun updateMessageInDB(messageEntity: MessageEntity): Completable
 
     fun insertMessageInDB(messageEntity: MessageEntity): Completable
+
+    fun deleteMessagesFromTopic(stream: Stream, topic: Topic): Completable
 }
 
 class ChatRepositoryImpl @Inject constructor(
@@ -206,15 +209,16 @@ class ChatRepositoryImpl @Inject constructor(
 
     //Database operation
 
+    @Transaction
     override fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>): Completable {
         return database.getMessagesAndReactionDao()
-            .insertMessagesFromTopic(messages.map { MessageEntity.toEntity(it) })
+            .insertOrReplaceMessagesFromTopic(messages.map { MessageEntity.toEntity(it) })
             .subscribeOn(Schedulers.io())
             .andThen(
                 Observable.fromIterable(messages)
                     .flatMapCompletable { message ->
                         database.getMessagesAndReactionDao()
-                            .insertAllReactionOnMessages(
+                            .insertOrReplaceAllReactionOnMessages(
                                 message.reactions
                                     .map { reaction ->
                                         ReactionEntity.toEntity(
@@ -301,5 +305,11 @@ class ChatRepositoryImpl @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
+    override fun deleteMessagesFromTopic(stream: Stream, topic: Topic): Completable {
+        return database.getMessagesAndReactionDao()
+            .deleteAllMessagesFromTopic(streamId = stream.streamId, topicName = topic.name)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
 
 }

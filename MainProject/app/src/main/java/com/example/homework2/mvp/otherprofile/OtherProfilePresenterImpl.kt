@@ -1,8 +1,8 @@
 package com.example.homework2.mvp.otherprofile
 
-import com.example.homework2.Errors
 import com.example.homework2.dataclasses.streamsandtopics.Member
 import com.example.homework2.mvp.BasePresenterImpl
+import com.example.homework2.toErrorType
 import javax.inject.Inject
 
 class OtherProfilePresenterImpl @Inject constructor(
@@ -13,7 +13,7 @@ class OtherProfilePresenterImpl @Inject constructor(
         val disposable = model.getPresence(member = member)
             .subscribe(
                 { view.setStatus(member = member, presence = it) },
-                { view.showError(throwable = it, error = Errors.INTERNET) })
+                { view.showError(throwable = it, error = it.toErrorType()) })
 
         compositeDisposable.add(disposable)
     }

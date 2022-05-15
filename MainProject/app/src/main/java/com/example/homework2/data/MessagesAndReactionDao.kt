@@ -20,10 +20,16 @@ interface MessagesAndReactionDao {
     ): Single<Map<MessageEntity, List<ReactionEntity>>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMessagesFromTopic(listMessagesEntity: List<MessageEntity>): Completable
+    fun insertOrReplaceMessagesFromTopic(listMessagesEntity: List<MessageEntity>): Completable
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllReactionOnMessages(reactionEntityList: List<ReactionEntity>): Completable
+    fun insertOrReplaceAllReactionOnMessages(reactionEntityList: List<ReactionEntity>): Completable
+
+//    @Query("DELETE FROM reactions WHERE reactions.message_id+:messageId")
+//    fun deleteReactionFromMessage(messageId:Long): Completable
+
+    @Query("DELETE FROM messages WHERE messages.stream_id=:streamId AND messages.subject=:topicName")
+    fun deleteAllMessagesFromTopic(streamId: Int, topicName: String): Completable
 
     @Query(
         "DELETE FROM messages " +
@@ -37,11 +43,9 @@ interface MessagesAndReactionDao {
         topicName: String
     ): Completable
 
-    @Query("DELETE FROM reactions WHERE reactions.message_id<:messageId")
-    fun deleteReactionFromMessagesWhereIdLowes(messageId: Long): Completable
-
     @Delete
     fun deleteMessage(messageEntity: MessageEntity): Completable
+
 
     @Update
     fun updateMessage(messageEntity: MessageEntity): Completable

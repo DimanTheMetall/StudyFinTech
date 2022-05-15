@@ -179,7 +179,10 @@ class RecycleStreamsFragment :
         bottomSheetDialog = StreamsCustomBottomSheetDialog(
             context = requireContext(),
             { streamName, streamDescription ->
-                presenter.onCreateButtonCLick(streamName, streamDescription)
+                presenter.onCreateButtonCLick(
+                    streamName = streamName,
+                    streamDescription = streamDescription
+                )
             },
             {
                 presenter.onCancelButtonClick()
@@ -223,4 +226,5 @@ class RecycleStreamsFragment :
             }
         }
     }
+
 }

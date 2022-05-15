@@ -1,7 +1,7 @@
 package com.example.homework2.mvp.myprofile
 
-import com.example.homework2.Errors
 import com.example.homework2.mvp.BasePresenterImpl
+import com.example.homework2.toErrorType
 import javax.inject.Inject
 
 class MyProfilePresenterImpl @Inject constructor(
@@ -13,7 +13,7 @@ class MyProfilePresenterImpl @Inject constructor(
             .subscribe({ view.renderProfile(member = it) }, {
                 view.showError(
                     throwable = it,
-                    error = Errors.INTERNET
+                    error = it.toErrorType()
                 )
             })
         compositeDisposable.add(disposable)

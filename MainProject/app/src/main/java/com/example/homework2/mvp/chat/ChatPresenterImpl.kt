@@ -107,9 +107,7 @@ class ChatPresenterImpl @Inject constructor(
     }
 
     override fun onTopicMessagesNextPageLoadRequested(stream: Stream, topic: Topic) {
-        if (!loadedIsLast) for (i in 1..100) {
-            loadNextTopicMessages(stream = stream, topic = topic)
-        }
+        if (!loadedIsLast) loadNextTopicMessages(stream = stream, topic = topic)
     }
 
     override fun onTopicMessagePreviousPageLoadRequest(stream: Stream, topic: Topic) {
@@ -155,10 +153,16 @@ class ChatPresenterImpl @Inject constructor(
                 if (messages.isNullOrEmpty()) {
                     loadNextTopicMessages(stream = stream, topic = topic)
                 } else {
+                    initRefreshLoad(
+                        stream = stream, topic = topic,
+                        firstMessageId = messages.first().id
+                    )
                     currentMessageList.addAll(messages)
                     view.showMessages(messages = currentMessageList)
                 }
-            }, { view.showError(throwable = it, error = Errors.SYSTEM) })
+            }, {
+                view.showError(throwable = it, error = Errors.SYSTEM)
+            })
 
         compositeDisposable.add(disposable)
     }
@@ -418,13 +422,6 @@ class ChatPresenterImpl @Inject constructor(
         compositeDisposable.add(updateDisposable)
     }
 
-    private fun insertSingleMessageInDB(message: SelectViewTypeClass.Message) {
-        val disposable = model.insertSingleMessageInDB(message)
-            .subscribe({}, {})
-
-        compositeDisposable.add(disposable)
-    }
-
     private fun editMessage(message: SelectViewTypeClass.Message, isTopicChanged: Boolean) {
         val editDisposable = model.editMessageInZulip(message = message)
             .subscribe({
@@ -439,6 +436,43 @@ class ChatPresenterImpl @Inject constructor(
             }, { view.showError(throwable = it, error = it.toErrorType()) })
 
         compositeDisposable.add(editDisposable)
+    }
+
+    private fun initRefreshLoad(stream: Stream, topic: Topic, firstMessageId: Long) {
+        @Suppress("UNCHECKED_CAST") val disposable = model.loadTopicMessages(
+            topic = topic,
+            stream = stream,
+            anchor = "$firstMessageId",
+            numAfter = Constance.LIMIT_MESSAGE_COUNT_FOR_TOPIC,
+            numBefore = 0
+        )
+            .subscribe(
+                { result ->
+                    val messages = result.messages
+                    val deleteDisposable =
+                        model.deleteMessagesFromTopic(stream = stream, topic = topic)
+                            .subscribe({
+                                val insertDisposable =
+                                    model.insertAllMessagesAndReactions(messages = messages)
+                                        .subscribe({}, {})
+                                compositeDisposable.add(insertDisposable)
+                            },
+                                {
+                                    TODO()
+                                })
+                    compositeDisposable.add(deleteDisposable)
+                    loadedIsLast = result.foundNewest
+                    if (loadedIsLast) subscribeTopicRefresher(topic = topic, stream = stream)
+
+                    currentMessageList.addAll(messages)
+                    view.showMessages(currentMessageList)
+
+                },
+                {
+                    view.showError(throwable = it, error = it.toErrorType())
+                })
+
+        compositeDisposable.add(disposable)
     }
 
 }

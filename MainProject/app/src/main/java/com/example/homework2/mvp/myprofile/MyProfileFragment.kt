@@ -13,6 +13,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.homework2.Constance
 import com.example.homework2.Errors
+import com.example.homework2.Errors.*
 import com.example.homework2.R
 import com.example.homework2.databinding.FragmentProfileBinding
 import com.example.homework2.dataclasses.streamsandtopics.Member
@@ -70,8 +71,9 @@ class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBindin
 
     override fun showError(throwable: Throwable, error: Errors) {
         val textMessage = when (error) {
-            Errors.INTERNET -> getString(R.string.internetError)
-            Errors.SYSTEM -> getString(R.string.systemError)
+            INTERNET -> getString(R.string.internetError)
+            SYSTEM -> getString(R.string.systemError)
+            BACKEND -> getString(R.string.backend_error)
         }
         Log.e(Constance.LogTag.PEOPLES, textMessage, throwable)
         Toast.makeText(requireContext(), textMessage, Toast.LENGTH_SHORT).show()

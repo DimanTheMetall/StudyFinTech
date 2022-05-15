@@ -10,6 +10,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homework2.Constance
 import com.example.homework2.Errors
+import com.example.homework2.Errors.*
 import com.example.homework2.R
 import com.example.homework2.databinding.FragmentPeopleBinding
 import com.example.homework2.dataclasses.streamsandtopics.Member
@@ -120,10 +121,10 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
 
     override fun showError(throwable: Throwable, error: Errors) {
         val textMessage = when (error) {
-            Errors.INTERNET -> getString(R.string.internetError)
-            Errors.SYSTEM -> getString(R.string.systemError)
+            INTERNET -> getString(R.string.internetError)
+            SYSTEM -> getString(R.string.systemError)
+            BACKEND -> getString(R.string.backend_error)
         }
-
         Log.e(Constance.LogTag.PEOPLES, textMessage, throwable)
         Toast.makeText(requireContext(), textMessage, Toast.LENGTH_SHORT).show()
         shimmer.hideShimmer()
