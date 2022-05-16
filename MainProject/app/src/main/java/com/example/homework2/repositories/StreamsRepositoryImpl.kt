@@ -3,8 +3,8 @@ package com.example.homework2.repositories
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
-import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
-import com.example.homework2.dataclasses.streamsandtopics.JsonTopic
+import com.example.homework2.dataclasses.chatdataclasses.ResultResponse
+import com.example.homework2.dataclasses.streamsandtopics.ResultTopic
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Subscriptions
 import com.example.homework2.retrofit.RetrofitService
@@ -29,9 +29,9 @@ interface StreamRepository {
 
     fun selectSubscribedStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>>
 
-    fun createOrSubscribeStream(subscriptions: Subscriptions): Single<JsonResponse>
+    fun createOrSubscribeStream(subscriptions: Subscriptions): Single<ResultResponse>
 
-    fun getTopicList(streamId: Int): Single<JsonTopic>
+    fun getTopicList(streamId: Int): Single<ResultTopic>
 }
 
 
@@ -52,7 +52,7 @@ class StreamsRepositoryImpl @Inject constructor(
             .subscribeOn(Schedulers.io())
     }
 
-    override fun getTopicList(streamId: Int): Single<JsonTopic> {
+    override fun getTopicList(streamId: Int): Single<ResultTopic> {
         return retrofitService.getTopicList(streamId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -95,7 +95,7 @@ class StreamsRepositoryImpl @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
-    override fun createOrSubscribeStream(subscriptions: Subscriptions): Single<JsonResponse> {
+    override fun createOrSubscribeStream(subscriptions: Subscriptions): Single<ResultResponse> {
         return retrofitService.createOrSubscribeStream(
             subscriptions = Gson().toJson(
                 listOf(

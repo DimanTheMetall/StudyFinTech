@@ -3,8 +3,8 @@ package com.example.homework2.test.repositries
 import android.annotation.SuppressLint
 import com.example.homework2.RxRule
 import com.example.homework2.dataclasses.chatdataclasses.Website
-import com.example.homework2.dataclasses.streamsandtopics.JsonUsers
 import com.example.homework2.dataclasses.streamsandtopics.Member
+import com.example.homework2.dataclasses.streamsandtopics.ResultUsers
 import com.example.homework2.repositories.UsersRepositoryImpl
 import com.example.homework2.retrofit.RetrofitService
 import io.reactivex.Single
@@ -40,7 +40,7 @@ class UsersRepositoryImplTest() {
             Website(status = "status", timestamp = 30)
         )
         val memberList = createMembersList(member = member)
-        val jsonUsers = JsonUsers(members = memberList, result = "result")
+        val jsonUsers = ResultUsers(members = memberList, result = "result")
         Mockito.`when`(retrofitService.getUsers()).thenReturn(Single.just(jsonUsers))
 
         var members: List<Member>? = null
@@ -75,12 +75,6 @@ class UsersRepositoryImplTest() {
         )
     }
 
-    private fun createMembersList(
-        member: Member
-    ): List<Member> {
-        return listOf(
-            member, member, member
-        )
-    }
+    private fun createMembersList(member: Member): List<Member> = listOf(member, member, member)
 
 }

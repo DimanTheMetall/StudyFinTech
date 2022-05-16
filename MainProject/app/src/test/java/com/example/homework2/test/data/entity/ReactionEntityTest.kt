@@ -5,9 +5,7 @@ import com.example.homework2.dataclasses.chatdataclasses.Reaction
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class ReactionEntityTest(
-
-) {
+class ReactionEntityTest {
 
     @Test
     fun `response data with out userId to entity`() {

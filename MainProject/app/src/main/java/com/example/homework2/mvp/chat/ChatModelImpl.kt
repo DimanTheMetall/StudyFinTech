@@ -1,13 +1,11 @@
 package com.example.homework2.mvp.chat
 
-import android.util.Log
-import com.example.homework2.Constance
 import com.example.homework2.data.local.entity.MessageEntity
 import com.example.homework2.dataclasses.chatdataclasses.EditMessage
-import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
-import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
+import com.example.homework2.dataclasses.chatdataclasses.ResultMessages
+import com.example.homework2.dataclasses.chatdataclasses.ResultResponse
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
-import com.example.homework2.dataclasses.streamsandtopics.JsonTopic
+import com.example.homework2.dataclasses.streamsandtopics.ResultTopic
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseModelImpl
@@ -32,7 +30,7 @@ class ChatModelImpl @Inject constructor(
         return chatRepositoryImpl.deleteMessageFromDB(message = message)
     }
 
-    override fun deleteMessageFromZulip(messageId: Long): Single<JsonResponse> {
+    override fun deleteMessageFromZulip(messageId: Long): Single<ResultResponse> {
         return chatRepositoryImpl.deleteMessageFromZulip(messageId = messageId)
     }
 
@@ -40,11 +38,11 @@ class ChatModelImpl @Inject constructor(
         return chatRepositoryImpl.deleteMessagesFromTopic(stream = stream, topic = topic)
     }
 
-    override fun loadTopicList(streamId: Int): Single<JsonTopic> {
+    override fun loadTopicList(streamId: Int): Single<ResultTopic> {
         return streamsRepositoryImpl.getTopicList(streamId = streamId)
     }
 
-    override fun editMessageInZulip(message: SelectViewTypeClass.Message): Single<JsonResponse> {
+    override fun editMessageInZulip(message: SelectViewTypeClass.Message): Single<ResultResponse> {
         return chatRepositoryImpl.editMessageInZulip(
             EditMessage(
                 messageId = message.id,
@@ -58,7 +56,7 @@ class ChatModelImpl @Inject constructor(
         messageId: Long,
         emojiName: String,
         reactionType: String
-    ): Single<JsonResponse> {
+    ): Single<ResultResponse> {
         return chatRepositoryImpl.deleteEmoji(
             messageId = messageId,
             emojiName = emojiName,
@@ -70,7 +68,7 @@ class ChatModelImpl @Inject constructor(
         messageId: Long,
         emojiName: String,
         reactionType: String
-    ): Single<JsonResponse> {
+    ): Single<ResultResponse> {
         return chatRepositoryImpl.addEmoji(
             messageId = messageId,
             emojiName = emojiName,
@@ -83,7 +81,7 @@ class ChatModelImpl @Inject constructor(
         sentText: String,
         topic: Topic,
         stream: Stream
-    ): Single<JsonResponse> {
+    ): Single<ResultResponse> {
         return chatRepositoryImpl.sendMessage(sentText = sentText, topic = topic, stream = stream)
     }
 
@@ -93,7 +91,7 @@ class ChatModelImpl @Inject constructor(
         anchor: String,
         numAfter: Int,
         numBefore: Int
-    ): Single<JsonMessages> {
+    ): Single<ResultMessages> {
         return chatRepositoryImpl.loadTopicMessages(
             topic = topic,
             stream = stream,
@@ -108,7 +106,7 @@ class ChatModelImpl @Inject constructor(
         anchor: String,
         numAfter: Int,
         numBefore: Int
-    ): Single<JsonMessages> {
+    ): Single<ResultMessages> {
         return chatRepositoryImpl.loadStreamMessages(
             stream = stream,
             anchor = anchor,
@@ -134,20 +132,11 @@ class ChatModelImpl @Inject constructor(
         messageIdToSave: Long,
         stream: Stream,
         topic: Topic
-    ) {
-        val disposable = chatRepositoryImpl.deleteOldestMessagesWhereIdLess(
+    ): Completable {
+        return chatRepositoryImpl.deleteOldestMessagesWhereIdLess(
             messageIdToSave = messageIdToSave,
             stream = stream, topic = topic
         )
-            .subscribe({
-                Log.d(
-                    Constance.LogTag.MESSAGES_AND_REACTIONS,
-                    "DELETE OLDEST MESSAGE SUCCESS"
-                )
-            }, {
-                Log.e(Constance.LogTag.MESSAGES_AND_REACTIONS, "DELETE OLDEST MESSAGE FAILED", it)
-            })
-        compositeDisposable.add(disposable)
     }
 
     override fun getMessageFromDataBase(

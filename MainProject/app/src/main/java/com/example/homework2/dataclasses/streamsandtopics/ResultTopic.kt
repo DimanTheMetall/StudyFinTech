@@ -2,14 +2,10 @@ package com.example.homework2.dataclasses.streamsandtopics
 
 import com.google.gson.annotations.SerializedName
 
-class JsonTopic(
-
-    @SerializedName("msg")
-    val msg: String,
-
+class ResultTopic(
     @SerializedName("result")
     val result: String,
 
     @SerializedName("topics")
-    val topics: List<Topic>
+    val topics: List<Topic>,
 )

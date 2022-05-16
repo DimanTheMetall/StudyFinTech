@@ -10,12 +10,12 @@ class MyProfilePresenterImpl @Inject constructor(
 
     override fun onInit() {
         val disposable = model.getMyProfile()
-            .subscribe({ view.renderProfile(member = it) }, {
-                view.showError(
-                    throwable = it,
-                    error = it.toErrorType()
-                )
+            .subscribe({
+                view.renderProfile(member = it)
+            }, {
+                view.showError(throwable = it, error = it.toErrorType())
             })
+
         compositeDisposable.add(disposable)
     }
 }

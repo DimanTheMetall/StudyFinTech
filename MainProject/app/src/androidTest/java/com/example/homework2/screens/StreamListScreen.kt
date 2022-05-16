@@ -11,11 +11,9 @@ import org.hamcrest.Matcher
 
 object StreamListScreen : KScreen<StreamListScreen>() {
 
-    override val layoutId: Int
-        get() = R.layout.fragment_recycle_channels
+    override val layoutId: Int get() = R.layout.fragment_recycle_channels
 
-    override val viewClass: Class<*>
-        get() = RecycleStreamsFragment::class.java
+    override val viewClass: Class<*> get() = RecycleStreamsFragment::class.java
 
     val streamList =
         KRecyclerView({ withId(R.id.recycle_channel) }, { itemType { StreamItem(it) } })

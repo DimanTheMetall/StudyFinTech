@@ -2,10 +2,10 @@ package com.example.homework2.mvp.chat
 
 import androidx.fragment.app.Fragment
 import com.example.homework2.Errors
-import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
-import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
+import com.example.homework2.dataclasses.chatdataclasses.ResultMessages
+import com.example.homework2.dataclasses.chatdataclasses.ResultResponse
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
-import com.example.homework2.dataclasses.streamsandtopics.JsonTopic
+import com.example.homework2.dataclasses.streamsandtopics.ResultTopic
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseModel
@@ -30,6 +30,8 @@ interface ChatView : BaseView {
 
     fun setTopicListInStream(topicList: List<Topic>)
 
+    fun clearMessageField()
+
     //Bottom dialogs functions
 
     fun showReactionDialog()
@@ -51,6 +53,8 @@ interface ChatView : BaseView {
 }
 
 interface ChatPresenter : BasePresenter {
+
+    fun onInit()
 
     fun onEmojiInMessageClick(
         messageId: Long,
@@ -114,19 +118,23 @@ interface ChatModel : BaseModel {
 
     fun deleteMessageFromDB(message: SelectViewTypeClass.Message): Completable
 
-    fun deleteMessageFromZulip(messageId: Long): Single<JsonResponse>
+    fun deleteMessageFromZulip(messageId: Long): Single<ResultResponse>
 
     fun deleteMessagesFromTopic(topic: Topic, stream: Stream): Completable
 
-    fun loadTopicList(streamId: Int): Single<JsonTopic>
+    fun loadTopicList(streamId: Int): Single<ResultTopic>
 
     fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message>
 
-    fun deleteEmoji(messageId: Long, emojiName: String, reactionType: String): Single<JsonResponse>
+    fun deleteEmoji(
+        messageId: Long,
+        emojiName: String,
+        reactionType: String
+    ): Single<ResultResponse>
 
-    fun addEmoji(messageId: Long, emojiName: String, reactionType: String): Single<JsonResponse>
+    fun addEmoji(messageId: Long, emojiName: String, reactionType: String): Single<ResultResponse>
 
-    fun sendMessage(sentText: String, topic: Topic, stream: Stream): Single<JsonResponse>
+    fun sendMessage(sentText: String, topic: Topic, stream: Stream): Single<ResultResponse>
 
     fun loadTopicMessages(
         topic: Topic,
@@ -134,14 +142,14 @@ interface ChatModel : BaseModel {
         anchor: String,
         numAfter: Int,
         numBefore: Int
-    ): Single<JsonMessages>
+    ): Single<ResultMessages>
 
     fun loadStreamMessages(
         stream: Stream,
         anchor: String,
         numAfter: Int,
         numBefore: Int
-    ): Single<JsonMessages>
+    ): Single<ResultMessages>
 
     fun loadLastMessage(
         topic: Topic,
@@ -150,14 +158,18 @@ interface ChatModel : BaseModel {
 
     fun insertAllMessagesAndReactions(messages: List<SelectViewTypeClass.Message>): Completable
 
-    fun deleteOldestMessagesWhereIdLess(messageIdToSave: Long, stream: Stream, topic: Topic)
+    fun deleteOldestMessagesWhereIdLess(
+        messageIdToSave: Long,
+        stream: Stream,
+        topic: Topic
+    ): Completable
 
     fun getMessageFromDataBase(
         stream: Stream,
         topic: Topic
     ): Single<MutableList<SelectViewTypeClass.Message>>
 
-    fun editMessageInZulip(message: SelectViewTypeClass.Message): Single<JsonResponse>
+    fun editMessageInZulip(message: SelectViewTypeClass.Message): Single<ResultResponse>
 
     fun updateMessageInDB(message: SelectViewTypeClass.Message): Completable
 

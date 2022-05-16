@@ -18,19 +18,20 @@ class PeoplesPresenterImpl @Inject constructor(
         val disposable = model.getUsersWithOutPresence()
             .subscribe({ members ->
                 view.showUsers(members.filter { it.fullName.contains(other = searchedText) })
-            }, { view.showError(throwable = it, error = it.toErrorType()) })
+            }, {
+                view.showError(throwable = it, error = it.toErrorType())
+            })
 
         compositeDisposable.add(disposable)
     }
 
-    override fun onInit() {
+    override fun onStart() {
         view.showProgress()
         val disposable = model.getAllUsersWithPresence()
-            .subscribe({ view.showUsers(userList = it) }, {
-                view.showError(
-                    throwable = it,
-                    error = it.toErrorType()
-                )
+            .subscribe({
+                view.showUsers(userList = it)
+            }, {
+                view.showError(throwable = it, error = it.toErrorType())
             })
 
         compositeDisposable.add(disposable)

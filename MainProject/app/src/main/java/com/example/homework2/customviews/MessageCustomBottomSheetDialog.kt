@@ -3,7 +3,7 @@ package com.example.homework2.customviews
 import android.content.Context
 import android.widget.ImageView
 import android.widget.Toast
-import com.example.homework2.Constance
+import com.example.homework2.Constants
 import com.example.homework2.R
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -85,5 +85,5 @@ class MessageCustomBottomSheetDialog(
         ).show()
     }
 
-    private fun isNotYoursMessage(): Boolean = message.senderId != Constance.myId
+    private fun isNotYoursMessage(): Boolean = message.senderId != Constants.myId
 }

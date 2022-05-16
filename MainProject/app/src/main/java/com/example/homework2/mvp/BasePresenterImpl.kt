@@ -12,7 +12,6 @@ abstract class BasePresenterImpl<V : BaseView, M : BaseModel>(
     protected val compositeDisposable = CompositeDisposable()
 
     override fun onDestroyView() {
-        model.clearDisposable()
         compositeDisposable.clear()
         localView = null
     }

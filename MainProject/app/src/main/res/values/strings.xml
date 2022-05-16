@@ -53,7 +53,7 @@
     <string name="topics_in_this_stream">Topics in this stream</string>
     <string name="close_help">close help</string>
     <string name="please_write_topic_name">Please write topic name</string>
-    <string name="please_write_message_text">Please write EditMessage text</string>
+    <string name="please_write_message_text">Please write message text</string>
     <string name="edit_message">Edit Message</string>
     <string name="apply">Apply</string>
     <string name="dont_have_permission">You dont have permission on that operation</string>
@@ -62,5 +62,6 @@
     <string name="message_copied">Message copied</string>
     <string name="message_already_in_this_topic">Message already in this topic</string>
     <string name="backend_error">Something went wrong</string>
+    <string name="topic_is_not_exist">This topic is not exist, to create topic please send message to this topic name</string>
 
 </resources>

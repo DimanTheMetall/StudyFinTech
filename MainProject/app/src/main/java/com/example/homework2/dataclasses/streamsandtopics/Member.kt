@@ -32,5 +32,5 @@ data class Member(
     val msg: String? = "",
 
     @SerializedName("website")
-    val website: Website?
+    val website: Website?,
 ) : Parcelable

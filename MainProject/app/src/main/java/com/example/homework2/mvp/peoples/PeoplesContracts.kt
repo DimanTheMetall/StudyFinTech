@@ -24,6 +24,8 @@ interface PeoplesPresenter : BasePresenter {
     fun onProfileCLicked(member: Member)
 
     fun onSearchedTextChanged(searchedText: String)
+
+    fun onStart()
 }
 
 

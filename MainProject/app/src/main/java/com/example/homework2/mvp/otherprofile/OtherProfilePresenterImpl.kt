@@ -18,6 +18,4 @@ class OtherProfilePresenterImpl @Inject constructor(
         compositeDisposable.add(disposable)
     }
 
-    override fun onInit() {
-    }
 }

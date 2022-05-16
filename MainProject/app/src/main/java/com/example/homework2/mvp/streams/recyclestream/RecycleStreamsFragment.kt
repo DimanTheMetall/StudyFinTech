@@ -8,11 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.homework2.Constance
+import com.example.homework2.Constants
 import com.example.homework2.Errors
 import com.example.homework2.Errors.*
 import com.example.homework2.R
@@ -117,7 +118,7 @@ class RecycleStreamsFragment :
             BACKEND -> getString(R.string.backend_error)
         }
         shimmer.hideShimmer()
-        Log.e(Constance.LogTag.TOPIC_AND_STREAM, textMessage, throwable)
+        Log.e(Constants.LogTag.TOPIC_AND_STREAM, textMessage, throwable)
         Toast.makeText(requireContext(), textMessage, Toast.LENGTH_SHORT).show()
     }
 
@@ -171,7 +172,6 @@ class RecycleStreamsFragment :
         (parentFragment as StreamFragment).binding.cancelImage.setOnClickListener {
             loadStreamsFromZulip()
             (parentFragment as StreamFragment).binding.searchStreamsEditText.setText("")
-
         }
     }
 
@@ -183,14 +183,13 @@ class RecycleStreamsFragment :
                     streamName = streamName,
                     streamDescription = streamDescription
                 )
-            },
-            {
+            }, {
                 presenter.onCancelButtonClick()
             })
     }
 
     private fun getIsSubscribedBoolean(): Boolean {
-        return requireArguments().getBoolean(Constance.ALL_OR_SUBSCRIBED_KEY)
+        return requireArguments().getBoolean(Constants.ALL_OR_SUBSCRIBED_KEY)
     }
 
     private fun initRecycleAdapter() {
@@ -218,11 +217,8 @@ class RecycleStreamsFragment :
     companion object {
 
         fun newInstance(isSubscribed: Boolean): RecycleStreamsFragment {
-            val arguments = Bundle()
-            arguments.putBoolean(Constance.ALL_OR_SUBSCRIBED_KEY, isSubscribed)
-
-            return RecycleStreamsFragment().also {
-                it.arguments = arguments
+            return RecycleStreamsFragment().apply {
+                arguments = bundleOf(Constants.ALL_OR_SUBSCRIBED_KEY to isSubscribed)
             }
         }
     }

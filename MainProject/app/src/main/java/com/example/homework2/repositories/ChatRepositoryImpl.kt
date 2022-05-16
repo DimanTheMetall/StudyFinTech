@@ -1,7 +1,7 @@
 package com.example.homework2.repositories
 
 import androidx.room.Transaction
-import com.example.homework2.Constance
+import com.example.homework2.Constants
 import com.example.homework2.data.ZulipDataBase
 import com.example.homework2.data.local.entity.MessageEntity
 import com.example.homework2.data.local.entity.ReactionEntity
@@ -24,19 +24,19 @@ interface ChatRepository {
         messageId: Long,
         emojiName: String,
         reactionType: String
-    ): Single<JsonResponse>
+    ): Single<ResultResponse>
 
     fun addEmoji(
         messageId: Long,
         emojiName: String,
         reactionType: String
-    ): Single<JsonResponse>
+    ): Single<ResultResponse>
 
     fun sendMessage(
         sentText: String,
         topic: Topic,
         stream: Stream
-    ): Single<JsonResponse>
+    ): Single<ResultResponse>
 
     fun loadTopicMessages(
         topic: Topic,
@@ -44,14 +44,14 @@ interface ChatRepository {
         anchor: String,
         numAfter: Int,
         numBefore: Int
-    ): Single<JsonMessages>
+    ): Single<ResultMessages>
 
     fun loadStreamMessages(
         stream: Stream,
         anchor: String,
         numAfter: Int,
         numBefore: Int
-    ): Single<JsonMessages>
+    ): Single<ResultMessages>
 
     fun loadLastMessageInTopic(
         topic: Topic,
@@ -73,9 +73,9 @@ interface ChatRepository {
 
     fun deleteMessageFromDB(message: SelectViewTypeClass.Message): Completable
 
-    fun deleteMessageFromZulip(messageId: Long): Single<JsonResponse>
+    fun deleteMessageFromZulip(messageId: Long): Single<ResultResponse>
 
-    fun editMessageInZulip(editMessage: EditMessage): Single<JsonResponse>
+    fun editMessageInZulip(editMessage: EditMessage): Single<ResultResponse>
 
     fun updateMessageInDB(messageEntity: MessageEntity): Completable
 
@@ -102,7 +102,7 @@ class ChatRepositoryImpl @Inject constructor(
         messageId: Long,
         emojiName: String,
         reactionType: String
-    ): Single<JsonResponse> {
+    ): Single<ResultResponse> {
         return retrofitService.deleteEmoji(messageId, emojiName, reactionType)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -112,7 +112,7 @@ class ChatRepositoryImpl @Inject constructor(
         messageId: Long,
         emojiName: String,
         reactionType: String
-    ): Single<JsonResponse> {
+    ): Single<ResultResponse> {
         return retrofitService.addEmoji(messageId, emojiName, reactionType, null)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -123,9 +123,9 @@ class ChatRepositoryImpl @Inject constructor(
         sentText: String,
         topic: Topic,
         stream: Stream
-    ): Single<JsonResponse> {
+    ): Single<ResultResponse> {
         val sentMessage = SendMessage(
-            type = Constance.STREAM,
+            type = Constants.STREAM,
             to = stream.name,
             content = sentText,
             topic = topic.name
@@ -147,12 +147,12 @@ class ChatRepositoryImpl @Inject constructor(
         anchor: String,
         numAfter: Int,
         numBefore: Int
-    ): Single<JsonMessages> {
+    ): Single<ResultMessages> {
         return retrofitService.getMessages(
             narrow = Narrow(
                 listOf(
-                    Filter(operator = Constance.STREAM, operand = stream.name),
-                    Filter(operator = Constance.TOPIC, operand = topic.name),
+                    Filter(operator = Constants.STREAM, operand = stream.name),
+                    Filter(operator = Constants.TOPIC, operand = topic.name),
                 )
             ).toJson(),
             anchor = anchor,
@@ -169,11 +169,11 @@ class ChatRepositoryImpl @Inject constructor(
         anchor: String,
         numAfter: Int,
         numBefore: Int
-    ): Single<JsonMessages> {
+    ): Single<ResultMessages> {
         return retrofitService.getMessages(
             narrow = Narrow(
                 listOf(
-                    Filter(operator = Constance.STREAM, operand = stream.name)
+                    Filter(operator = Constants.STREAM, operand = stream.name)
                 )
             ).toJson(),
             anchor = anchor,
@@ -192,11 +192,11 @@ class ChatRepositoryImpl @Inject constructor(
         return retrofitService.getMessages(
             narrow = Narrow(
                 listOf(
-                    Filter(operator = Constance.STREAM, operand = stream.name),
-                    Filter(operator = Constance.TOPIC, operand = topic.name),
+                    Filter(operator = Constants.STREAM, operand = stream.name),
+                    Filter(operator = Constants.TOPIC, operand = topic.name),
                 )
             ).toJson(),
-            anchor = Constance.Anchors.NEWEST,
+            anchor = Constants.Anchors.NEWEST,
             numBefore = 1,
             numAfter = 1,
             false
@@ -277,13 +277,13 @@ class ChatRepositoryImpl @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override fun deleteMessageFromZulip(messageId: Long): Single<JsonResponse> {
+    override fun deleteMessageFromZulip(messageId: Long): Single<ResultResponse> {
         return retrofitService.deleteMessageById(messageId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override fun editMessageInZulip(editMessage: EditMessage): Single<JsonResponse> {
+    override fun editMessageInZulip(editMessage: EditMessage): Single<ResultResponse> {
         return retrofitService.editMessage(
             msg_id = editMessage.messageId,
             topic = editMessage.topic,

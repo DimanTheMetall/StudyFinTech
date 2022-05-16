@@ -15,7 +15,11 @@ interface MyProfileView : BaseView {
 
 }
 
-interface MyProfilePresenter : BasePresenter
+interface MyProfilePresenter : BasePresenter {
+
+    fun onInit()
+
+}
 
 interface MyProfileModel : BaseModel {
 

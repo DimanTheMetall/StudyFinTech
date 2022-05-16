@@ -1,6 +1,7 @@
 package com.example.homework2.mvp.streams.recyclestream
 
-import com.example.homework2.Constance
+import android.util.Log
+import com.example.homework2.Constants
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
 import com.example.homework2.dataclasses.streamsandtopics.Stream
@@ -65,10 +66,7 @@ class RecycleStreamPresenterImpl(
     override fun onCreateButtonCLick(streamName: String, streamDescription: String?) {
         view.showProgressInDialog()
         val disposable = model.createOrSubscribeStream(
-            Subscriptions(
-                name = streamName,
-                description = streamDescription
-            )
+            Subscriptions(name = streamName, description = streamDescription)
         )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -97,7 +95,7 @@ class RecycleStreamPresenterImpl(
         view.openFragment(
             fragment = ChatFragment.newInstance(
                 stream = stream,
-                topic = Topic(name = Constance.NONEXISTTOPIC),
+                topic = Topic(name = Constants.NOT_EXIST_TOPIC),
             ),
             tag = ChatFragment.TAG
         )
@@ -109,8 +107,6 @@ class RecycleStreamPresenterImpl(
             tag = ChatFragment.TAG
         )
     }
-
-    override fun onInit() {}
 
     private fun mapStreams(map: Map<StreamEntity, List<TopicEntity>>): List<Stream> {
         val streamList = mutableListOf<Stream>()
@@ -130,7 +126,12 @@ class RecycleStreamPresenterImpl(
                 val disposable = model.loadAllStreams()
                     .subscribe({
                         view.showStreams(streamList = it)
-                        model.insertStreamsAndTopics(streamsList = it, isSubscribed = false)
+                        val insertDisposable =
+                            model.insertStreamsAndTopics(streamsList = it, isSubscribed = false)
+                                .subscribe(
+                                    { Log.d(Constants.LogTag.TOPIC_AND_STREAM, "INSERT SUCCESS") },
+                                    { Log.e(Constants.LogTag.TOPIC_AND_STREAM, it.toString()) })
+                        compositeDisposable.add(insertDisposable)
                     }, {
                         view.showError(throwable = it, error = it.toErrorType())
                     })
@@ -141,8 +142,10 @@ class RecycleStreamPresenterImpl(
                 val disposable = model.loadSubscribedStreams()
                     .subscribe({
                         view.showStreams(streamList = it)
-                        model.insertStreamsAndTopics(streamsList = it, isSubscribed = true)
-                    }, { view.showError(throwable = it, error = it.toErrorType()) })
+
+                    }, {
+                        view.showError(throwable = it, error = it.toErrorType())
+                    })
 
                 compositeDisposable.add(disposable)
             }

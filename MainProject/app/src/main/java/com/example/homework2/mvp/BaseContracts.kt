@@ -10,12 +10,10 @@ interface BasePresenter {
 
     fun onDestroyView()
 
-    fun onInit()
-
     fun onAttach(baseView: BaseView)
 }
 
-interface BaseModel {
+interface BaseModel
 
-    fun clearDisposable()
-}
+
+

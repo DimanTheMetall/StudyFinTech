@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import com.example.homework2.Constance
+import com.example.homework2.Constants
 import com.example.homework2.Errors
 import com.example.homework2.Errors.*
 import com.example.homework2.R
@@ -51,17 +51,17 @@ class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBindin
         with(binding) {
             profileName.text = member.fullName
 
-            if (member.website != null && currentTime - member.website.timestamp > Constance.Status.TIME_FOR_ON_ACTIVE_STATUS) {
-                profileStatusOnline.text = Constance.Status.OFFLINE
+            if (member.website != null && currentTime - member.website.timestamp > Constants.Status.TIME_FOR_ON_ACTIVE_STATUS) {
+                profileStatusOnline.text = Constants.Status.OFFLINE
                 profileStatusOnline.setTextColor(Color.RED)
             }
 
             when (member.website?.status) {
-                Constance.Status.ACTIVE -> {
+                Constants.Status.ACTIVE -> {
                     profileStatusOnline.text = member.website.status
                     profileStatusOnline.setTextColor(Color.GREEN)
                 }
-                Constance.Status.IDLE -> {
+                Constants.Status.IDLE -> {
                     profileStatusOnline.text = member.website.status
                     profileStatusOnline.setTextColor(Color.YELLOW)
                 }
@@ -75,15 +75,8 @@ class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBindin
             SYSTEM -> getString(R.string.systemError)
             BACKEND -> getString(R.string.backend_error)
         }
-        Log.e(Constance.LogTag.PEOPLES, textMessage, throwable)
+        Log.e(Constants.LogTag.PEOPLES, textMessage, throwable)
         Toast.makeText(requireContext(), textMessage, Toast.LENGTH_SHORT).show()
-    }
-
-    companion object {
-
-        fun newInstance(): MyProfileFragment {
-            return MyProfileFragment()
-        }
     }
 
     override fun inflateViewBinding(
@@ -91,6 +84,10 @@ class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBindin
         container: ViewGroup?
     ): FragmentProfileBinding {
         return FragmentProfileBinding.inflate(inflater, container, false)
+    }
+
+    companion object {
+        fun newInstance(): MyProfileFragment = MyProfileFragment()
     }
 
 }

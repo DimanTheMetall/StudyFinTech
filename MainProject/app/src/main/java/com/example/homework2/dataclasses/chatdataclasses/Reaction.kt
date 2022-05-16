@@ -13,9 +13,9 @@ data class Reaction(
     val userId: Int = 0,
 
     @SerializedName("reaction_type")
-    val reactionType: String
+    val reactionType: String,
 
-) {
+    ) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

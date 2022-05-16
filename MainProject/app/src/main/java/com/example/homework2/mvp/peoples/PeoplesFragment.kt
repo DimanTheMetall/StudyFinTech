@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.homework2.Constance
+import com.example.homework2.Constants
 import com.example.homework2.Errors
 import com.example.homework2.Errors.*
 import com.example.homework2.R
@@ -77,7 +77,7 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
 
     private fun initCancelClickListener() {
         binding.cancelImage.setOnClickListener {
-            presenter.onInit()
+            presenter.onStart()
             binding.searchUsers.setText("")
         }
     }
@@ -125,7 +125,7 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
             SYSTEM -> getString(R.string.systemError)
             BACKEND -> getString(R.string.backend_error)
         }
-        Log.e(Constance.LogTag.PEOPLES, textMessage, throwable)
+        Log.e(Constants.LogTag.PEOPLES, textMessage, throwable)
         Toast.makeText(requireContext(), textMessage, Toast.LENGTH_SHORT).show()
         shimmer.hideShimmer()
     }
@@ -136,10 +136,7 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
     }
 
     companion object {
-
-        fun newInstance(): PeoplesFragment {
-            return PeoplesFragment()
-        }
+        fun newInstance(): PeoplesFragment = PeoplesFragment()
     }
 
 }

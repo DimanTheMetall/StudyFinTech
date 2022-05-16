@@ -6,7 +6,7 @@ class Subscriptions(
     @SerializedName("name")
     val name: String,
 
+    //Используется при отправке на сервер
     @SerializedName("description")
     val description: String? = null
 )
-

@@ -42,12 +42,12 @@ fun RecyclerView.addOnPageScrollListener(
                     val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
 
                     if (lastVisiblePosition == adapter?.getLastPosition()
-                            ?.minus(Constance.MESSAGE_COUNT_FOR_REQUEST_LOAD) && lastVisiblePosition != lastPosition
+                            ?.minus(Constants.MESSAGE_COUNT_FOR_REQUEST_LOAD) && lastVisiblePosition != lastPosition
                     ) {
                         onScrollToNewPage.invoke()
                         lastPosition = lastVisiblePosition
                     }
-                    if (firstVisiblePosition == Constance.MESSAGE_COUNT_FOR_REQUEST_LOAD && currentSize != adapter?.itemCount) {
+                    if (firstVisiblePosition == Constants.MESSAGE_COUNT_FOR_REQUEST_LOAD && currentSize != adapter?.itemCount) {
                         currentSize = adapter?.itemCount ?: 1
                         onScrollToPreviousPage.invoke()
 

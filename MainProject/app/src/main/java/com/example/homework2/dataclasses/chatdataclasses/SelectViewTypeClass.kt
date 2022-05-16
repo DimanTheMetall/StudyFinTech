@@ -46,8 +46,8 @@ sealed class SelectViewTypeClass {
         val type: String,
 
         @SerializedName("reactions")
-        var reactions: List<Reaction>
+        var reactions: List<Reaction>,
 
-    ) : SelectViewTypeClass()
+        ) : SelectViewTypeClass()
 }
 

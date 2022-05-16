@@ -1,6 +1,6 @@
 package com.example.homework2.repositories
 
-import com.example.homework2.Constance
+import com.example.homework2.Constants
 import com.example.homework2.dataclasses.chatdataclasses.Presence
 import com.example.homework2.dataclasses.chatdataclasses.Website
 import com.example.homework2.dataclasses.streamsandtopics.Member
@@ -40,7 +40,7 @@ class UsersRepositoryImpl @Inject constructor(val retrofitService: RetrofitServi
                 retrofitService.getPresence(member.userId)
                     .map { it.presence.website }
                     .onErrorReturnItem(
-                        Website(Constance.Status.OFFLINE, -1)
+                        Website(Constants.Status.OFFLINE, -1)
                     )
                     .map { website ->
                         member.copy(website = website)

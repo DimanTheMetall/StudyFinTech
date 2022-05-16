@@ -2,17 +2,10 @@ package com.example.homework2.dataclasses.streamsandtopics
 
 import com.google.gson.annotations.SerializedName
 
-class JsonStreams(
-
-    @SerializedName("invite_only")
-    val inviteOnly: Boolean? = null,
-
-    @SerializedName("msg")
-    val msg: String,
-
+class ResultStreams(
     @SerializedName("result")
     val result: String,
 
     @SerializedName("streams", alternate = ["subscriptions"])
-    val streams: List<Stream>
+    val streams: List<Stream>,
 )

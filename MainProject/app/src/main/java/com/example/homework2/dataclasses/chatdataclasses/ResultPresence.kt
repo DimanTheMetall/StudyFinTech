@@ -1,6 +1,6 @@
 package com.example.homework2.dataclasses.chatdataclasses
 
-class JsonPresense(
+class ResultPresence(
     val presence: Presence,
-    val result: String
+    val result: String,
 )

@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.homework2.Constance
+import com.example.homework2.Constants
 import com.example.homework2.PeoplesDiffCallback
 import com.example.homework2.R
 import com.example.homework2.databinding.ProfileLayoutBinding
@@ -58,7 +58,7 @@ class PeopleAdapter(private val openFrag: (Member) -> Unit) :
     private fun setStatus(member: Member, binding: ProfileLayoutBinding) {
         with(binding) {
             when (member.website?.status) {
-                Constance.Status.ACTIVE -> {
+                Constants.Status.ACTIVE -> {
                     onlineImage.isVisible = true
                 }
                 else -> {

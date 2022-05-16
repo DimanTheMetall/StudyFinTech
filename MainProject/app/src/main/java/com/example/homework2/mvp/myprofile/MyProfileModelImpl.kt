@@ -10,6 +10,5 @@ class MyProfileModelImpl @Inject constructor(
     private val usersRepositoryImpl: UsersRepository
 ) : BaseModelImpl(), MyProfileModel {
 
-    override fun getMyProfile(): Single<Member> =
-        usersRepositoryImpl.loadMyProfile()
+    override fun getMyProfile(): Single<Member> = usersRepositoryImpl.loadMyProfile()
 }

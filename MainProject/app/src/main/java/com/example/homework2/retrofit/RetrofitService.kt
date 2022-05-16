@@ -1,13 +1,13 @@
 package com.example.homework2.retrofit
 
-import com.example.homework2.dataclasses.chatdataclasses.JsonMessage
-import com.example.homework2.dataclasses.chatdataclasses.JsonMessages
-import com.example.homework2.dataclasses.chatdataclasses.JsonPresense
-import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
-import com.example.homework2.dataclasses.streamsandtopics.JsonStreams
-import com.example.homework2.dataclasses.streamsandtopics.JsonTopic
-import com.example.homework2.dataclasses.streamsandtopics.JsonUsers
+import com.example.homework2.dataclasses.chatdataclasses.ResultMessage
+import com.example.homework2.dataclasses.chatdataclasses.ResultMessages
+import com.example.homework2.dataclasses.chatdataclasses.ResultPresence
+import com.example.homework2.dataclasses.chatdataclasses.ResultResponse
 import com.example.homework2.dataclasses.streamsandtopics.Member
+import com.example.homework2.dataclasses.streamsandtopics.ResultStreams
+import com.example.homework2.dataclasses.streamsandtopics.ResultTopic
+import com.example.homework2.dataclasses.streamsandtopics.ResultUsers
 import io.reactivex.Single
 import retrofit2.http.*
 
@@ -18,19 +18,19 @@ interface RetrofitService {
     fun getOneMessage(
         @Path("msg_id") messageId: Long,
         @Query("apply_markdown") apply_markdown: Boolean
-    ): Single<JsonMessage>
+    ): Single<ResultMessage>
 
     @GET("streams")
-    fun getAllStreams(): Single<JsonStreams>
+    fun getAllStreams(): Single<ResultStreams>
 
     @GET("users/me/{stream_id}/topics")
-    fun getTopicList(@Path("stream_id") streamId: Int): Single<JsonTopic>
+    fun getTopicList(@Path("stream_id") streamId: Int): Single<ResultTopic>
 
     @GET("users/me/subscriptions")
-    fun getSubscribedStreams(): Single<JsonStreams>
+    fun getSubscribedStreams(): Single<ResultStreams>
 
     @GET("users")
-    fun getUsers(): Single<JsonUsers>
+    fun getUsers(): Single<ResultUsers>
 
     @GET("users/me")
     fun getOwnUser(): Single<Member>
@@ -43,7 +43,7 @@ interface RetrofitService {
         @Query("num_before") numBefore: Int,
         @Query("num_after") numAfter: Int,
         @Query("apply_markdown") apply_markdown: Boolean
-    ): Single<JsonMessages>
+    ): Single<ResultMessages>
 
     @POST("messages")
     fun sendMessageInTopic(
@@ -51,10 +51,10 @@ interface RetrofitService {
         @Query("to") to: String,
         @Query("content") content: String,
         @Query("topic") topic: String
-    ): Single<JsonResponse>
+    ): Single<ResultResponse>
 
     @GET("users/{user_id_or_email}/presence")
-    fun getPresence(@Path("user_id_or_email") user_id_or_email: Any): Single<JsonPresense>
+    fun getPresence(@Path("user_id_or_email") user_id_or_email: Any): Single<ResultPresence>
 
     @POST("messages/{message_id}/reactions")
     fun addEmoji(
@@ -62,26 +62,26 @@ interface RetrofitService {
         @Query("emoji_name") emoji_name: String,
         @Query("reaction_type") reaction_type: String,
         @Query("emoji_code") emoji_code: String?
-    ): Single<JsonResponse>
+    ): Single<ResultResponse>
 
     @DELETE("messages/{message_id}/reactions")
     fun deleteEmoji(
         @Path("message_id") message_id: Long,
         @Query("emoji_name") emoji_name: String,
         @Query("reaction_type") reaction_type: String,
-    ): Single<JsonResponse>
+    ): Single<ResultResponse>
 
     @POST("users/me/subscriptions")
-    fun createOrSubscribeStream(@Query("subscriptions") subscriptions: String): Single<JsonResponse>
+    fun createOrSubscribeStream(@Query("subscriptions") subscriptions: String): Single<ResultResponse>
 
     @DELETE("messages/{msg_id}")
-    fun deleteMessageById(@Path("msg_id") msg_id: Long): Single<JsonResponse>
+    fun deleteMessageById(@Path("msg_id") msg_id: Long): Single<ResultResponse>
 
     @PATCH("messages/{msg_id}")
     fun editMessage(
         @Path("msg_id") msg_id: Long,
         @Query("topic") topic: String,
         @Query("content") content: String
-    ): Single<JsonResponse>
+    ): Single<ResultResponse>
 
 }

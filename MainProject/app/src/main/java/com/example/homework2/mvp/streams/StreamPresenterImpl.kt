@@ -4,8 +4,4 @@ import com.example.homework2.mvp.BasePresenterImpl
 
 class StreamPresenterImpl(
     model: StreamsModel
-) : BasePresenterImpl<StreamsView, StreamsModel>(model), StreamsPresenter {
-
-    override fun onInit() {
-    }
-}
+) : BasePresenterImpl<StreamsView, StreamsModel>(model), StreamsPresenter

@@ -57,8 +57,6 @@ class StreamFragment :
     }
 
     companion object {
-        fun newInstance(): StreamFragment {
-            return StreamFragment()
-        }
+        fun newInstance(): StreamFragment = StreamFragment()
     }
 }

@@ -1,6 +1,6 @@
 package com.example.homework2.di.zulipcomponent
 
-import com.example.homework2.Constance
+import com.example.homework2.Constants
 import com.example.homework2.retrofit.AuthInterceptor
 import com.example.homework2.retrofit.RetrofitService
 import dagger.Module
@@ -28,7 +28,7 @@ class RetrofitModule {
     @Provides
     fun providesRetrofit(okHttpClient: OkHttpClient): RetrofitService {
         val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(Constance.BASE_URL)
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(okHttpClient)

@@ -10,5 +10,5 @@ class EditMessage(
     val topic: String,
 
     @SerializedName("content")
-    val content: String
+    val content: String,
 )

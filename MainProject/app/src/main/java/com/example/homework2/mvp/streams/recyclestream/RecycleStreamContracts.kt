@@ -4,13 +4,14 @@ import androidx.fragment.app.Fragment
 import com.example.homework2.Errors
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
-import com.example.homework2.dataclasses.chatdataclasses.JsonResponse
+import com.example.homework2.dataclasses.chatdataclasses.ResultResponse
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Subscriptions
 import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.mvp.BaseModel
 import com.example.homework2.mvp.BasePresenter
 import com.example.homework2.mvp.BaseView
+import io.reactivex.Completable
 import io.reactivex.Single
 
 interface RecycleStreamView : BaseView {
@@ -59,7 +60,7 @@ interface RecycleStreamPresenter : BasePresenter {
 
 interface RecycleStreamModel : BaseModel {
 
-    fun insertStreamsAndTopics(streamsList: List<Stream>, isSubscribed: Boolean)
+    fun insertStreamsAndTopics(streamsList: List<Stream>, isSubscribed: Boolean): Completable
 
     fun loadSubscribedStreams(): Single<List<Stream>>
 
@@ -69,5 +70,5 @@ interface RecycleStreamModel : BaseModel {
 
     fun selectSubscribedStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>>
 
-    fun createOrSubscribeStream(subscriptions: Subscriptions): Single<JsonResponse>
+    fun createOrSubscribeStream(subscriptions: Subscriptions): Single<ResultResponse>
 }

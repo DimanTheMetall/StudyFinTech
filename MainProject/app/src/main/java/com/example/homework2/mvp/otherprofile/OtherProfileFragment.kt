@@ -7,11 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import com.example.homework2.Constance
+import com.example.homework2.Constants
 import com.example.homework2.Errors
 import com.example.homework2.Errors.*
 import com.example.homework2.R
@@ -52,12 +53,12 @@ class OtherProfileFragment : BaseFragment<OtherProfilePresenter, FragmentOtherPr
             SYSTEM -> getString(R.string.systemError)
             BACKEND -> getString(R.string.backend_error)
         }
-        Log.e(Constance.LogTag.PEOPLES, textMessage, throwable)
+        Log.e(Constants.LogTag.PEOPLES, textMessage, throwable)
         Toast.makeText(requireContext(), textMessage, Toast.LENGTH_SHORT).show()
     }
 
     override fun updateUser() {
-        val member: Member = requireArguments().getParcelable(Constance.PROFILE_KEY)
+        val member: Member = requireArguments().getParcelable(Constants.PROFILE_KEY)
             ?: throw IllegalArgumentException("Member cannot be null")
         presenter.onUserNeededUpdate(member = member)
     }
@@ -76,13 +77,13 @@ class OtherProfileFragment : BaseFragment<OtherProfilePresenter, FragmentOtherPr
             profileName.text = member.fullName
             profileStatusOnline.text = presence.website.status
             when (presence.website.status) {
-                Constance.Status.ACTIVE -> {
+                Constants.Status.ACTIVE -> {
                     profileStatusOnline.setTextColor(Color.GREEN)
                 }
-                Constance.Status.IDLE -> {
+                Constants.Status.IDLE -> {
                     profileStatusOnline.setTextColor(Color.YELLOW)
                 }
-                Constance.Status.OFFLINE -> {
+                Constants.Status.OFFLINE -> {
                     profileStatusOnline.setTextColor(Color.RED)
                 }
             }
@@ -99,10 +100,8 @@ class OtherProfileFragment : BaseFragment<OtherProfilePresenter, FragmentOtherPr
     companion object {
 
         fun newInstance(member: Member): OtherProfileFragment {
-            val argument = Bundle()
-            argument.putParcelable(Constance.PROFILE_KEY, member)
             return OtherProfileFragment().apply {
-                arguments = argument
+                arguments = bundleOf(Constants.PROFILE_KEY to member)
             }
         }
     }

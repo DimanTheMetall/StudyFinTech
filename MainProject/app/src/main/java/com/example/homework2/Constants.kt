@@ -1,6 +1,6 @@
 package com.example.homework2
 
-object Constance {
+object Constants {
 
     const val myId = 490112
     const val PROFILE_KEY = "Profile key"
@@ -20,7 +20,7 @@ object Constance {
     const val DOWNLOAD_MESSAGES_PERIOD = 10L
     const val INIT_REFRESHER_DELAY = 3L
 
-    const val NONEXISTTOPIC = "notexist_key44ffrrtaff"
+    const val NOT_EXIST_TOPIC = "notexist_key44ffrrtaff"
 
     object Status {
         const val ACTIVE = "active"
@@ -31,13 +31,21 @@ object Constance {
 
     object Anchors {
         const val NEWEST = "newest"
-        const val OLDEST = "oldest"
     }
 
     object LogTag {
         const val TOPIC_AND_STREAM = "TOPIC and STREAM"
         const val MESSAGES_AND_REACTIONS = "MESSAGES and REACTIONS"
         const val PEOPLES = "PEOPLES"
+    }
+
+    object LogMessage {
+        const val INSERT_SUCCESS = "INSERT SUCCESS"
+        const val INSERT_ERROR = "INSERT ERROR"
+
+        const val UPDATE_ERROR = "UPDATE ERROR"
+
+        const val DELETE_ERROR = "DELETE ERROR"
     }
 
     //URL

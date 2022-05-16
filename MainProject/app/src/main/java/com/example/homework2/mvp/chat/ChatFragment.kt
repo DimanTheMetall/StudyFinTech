@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -78,14 +79,13 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         initRecycleAdapter()
         configureRecycleAdapter()
         initShimmer()
-        initClickListenerOnMessageTranslateImage()
+        setClickListenerOnMessageTranslateImage()
         initMessageRequest(isStreamChat)
         initHelpRecycleAdapter()
         initHelpListener()
         setCLickListenerOnCancelHelpBtn()
-        initInTopicClickListener()
+        setInTopicClickListener()
         initInTopicImageSwitcher()
-
     }
 
     override fun onDestroyView() {
@@ -119,7 +119,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
             BACKEND -> getString(R.string.backend_error)
         }
 
-        Log.e(Constance.LogTag.MESSAGES_AND_REACTIONS, messageText, throwable)
+        Log.e(Constants.LogTag.MESSAGES_AND_REACTIONS, messageText, throwable)
         Toast.makeText(requireContext(), messageText, Toast.LENGTH_SHORT).show()
         shimmer.hideShimmer()
     }
@@ -131,6 +131,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     }
 
     override fun changeHelpVisibility(visibility: Int) {
+        if (visibility == View.VISIBLE) helpAdapter.setTopicsList(stream.topicList)
         binding.help.root.visibility = visibility
     }
 
@@ -146,7 +147,11 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     }
 
     override fun setTopicListInStream(topicList: List<Topic>) {
-        helpAdapter.setTopicsList(topicList)
+        stream.topicList = topicList.toMutableList()
+    }
+
+    override fun clearMessageField() {
+        binding.messageField.setText("")
     }
 
     override fun showReactionDialog() {
@@ -198,10 +203,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
                 onDeleteMessageClick = { message -> presenter.onDeleteMessageClick(message = message) },
                 onEditMessageClick = { message -> presenter.onEditMessageClick(message = message) },
                 onMoveMessageClick = { message ->
-                    presenter.onChangeTopicClick(
-                        message = message,
-                        stream = stream
-                    )
+                    presenter.onChangeTopicClick(message = message, stream = stream)
                 },
                 onCopyMessageClick = { message ->
                     val clipData = ClipData.newPlainText("label", message.content)
@@ -232,7 +234,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     }
 
-    private fun initClickListenerOnMessageTranslateImage() {
+    private fun setClickListenerOnMessageTranslateImage() {
         binding.apply {
             messageTranslateImage.setOnClickListener {
                 if (isStreamChat) {
@@ -280,12 +282,25 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         }
     }
 
-    private fun initInTopicClickListener() {
+    private fun setInTopicClickListener() {
         binding.inTopicImage.setOnClickListener {
-            presenter.onInTopicCLick(
-                createTopic(binding.topicField.text.toString()),
-                stream = stream
-            )
+            var isExist = false
+            stream.topicList.forEach { topic ->
+                if (topic.name == binding.topicField.text.toString()) isExist = true
+            }
+
+            if (isExist) {
+                presenter.onInTopicCLick(
+                    createTopic(binding.topicField.text.toString()),
+                    stream = stream
+                )
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.topic_is_not_exist),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
@@ -389,9 +404,9 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     }
 
     private fun initArguments() {
-        topic = requireArguments().getParcelable(Constance.TOPIC_KEY)!!
-        stream = requireArguments().getParcelable(Constance.STREAM_KEY)!!
-        isStreamChat = topic.name == Constance.NONEXISTTOPIC
+        topic = requireArguments().getParcelable(Constants.TOPIC_KEY)!!
+        stream = requireArguments().getParcelable(Constants.STREAM_KEY)!!
+        isStreamChat = topic.name == Constants.NOT_EXIST_TOPIC
     }
 
     private fun initRecycleAdapter() {
@@ -465,11 +480,8 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         const val TAG = "ChatFragment"
 
         fun newInstance(topic: Topic, stream: Stream): ChatFragment {
-            val argument = Bundle()
-            argument.putParcelable(Constance.TOPIC_KEY, topic)
-            argument.putParcelable(Constance.STREAM_KEY, stream)
             return ChatFragment().apply {
-                arguments = argument
+                arguments = bundleOf(Constants.TOPIC_KEY to topic, Constants.STREAM_KEY to stream)
             }
         }
     }

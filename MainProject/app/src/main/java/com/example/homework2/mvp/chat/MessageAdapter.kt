@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.homework2.ChatDiffCallback
-import com.example.homework2.Constance
+import com.example.homework2.Constants
 import com.example.homework2.R
 import com.example.homework2.customviews.CustomViewGroup
 import com.example.homework2.databinding.CustomViewGroupLayoutBinding
@@ -53,6 +53,7 @@ class MessageAdapter(
             messageTextView.text = item.content
             messageTitleTextView.text = item.senderFullName
 
+            //Нулабельность из-за рефлексии ретрофита
             if (!item.avatarUrl.isNullOrEmpty()) {
                 Glide.with(customViewGroup.context)
                     .load(item.avatarUrl)
@@ -81,7 +82,7 @@ class MessageAdapter(
             for (reactions in byEmojiName) {
                 var meIsAdded = false
                 reactions.value.forEach {
-                    meIsAdded = it.userId == Constance.myId
+                    meIsAdded = it.userId == Constants.myId
                 }
                 val emojiCount: Int = reactions.value.size
 

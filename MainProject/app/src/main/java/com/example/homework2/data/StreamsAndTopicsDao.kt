@@ -3,7 +3,7 @@ package com.example.homework2.data
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.room.*
-import com.example.homework2.Constance
+import com.example.homework2.Constants
 import com.example.homework2.data.local.entity.StreamEntity
 import com.example.homework2.data.local.entity.TopicEntity
 import com.example.homework2.dataclasses.streamsandtopics.Stream
@@ -21,10 +21,8 @@ interface StreamsAndTopicsDao {
             val cashedStream = getStreamById(streamEntity.id.toLong())
 
             when {
-                cashedStream == null -> {
-                    insertStream(streamEntity)
+                cashedStream == null -> insertStream(streamEntity)
 
-                }
                 cashedStream != streamEntity || streamEntity.subscribedOrAll == StreamEntity.SUBSCRIBED -> {
                     updateStream(streamEntity)
                 }
@@ -34,7 +32,14 @@ interface StreamsAndTopicsDao {
                     topic = it,
                     streamId = stream.streamId
                 )
-            }).subscribe({}, { Log.e(Constance.LogTag.TOPIC_AND_STREAM, "$it") })
+            })
+                .subscribe(
+                    { }, {
+                        Log.e(
+                            Constants.LogTag.TOPIC_AND_STREAM,
+                            "TOPICS ${Constants.LogMessage.INSERT_ERROR}"
+                        )
+                    })
         }
     }
 
