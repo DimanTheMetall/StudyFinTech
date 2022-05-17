@@ -234,10 +234,14 @@ class ChatPresenterImpl @Inject constructor(
         view.hideMessageBottomDialog()
     }
 
-    override fun onApplyEditMessageClick(message: SelectViewTypeClass.Message) {
+    override fun onApplyEditMessageClick(
+        message: SelectViewTypeClass.Message,
+        isStreamChat: Boolean
+    ) {
         view.hideEditMessageDialog()
+        view.hideChangeTopicDialog()
         view.showProgress()
-        editMessage(message = message, isTopicChanged = false)
+        editMessage(message = message, isTopicChanged = false, isStreamChat = isStreamChat)
     }
 
     override fun onCancelEditMessageClick() {
@@ -249,10 +253,13 @@ class ChatPresenterImpl @Inject constructor(
         view.showChangeTopicDialog(message = message, stream = stream)
     }
 
-    override fun onApplyChangeTopicForMessage(message: SelectViewTypeClass.Message) {
+    override fun onApplyChangeTopicForMessage(
+        message: SelectViewTypeClass.Message,
+        isStreamChat: Boolean
+    ) {
         view.hideChangeTopicDialog()
         view.showProgress()
-        editMessage(message = message, isTopicChanged = true)
+        editMessage(message = message, isTopicChanged = true, isStreamChat = isStreamChat)
     }
 
     override fun onCopyCLick() {
@@ -431,22 +438,22 @@ class ChatPresenterImpl @Inject constructor(
         }
     }
 
-    private fun editMessageInList(
-        newMessage: SelectViewTypeClass.Message,
-        list: MutableList<SelectViewTypeClass.Message>,
-        topicIsChanged: Boolean
-    ): List<SelectViewTypeClass.Message> {
-        var newList: List<SelectViewTypeClass.Message> = list
-        if (topicIsChanged) {
-            newList = list.map { oldMessage ->
-                if (newMessage.id != oldMessage.id) oldMessage else oldMessage.copy(
-                    content = newMessage.content
-                )
-            }
+    private fun editMessageInList(newMessage: SelectViewTypeClass.Message) {
+        currentMessageList = currentMessageList.map { oldMessage ->
+            if (newMessage.id != oldMessage.id) oldMessage else oldMessage.copy(
+                content = newMessage.content
+            )
+        }.toMutableList()
+    }
+
+    private fun changeTopicInMessage(message: SelectViewTypeClass.Message, isStreamChat: Boolean) {
+        var messageToChange: SelectViewTypeClass.Message? = null
+        if (!isStreamChat) {
+            currentMessageList.forEach { if (it.id == message.id) messageToChange = it }
+            currentMessageList.remove(messageToChange)
         } else {
-            newList.toMutableList().remove(newMessage)
+            currentMessageList.map { if (it.id == message.id) it.copy(subject = message.subject) else it }
         }
-        return newList
     }
 
     private fun updateMessageInDB(message: SelectViewTypeClass.Message) {
@@ -461,17 +468,19 @@ class ChatPresenterImpl @Inject constructor(
         compositeDisposable.add(updateDisposable)
     }
 
-    private fun editMessage(message: SelectViewTypeClass.Message, isTopicChanged: Boolean) {
+    private fun editMessage(
+        message: SelectViewTypeClass.Message,
+        isTopicChanged: Boolean,
+        isStreamChat: Boolean
+    ) {
         val editDisposable = model.editMessageInZulip(message = message)
             .subscribe({
                 updateMessageInDB(message = message)
-                view.showMessages(
-                    editMessageInList(
-                        newMessage = message,
-                        list = currentMessageList,
-                        topicIsChanged = isTopicChanged
-                    )
-                )
+                if (isTopicChanged) changeTopicInMessage(
+                    message = message,
+                    isStreamChat = isStreamChat
+                ) else editMessageInList(newMessage = message)
+                view.showMessages(currentMessageList)
             }, {
                 view.showError(throwable = it, error = it.toErrorType())
             })

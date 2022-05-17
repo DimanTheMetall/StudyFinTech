@@ -11,6 +11,7 @@
     <color name="selected">#4D4D57</color>
     <color name="gray">#545455</color>
     <color name="background_1">#3F3F47</color>
+    <color name="background_2">#27272B</color>
     <color name="unselected">#2F2F33</color>
     <color name="bg_main">#141417</color>
     <color name="bg_main_2">#1D1D1D</color>

@@ -102,13 +102,13 @@ interface ChatPresenter : BasePresenter {
 
     fun onEditMessageClick(message: SelectViewTypeClass.Message)
 
-    fun onApplyEditMessageClick(message: SelectViewTypeClass.Message)
+    fun onApplyEditMessageClick(message: SelectViewTypeClass.Message, isStreamChat: Boolean)
 
     fun onCancelEditMessageClick()
 
     fun onChangeTopicClick(message: SelectViewTypeClass.Message, stream: Stream)
 
-    fun onApplyChangeTopicForMessage(message: SelectViewTypeClass.Message)
+    fun onApplyChangeTopicForMessage(message: SelectViewTypeClass.Message, isStreamChat: Boolean)
 
     fun onCopyCLick()
 

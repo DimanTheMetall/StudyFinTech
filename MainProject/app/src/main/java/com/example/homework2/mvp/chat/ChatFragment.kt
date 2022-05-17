@@ -126,7 +126,8 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     override fun showMessages(messages: List<SelectViewTypeClass.Message>) {
         //Каст на мутабельность из-за ссылочного типа
-        messageAdapter.replaceMessageList(newList = messages.toMutableList())
+        messageAdapter.replaceMessageList(
+            newList = messages.toMutableList().sortedBy { it.timestamp })
         shimmer.hideShimmer()
     }
 
@@ -217,7 +218,12 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private fun initEditMessageSheetDialog() {
         editMessageBottomSheetDialog = EditMessageCustomBottomSheetDialog(
             context = requireContext(),
-            onApplyClick = { message -> presenter.onApplyEditMessageClick(message = message) },
+            onApplyClick = { message ->
+                presenter.onApplyEditMessageClick(
+                    message = message,
+                    isStreamChat = isStreamChat
+                )
+            },
             onCancelClick = { presenter.onCancelEditMessageClick() })
     }
 
@@ -470,8 +476,8 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
     private fun initChangeTopicDialog() {
         changeTopicBottomSheetBottomSheetDialog =
             ChangeMessageTopicBottomSheetDialog(requireContext()) { message ->
-                presenter.onApplyEditMessageClick(
-                    message = message
+                presenter.onApplyChangeTopicForMessage(
+                    message = message, isStreamChat = isStreamChat
                 )
             }
     }

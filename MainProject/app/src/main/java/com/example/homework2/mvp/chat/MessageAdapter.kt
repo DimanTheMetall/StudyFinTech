@@ -155,21 +155,25 @@ class MessageAdapter(
         return differ.currentList.size
     }
 
-
     fun replaceMessageList(newList: List<SelectViewTypeClass.Message>) {
         val format = DateTimeFormat.forPattern("d MMMM, yyyy")
         val listWithTime: MutableList<SelectViewTypeClass> = mutableListOf()
 
-        for (i in newList.indices) {
-            if (i % 10 == 0) {
-                val currentDate = Instant.ofEpochSecond(newList[i].timestamp).toDateTime()
-                val dateView = SelectViewTypeClass.Date(currentDate.toString(format))
+        for (index in 0..newList.lastIndex) {
+            val previousTime =
+                Instant.ofEpochSecond(if (index == 0) 0L else newList[index - 1].timestamp)
+                    .toDateTime().toString(format)
+
+            val currentTime =
+                Instant.ofEpochSecond(newList[index].timestamp).toDateTime().toString(format)
+
+            if (previousTime != currentTime) {
+                val dateView = SelectViewTypeClass.Date(currentTime)
                 listWithTime.add(dateView)
-                listWithTime.add(newList[i])
-            } else {
-                listWithTime.add(newList[i])
             }
+            listWithTime.add(newList[index])
         }
+
         differ.submitList(listWithTime)
     }
 }
