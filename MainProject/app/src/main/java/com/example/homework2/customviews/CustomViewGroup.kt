@@ -179,8 +179,8 @@ class CustomViewGroup @JvmOverloads constructor(
                 .apply {
                     layoutParams =
                         MarginLayoutParams(
-                            LayoutParams.WRAP_CONTENT,
-                            LayoutParams.WRAP_CONTENT
+                            context.dpToPx(48),
+                            context.dpToPx(38)
                         ).apply {
                             setMargins(
                                 context.dpToPx(0),

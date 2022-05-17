@@ -9,6 +9,7 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import com.example.homework2.R
+import com.example.homework2.dpToPx
 
 class CustomTextView @JvmOverloads constructor(
     context: Context,
@@ -35,7 +36,10 @@ class CustomTextView @JvmOverloads constructor(
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CustomTextView)
 
         textPaint.textSize =
-            typedArray.getDimension(R.styleable.CustomTextView_customTextSize, 50f)
+            typedArray.getDimension(
+                R.styleable.CustomTextView_customTextSize,
+                context.dpToPx(16).toFloat()
+            )
         textPaint.color =
             typedArray.getColor(R.styleable.CustomTextView_customTextColor, Color.BLACK)
 

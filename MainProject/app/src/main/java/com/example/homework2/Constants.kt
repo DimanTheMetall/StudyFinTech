@@ -40,7 +40,6 @@ object Constants {
     }
 
     object LogMessage {
-        const val INSERT_SUCCESS = "INSERT SUCCESS"
         const val INSERT_ERROR = "INSERT ERROR"
 
         const val UPDATE_ERROR = "UPDATE ERROR"

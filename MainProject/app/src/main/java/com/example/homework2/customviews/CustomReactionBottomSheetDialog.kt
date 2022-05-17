@@ -26,7 +26,14 @@ class CustomReactionBottomSheetDialog(context: Context, val getEmoji: (String, S
         Triple(context.getString(R.string.emoji_11), "neutral", "U+1F610"),
         Triple(context.getString(R.string.emoji_12), "sleeping", "U+1F634"),
         Triple(context.getString(R.string.emoji_13), "stuck_out_tongue_closed_eyes", "U+1F600"),
-        Triple(context.getString(R.string.emoji_14), "+1", "U+1F44D")
+        Triple(context.getString(R.string.emoji_14), "+1", "U+1F44D"),
+        Triple(context.getString(R.string.emoji_15), "stuck_out_tongue_wink", "U+1F61C"),
+        Triple(context.getString(R.string.emoji_16), "nerd", "U+1F913"),
+        Triple(context.getString(R.string.emoji_17), "100", "U+1F4AF"),
+        Triple(context.getString(R.string.emoji_18), "lipstick_kiss", "U+1F48B"),
+        Triple(context.getString(R.string.emoji_19), "love_letter", "U+1F48C"),
+        Triple(context.getString(R.string.emoji_20), "heart_box", "U+1F49F"),
+        Triple(context.getString(R.string.emoji_21), "bomb", "U+1F4A3"),
     )
 
     init {

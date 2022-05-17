@@ -393,8 +393,14 @@ class ChatPresenterImpl @Inject constructor(
 
                     val insertDisposable = model.insertAllMessagesAndReactions(messages = messages)
                         .subscribe(
-                            { checkAndDelete(stream = stream, topic = topic) },
-                            { view.showError(throwable = it, error = Errors.SYSTEM) })
+                            {
+                                checkAndDelete(stream = stream, topic = topic)
+                            }, {
+                                Log.e(
+                                    Constants.LogTag.MESSAGES_AND_REACTIONS,
+                                    "MESSAGE ${Constants.LogMessage.INSERT_ERROR}"
+                                )
+                            })
                     compositeDisposable.add(insertDisposable)
                 },
                 {
