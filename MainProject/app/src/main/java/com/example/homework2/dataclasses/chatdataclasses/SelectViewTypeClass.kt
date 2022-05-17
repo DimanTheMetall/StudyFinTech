@@ -50,4 +50,3 @@ sealed class SelectViewTypeClass {
 
         ) : SelectViewTypeClass()
 }
-

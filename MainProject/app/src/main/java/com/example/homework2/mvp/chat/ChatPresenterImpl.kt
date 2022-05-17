@@ -276,7 +276,12 @@ class ChatPresenterImpl @Inject constructor(
     override fun onDestroy(isStreamChat: Boolean, stream: Stream, topic: Topic) {
         if (!isStreamChat && currentMessageList.isEmpty()) {
             val disposable = model.deleteTopicFromDB(stream = stream, topic = topic)
-                .subscribe()
+                .subscribe({}, {
+                    Log.e(
+                        Constants.LogTag.TOPIC_AND_STREAM,
+                        "TOPIC ${Constants.LogMessage.DELETE_ERROR}"
+                    )
+                })
             compositeDisposable.add(disposable)
         }
     }

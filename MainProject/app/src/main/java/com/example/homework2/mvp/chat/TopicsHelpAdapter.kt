@@ -1,5 +1,6 @@
 package com.example.homework2.mvp.chat
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ class TopicsHelpAdapter(
 
     private var topicsList = listOf<Topic>()
 
+    @SuppressLint("InflateParams")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.help_topic_item, null, false)
@@ -41,6 +43,7 @@ class TopicsHelpAdapter(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setTopicsList(newList: List<Topic>) {
         topicsList = newList
         notifyDataSetChanged()

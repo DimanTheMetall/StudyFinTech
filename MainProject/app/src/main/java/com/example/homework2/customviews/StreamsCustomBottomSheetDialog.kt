@@ -31,7 +31,7 @@ class StreamsCustomBottomSheetDialog(
             val streamDescription =
                 findViewById<EditText>(R.id.stream_description_edit_text)?.text.toString()
 
-            if (streamName.isNullOrBlank()) {
+            if (streamName.isBlank()) {
                 Toast.makeText(
                     context,
                     context.getString(R.string.please_write_stream_name),

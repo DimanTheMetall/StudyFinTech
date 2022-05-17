@@ -45,10 +45,6 @@ interface StreamsAndTopicsDao {
     fun insertStreamsAsynh(streamsList: List<Stream>, type: String): Completable {
         return Completable.create {
             insertStreams(streamsList, type)
-//            streamsList.forEach { stream ->
-//                insertTopicList(stream.topicList.map { TopicEntity.toEntity(it, stream.streamId) })
-//                    .subscribe()
-//            }
             it.onComplete()
         }
     }
