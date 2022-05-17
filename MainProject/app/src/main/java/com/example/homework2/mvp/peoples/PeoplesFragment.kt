@@ -55,6 +55,11 @@ class PeoplesFragment : BaseFragment<PeoplesPresenter, FragmentPeopleBinding>(),
         initCancelClickListener()
     }
 
+    override fun onResume() {
+        super.onResume()
+        presenter.onStart()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         compositeDisposable.clear()

@@ -90,6 +90,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     override fun onDestroyView() {
         super.onDestroyView()
+        presenter.onDestroy(isStreamChat = isStreamChat, stream = stream, topic = topic)
         compositeDisposable.clear()
     }
 
@@ -221,7 +222,8 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
             onApplyClick = { message ->
                 presenter.onApplyEditMessageClick(
                     message = message,
-                    isStreamChat = isStreamChat
+                    isStreamChat = isStreamChat,
+                    stream = stream
                 )
             },
             onCancelClick = { presenter.onCancelEditMessageClick() })
@@ -477,7 +479,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         changeTopicBottomSheetBottomSheetDialog =
             ChangeMessageTopicBottomSheetDialog(requireContext()) { message ->
                 presenter.onApplyChangeTopicForMessage(
-                    message = message, isStreamChat = isStreamChat
+                    message = message, isStreamChat = isStreamChat, stream = stream
                 )
             }
     }

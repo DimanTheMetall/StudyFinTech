@@ -236,12 +236,15 @@ class ChatPresenterImpl @Inject constructor(
 
     override fun onApplyEditMessageClick(
         message: SelectViewTypeClass.Message,
-        isStreamChat: Boolean
+        isStreamChat: Boolean, stream: Stream
     ) {
         view.hideEditMessageDialog()
         view.hideChangeTopicDialog()
         view.showProgress()
-        editMessage(message = message, isTopicChanged = false, isStreamChat = isStreamChat)
+        editMessage(
+            message = message, isTopicChanged = false, isStreamChat = isStreamChat,
+            stream = stream
+        )
     }
 
     override fun onCancelEditMessageClick() {
@@ -255,15 +258,27 @@ class ChatPresenterImpl @Inject constructor(
 
     override fun onApplyChangeTopicForMessage(
         message: SelectViewTypeClass.Message,
-        isStreamChat: Boolean
+        isStreamChat: Boolean,
+        stream: Stream
     ) {
         view.hideChangeTopicDialog()
         view.showProgress()
-        editMessage(message = message, isTopicChanged = true, isStreamChat = isStreamChat)
+        editMessage(
+            message = message, isTopicChanged = true, isStreamChat = isStreamChat,
+            stream = stream
+        )
     }
 
     override fun onCopyCLick() {
         view.hideMessageBottomDialog()
+    }
+
+    override fun onDestroy(isStreamChat: Boolean, stream: Stream, topic: Topic) {
+        if (!isStreamChat && currentMessageList.isEmpty()) {
+            val disposable = model.deleteTopicFromDB(stream = stream, topic = topic)
+                .subscribe()
+            compositeDisposable.add(disposable)
+        }
     }
 
     override fun onInit() {
@@ -471,15 +486,27 @@ class ChatPresenterImpl @Inject constructor(
     private fun editMessage(
         message: SelectViewTypeClass.Message,
         isTopicChanged: Boolean,
-        isStreamChat: Boolean
+        isStreamChat: Boolean,
+        stream: Stream
     ) {
         val editDisposable = model.editMessageInZulip(message = message)
             .subscribe({
                 updateMessageInDB(message = message)
-                if (isTopicChanged) changeTopicInMessage(
-                    message = message,
-                    isStreamChat = isStreamChat
-                ) else editMessageInList(newMessage = message)
+                if (isTopicChanged) {
+                    changeTopicInMessage(
+                        message = message,
+                        isStreamChat = isStreamChat
+                    )
+                    val disposable = model.insertTopicInDB(stream, Topic(message.subject))
+                        .subscribe({}, {
+                            Log.e(
+                                Constants.LogTag.MESSAGES_AND_REACTIONS,
+                                "TOPIC ${Constants.LogMessage.INSERT_ERROR}"
+                            )
+                        })
+                    compositeDisposable.add(disposable)
+                } else editMessageInList(newMessage = message)
+
                 view.showMessages(currentMessageList)
             }, {
                 view.showError(throwable = it, error = it.toErrorType())

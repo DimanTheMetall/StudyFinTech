@@ -34,6 +34,7 @@ class MyProfileFragment : BaseFragment<MyProfilePresenter, FragmentProfileBindin
         val myProfileComponent: MyProfileComponent =
             DaggerMyProfileComponent.factory().create(requireActivity().zulipApp().zulipComponent)
         myProfileComponent.inject(this)
+        presenter.onInit()
         super.onViewCreated(view, savedInstanceState)
     }
 

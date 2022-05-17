@@ -22,7 +22,6 @@ interface StreamsAndTopicsDao {
 
             when {
                 cashedStream == null -> insertStream(streamEntity)
-
                 cashedStream != streamEntity || streamEntity.subscribedOrAll == StreamEntity.SUBSCRIBED -> {
                     updateStream(streamEntity)
                 }
@@ -46,6 +45,10 @@ interface StreamsAndTopicsDao {
     fun insertStreamsAsynh(streamsList: List<Stream>, type: String): Completable {
         return Completable.create {
             insertStreams(streamsList, type)
+//            streamsList.forEach { stream ->
+//                insertTopicList(stream.topicList.map { TopicEntity.toEntity(it, stream.streamId) })
+//                    .subscribe()
+//            }
             it.onComplete()
         }
     }
@@ -79,5 +82,11 @@ interface StreamsAndTopicsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTopicList(topicEntityList: List<TopicEntity>): Completable
+
+    @Delete
+    fun deleteTopic(topicEntity: TopicEntity): Completable
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertTopic(topicEntity: TopicEntity): Completable
 
 }

@@ -102,16 +102,25 @@ interface ChatPresenter : BasePresenter {
 
     fun onEditMessageClick(message: SelectViewTypeClass.Message)
 
-    fun onApplyEditMessageClick(message: SelectViewTypeClass.Message, isStreamChat: Boolean)
+    fun onApplyEditMessageClick(
+        message: SelectViewTypeClass.Message,
+        isStreamChat: Boolean,
+        stream: Stream
+    )
 
     fun onCancelEditMessageClick()
 
     fun onChangeTopicClick(message: SelectViewTypeClass.Message, stream: Stream)
 
-    fun onApplyChangeTopicForMessage(message: SelectViewTypeClass.Message, isStreamChat: Boolean)
+    fun onApplyChangeTopicForMessage(
+        message: SelectViewTypeClass.Message,
+        isStreamChat: Boolean,
+        stream: Stream
+    )
 
     fun onCopyCLick()
 
+    fun onDestroy(isStreamChat: Boolean, stream: Stream, topic: Topic)
 }
 
 interface ChatModel : BaseModel {
@@ -174,5 +183,9 @@ interface ChatModel : BaseModel {
     fun updateMessageInDB(message: SelectViewTypeClass.Message): Completable
 
     fun insertSingleMessageInDB(message: SelectViewTypeClass.Message): Completable
+
+    fun deleteTopicFromDB(stream: Stream, topic: Topic): Completable
+
+    fun insertTopicInDB(stream: Stream, topic: Topic): Completable
 
 }

@@ -154,4 +154,12 @@ class ChatModelImpl @Inject constructor(
         return chatRepositoryImpl.insertMessageInDB(messageEntity = MessageEntity.toEntity(message))
     }
 
+    override fun deleteTopicFromDB(stream: Stream, topic: Topic): Completable {
+        return streamsRepositoryImpl.deleteTopic(stream = stream, topic = topic)
+    }
+
+    override fun insertTopicInDB(stream: Stream, topic: Topic): Completable {
+        return streamsRepositoryImpl.insertTopic(stream = stream, topic = topic)
+    }
+
 }

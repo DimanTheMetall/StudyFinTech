@@ -56,6 +56,7 @@ class RecycleStreamsFragment :
 
         super.onCreateView(inflater, container, savedInstanceState)
         isSubscribed = getIsSubscribedBoolean()
+
         return binding.root
     }
 

@@ -7,6 +7,7 @@ import com.example.homework2.dataclasses.chatdataclasses.ResultResponse
 import com.example.homework2.dataclasses.streamsandtopics.ResultTopic
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Subscriptions
+import com.example.homework2.dataclasses.streamsandtopics.Topic
 import com.example.homework2.retrofit.RetrofitService
 import com.google.gson.Gson
 import io.reactivex.Completable
@@ -32,6 +33,11 @@ interface StreamRepository {
     fun createOrSubscribeStream(subscriptions: Subscriptions): Single<ResultResponse>
 
     fun getTopicList(streamId: Int): Single<ResultTopic>
+
+    fun deleteTopic(stream: Stream, topic: Topic): Completable
+
+    fun insertTopic(stream: Stream, topic: Topic): Completable
+
 }
 
 
@@ -54,6 +60,28 @@ class StreamsRepositoryImpl @Inject constructor(
 
     override fun getTopicList(streamId: Int): Single<ResultTopic> {
         return retrofitService.getTopicList(streamId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun deleteTopic(stream: Stream, topic: Topic): Completable {
+        return database.getStreamsAndTopicsDao().deleteTopic(
+            TopicEntity.toEntity(
+                topic = topic,
+                streamId = stream.streamId
+            )
+        )
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun insertTopic(stream: Stream, topic: Topic): Completable {
+        return database.getStreamsAndTopicsDao().insertTopic(
+            TopicEntity.toEntity(
+                topic = topic,
+                streamId = stream.streamId
+            )
+        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
