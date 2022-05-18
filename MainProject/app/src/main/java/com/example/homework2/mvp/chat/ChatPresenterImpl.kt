@@ -105,11 +105,11 @@ class ChatPresenterImpl @Inject constructor(
 
     override fun onAddReactionMessageClick(message: SelectViewTypeClass.Message) {
         view.hideMessageBottomDialog()
-        view.showReactionDialog()
+        view.showReactionDialog(message = message)
     }
 
-    override fun onAddInMessageClick() {
-        view.showReactionDialog()
+    override fun onAddInMessageClick(message: SelectViewTypeClass.Message) {
+        view.showReactionDialog(message = message)
     }
 
     override fun onMessageLongClick(message: SelectViewTypeClass.Message) {
@@ -203,32 +203,40 @@ class ChatPresenterImpl @Inject constructor(
     }
 
     override fun onEmojiInSheetDialogClick(
-        messageId: Long,
+        message: SelectViewTypeClass.Message,
         emojiName: String,
         reactionType: String
     ) {
-        val emojiDisposable = model.addEmoji(
-            messageId = messageId,
-            emojiName = emojiName,
-            reactionType = reactionType
-        )
-            .subscribe({
-                val messageDisposable = model.loadMessageById(messageId = messageId)
-                    .subscribe({ message ->
-                        currentMessageList =
-                            currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
-                                .toMutableList()
-                        view.showMessages(messages = currentMessageList)
-                    }, {
-                        view.showError(throwable = it, error = it.toErrorType())
-                    })
+        var isExist = false
+        message.reactions.forEach { reaction ->
+            if (reaction.userId == Constants.myId && reaction.emojiName == emojiName) isExist = true
+        }
 
-                compositeDisposable.add(messageDisposable)
-            }, {
-                view.showError(throwable = it, error = it.toErrorType())
-            })
+        if (!isExist) {
+            val emojiDisposable = model.addEmoji(
+                messageId = message.id,
+                emojiName = emojiName,
+                reactionType = reactionType
+            )
+                .subscribe({
+                    val messageDisposable = model.loadMessageById(messageId = message.id)
+                        .subscribe({ message ->
+                            refreshReactionOnMessage(message = message)
+                            currentMessageList =
+                                currentMessageList.map { oldMessage -> if (oldMessage.id == message.id) message else oldMessage }
+                                    .toMutableList()
+                            view.showMessages(messages = currentMessageList)
+                        }, {
+                            view.showError(throwable = it, error = it.toErrorType())
+                        })
 
-        compositeDisposable.add(emojiDisposable)
+                    compositeDisposable.add(messageDisposable)
+                }, {
+                    view.showError(throwable = it, error = it.toErrorType())
+                })
+
+            compositeDisposable.add(emojiDisposable)
+        }
     }
 
     override fun onHelpTopicItemCLick(topic: Topic) {
@@ -375,8 +383,8 @@ class ChatPresenterImpl @Inject constructor(
                         )
                     })
 
-                currentMessageList.addAll(messages.sortedBy { it.timestamp })
-                view.showMessages(currentMessageList)
+                currentMessageList.addAll(messages)
+                view.showMessages(messages = currentMessageList)
 
                 compositeDisposable.add(insertDisposable)
             }, {
@@ -386,52 +394,6 @@ class ChatPresenterImpl @Inject constructor(
         compositeDisposable.add(disposable)
     }
 
-    private fun initRefreshLoadForStreamMessages(
-        stream: Stream,
-        messages: List<SelectViewTypeClass.Message>,
-    ) {
-        view.showMessages(messages = messages)
-        @Suppress("UNCHECKED_CAST") val disposable = model.loadStreamMessages(
-            stream = stream, anchor = "${messages.first().id}",
-            numAfter = Constants.LIMIT_MESSAGE_COUNT_FOR_TOPIC,
-            numBefore = 0
-        )
-            .subscribe(
-                { result ->
-                    val newMessageList = result.messages
-                    val deleteDisposable =
-                        model.deleteMessagesFromStream(stream = stream)
-                            .subscribe({
-                                val insertDisposable =
-                                    model.insertAllMessagesAndReactions(messages = newMessageList)
-                                        .subscribe({ }, {
-                                            Log.e(
-                                                Constants.LogTag.MESSAGES_AND_REACTIONS,
-                                                "MESSAGE ${Constants.LogMessage.INSERT_ERROR}"
-                                            )
-                                        })
-
-                                compositeDisposable.add(insertDisposable)
-                            }, {
-                                Log.e(
-                                    Constants.LogTag.MESSAGES_AND_REACTIONS,
-                                    "MESSAGE ${Constants.LogMessage.DELETE_ERROR}"
-                                )
-                            })
-
-                    compositeDisposable.add(deleteDisposable)
-                    loadedIsLast = result.foundNewest
-                    if (loadedIsLast) subscribeStreamsRefresher(stream = stream)
-
-                    currentMessageList.addAll(newMessageList)
-                    view.showMessages(currentMessageList)
-                },
-                {
-                    view.showError(throwable = it, error = it.toErrorType())
-                })
-
-        compositeDisposable.add(disposable)
-    }
 
     private fun checkAndDeleteForStreamMessages(stream: Stream) {
         val bySubject = currentMessageList.groupBy { it.subject }
@@ -455,7 +417,6 @@ class ChatPresenterImpl @Inject constructor(
                 compositeDisposable.add(deleteDisposable)
             }
         }
-
     }
 
     private fun checkAndDeleteTopicMessages(stream: Stream, topic: Topic) {
@@ -662,6 +623,7 @@ class ChatPresenterImpl @Inject constructor(
                                     "MESSAGE ${Constants.LogMessage.DELETE_ERROR}"
                                 )
                             })
+
                     compositeDisposable.add(deleteDisposable)
                     loadedIsLast = result.foundNewest
                     if (loadedIsLast) subscribeTopicRefresher(topic = topic, stream = stream)
@@ -674,6 +636,75 @@ class ChatPresenterImpl @Inject constructor(
                 })
 
         compositeDisposable.add(disposable)
+    }
+
+    private fun initRefreshLoadForStreamMessages(
+        stream: Stream,
+        messages: List<SelectViewTypeClass.Message>,
+    ) {
+        view.showMessages(messages = messages)
+        @Suppress("UNCHECKED_CAST") val disposable = model.loadStreamMessages(
+            stream = stream, anchor = "${messages.first().id}",
+            numAfter = Constants.LIMIT_MESSAGE_COUNT_FOR_TOPIC,
+            numBefore = 0
+        )
+            .subscribe(
+                { result ->
+                    val newMessageList = result.messages
+                    val deleteDisposable =
+                        model.deleteMessagesFromStream(stream = stream)
+                            .subscribe({
+                                val insertDisposable =
+                                    model.insertAllMessagesAndReactions(messages = newMessageList)
+                                        .subscribe({ }, {
+                                            Log.e(
+                                                Constants.LogTag.MESSAGES_AND_REACTIONS,
+                                                "MESSAGE ${Constants.LogMessage.INSERT_ERROR}"
+                                            )
+                                        })
+
+                                compositeDisposable.add(insertDisposable)
+                            }, {
+                                Log.e(
+                                    Constants.LogTag.MESSAGES_AND_REACTIONS,
+                                    "MESSAGE ${Constants.LogMessage.DELETE_ERROR}"
+                                )
+                            })
+
+                    compositeDisposable.add(deleteDisposable)
+                    loadedIsLast = result.foundNewest
+                    if (loadedIsLast) subscribeStreamsRefresher(stream = stream)
+
+                    currentMessageList.addAll(newMessageList)
+                    view.showMessages(messages = currentMessageList)
+                },
+                {
+                    view.showError(throwable = it, error = it.toErrorType())
+                })
+
+        compositeDisposable.add(disposable)
+    }
+
+    private fun refreshReactionOnMessage(message: SelectViewTypeClass.Message) {
+        val deleteDisposable = model.deleteReactionsByMessageId(messageId = message.id)
+            .subscribe({
+                val insertDisposable = model.insertAllReactions(message.id, message.reactions)
+                    .subscribe({}, {
+                        Log.e(
+                            Constants.LogTag.MESSAGES_AND_REACTIONS,
+                            "REACTIONS ${Constants.LogMessage.INSERT_ERROR}"
+                        )
+                    })
+
+                compositeDisposable.add(insertDisposable)
+            }, {
+                Log.e(
+                    Constants.LogTag.MESSAGES_AND_REACTIONS,
+                    "REACTIONS ${Constants.LogMessage.DELETE_ERROR}"
+                )
+            })
+
+        compositeDisposable.add(deleteDisposable)
     }
 
 }

@@ -50,7 +50,6 @@ fun RecyclerView.addOnPageScrollListener(
                     if (firstVisiblePosition == Constants.MESSAGE_COUNT_FOR_REQUEST_LOAD && currentSize != adapter?.itemCount) {
                         currentSize = adapter?.itemCount ?: 1
                         onScrollToPreviousPage.invoke()
-
                     }
                 }
             })

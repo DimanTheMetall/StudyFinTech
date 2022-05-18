@@ -40,7 +40,6 @@ interface StreamRepository {
 
 }
 
-
 class StreamsRepositoryImpl @Inject constructor(
     private val retrofitService: RetrofitService,
     private val database: ZulipDataBase

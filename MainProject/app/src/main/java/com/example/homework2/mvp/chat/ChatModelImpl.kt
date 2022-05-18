@@ -1,10 +1,7 @@
 package com.example.homework2.mvp.chat
 
 import com.example.homework2.data.local.entity.MessageEntity
-import com.example.homework2.dataclasses.chatdataclasses.EditMessage
-import com.example.homework2.dataclasses.chatdataclasses.ResultMessages
-import com.example.homework2.dataclasses.chatdataclasses.ResultResponse
-import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
+import com.example.homework2.dataclasses.chatdataclasses.*
 import com.example.homework2.dataclasses.streamsandtopics.ResultTopic
 import com.example.homework2.dataclasses.streamsandtopics.Stream
 import com.example.homework2.dataclasses.streamsandtopics.Topic
@@ -168,6 +165,17 @@ class ChatModelImpl @Inject constructor(
 
     override fun insertTopicInDB(stream: Stream, topic: Topic): Completable {
         return streamsRepositoryImpl.insertTopic(stream = stream, topic = topic)
+    }
+
+    override fun deleteReactionsByMessageId(messageId: Long): Completable {
+        return chatRepositoryImpl.deleteAllReactionsByMessageId(messageId = messageId)
+    }
+
+    override fun insertAllReactions(messageId: Long, reactionsList: List<Reaction>): Completable {
+        return chatRepositoryImpl.insertAllReactionOnMessage(
+            reactionsList = reactionsList,
+            messageId = messageId
+        )
     }
 
 }

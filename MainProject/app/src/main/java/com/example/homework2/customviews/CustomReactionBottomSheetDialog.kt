@@ -6,11 +6,17 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatTextView
 import com.example.homework2.R
+import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
 import com.example.homework2.dpToPx
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class CustomReactionBottomSheetDialog(context: Context, val getEmoji: (String, String) -> Unit) :
+class CustomReactionBottomSheetDialog(
+    context: Context,
+    val getEmoji: (String, SelectViewTypeClass.Message) -> Unit
+) :
     BottomSheetDialog(context) {
+
+    private lateinit var _message: SelectViewTypeClass.Message
 
     private val emojiTriple = listOf(
         Triple(context.getString(R.string.emoji_1), "grinning", "U+1F600"),
@@ -56,10 +62,14 @@ class CustomReactionBottomSheetDialog(context: Context, val getEmoji: (String, S
                         context.dpToPx(6)
                     )
 
-                    setOnClickListener { getEmoji(triple.second, triple.third) }
+                    setOnClickListener { getEmoji(triple.second, _message) }
                 }
                 viewGroup.addView(textView)
             }
         }
+    }
+
+    fun setMessage(message: SelectViewTypeClass.Message) {
+        _message = message
     }
 }

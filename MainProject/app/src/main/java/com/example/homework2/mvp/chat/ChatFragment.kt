@@ -156,8 +156,9 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         binding.messageField.setText("")
     }
 
-    override fun showReactionDialog() {
+    override fun showReactionDialog(message: SelectViewTypeClass.Message) {
         reactionReactionBottomSheetDialog?.show()
+        reactionReactionBottomSheetDialog?.setMessage(message = message)
     }
 
     override fun hideReactionDialog() {
@@ -231,9 +232,9 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
 
     private fun initReactionBottomSheetDialog() {
         reactionReactionBottomSheetDialog =
-            CustomReactionBottomSheetDialog(requireContext()) { emojiName, _ ->
+            CustomReactionBottomSheetDialog(requireContext()) { emojiName, message ->
                 presenter.onEmojiInSheetDialogClick(
-                    messageId = messageId,
+                    message = message,
                     emojiName = emojiName,
                     reactionType = getString(R.string.unicodeEmoji),
                 )
@@ -430,7 +431,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
             )
         }, { message ->
             this.messageId = message.id
-            presenter.onAddInMessageClick()
+            presenter.onAddInMessageClick(message = message)
         })
         binding.rcView.adapter = messageAdapter
     }

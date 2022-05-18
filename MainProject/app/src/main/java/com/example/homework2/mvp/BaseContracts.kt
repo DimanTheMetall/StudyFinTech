@@ -14,6 +14,3 @@ interface BasePresenter {
 }
 
 interface BaseModel
-
-
-

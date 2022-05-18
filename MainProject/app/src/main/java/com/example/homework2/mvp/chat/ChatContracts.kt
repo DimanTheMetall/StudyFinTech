@@ -2,6 +2,7 @@ package com.example.homework2.mvp.chat
 
 import androidx.fragment.app.Fragment
 import com.example.homework2.Errors
+import com.example.homework2.dataclasses.chatdataclasses.Reaction
 import com.example.homework2.dataclasses.chatdataclasses.ResultMessages
 import com.example.homework2.dataclasses.chatdataclasses.ResultResponse
 import com.example.homework2.dataclasses.chatdataclasses.SelectViewTypeClass
@@ -34,7 +35,7 @@ interface ChatView : BaseView {
 
     //Bottom dialogs functions
 
-    fun showReactionDialog()
+    fun showReactionDialog(message: SelectViewTypeClass.Message)
 
     fun hideReactionDialog()
 
@@ -67,7 +68,7 @@ interface ChatPresenter : BasePresenter {
 
     fun onAddReactionMessageClick(message: SelectViewTypeClass.Message)
 
-    fun onAddInMessageClick()
+    fun onAddInMessageClick(message: SelectViewTypeClass.Message)
 
     fun onMessageLongClick(message: SelectViewTypeClass.Message)
 
@@ -92,7 +93,11 @@ interface ChatPresenter : BasePresenter {
 
     fun onInitMessageForStreamRequest(stream: Stream)
 
-    fun onEmojiInSheetDialogClick(messageId: Long, emojiName: String, reactionType: String)
+    fun onEmojiInSheetDialogClick(
+        message: SelectViewTypeClass.Message,
+        emojiName: String,
+        reactionType: String
+    )
 
     fun onHelpTopicItemCLick(topic: Topic)
 
@@ -191,5 +196,9 @@ interface ChatModel : BaseModel {
     fun deleteTopicFromDB(stream: Stream, topic: Topic): Completable
 
     fun insertTopicInDB(stream: Stream, topic: Topic): Completable
+
+    fun deleteReactionsByMessageId(messageId: Long): Completable
+
+    fun insertAllReactions(messageId: Long, reactionsList: List<Reaction>): Completable
 
 }

@@ -86,6 +86,11 @@ interface ChatRepository {
     fun deleteMessagesFromTopic(stream: Stream, topic: Topic): Completable
 
     fun deleteMessagesFromStream(stream: Stream): Completable
+
+    fun deleteAllReactionsByMessageId(messageId: Long): Completable
+
+    fun insertAllReactionOnMessage(reactionsList: List<Reaction>, messageId: Long): Completable
+
 }
 
 class ChatRepositoryImpl @Inject constructor(
@@ -337,6 +342,28 @@ class ChatRepositoryImpl @Inject constructor(
     override fun deleteMessagesFromStream(stream: Stream): Completable {
         return database.getMessagesAndReactionDao()
             .deleteAllMessagesFromStream(streamId = stream.streamId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun deleteAllReactionsByMessageId(messageId: Long): Completable {
+        return database.getMessagesAndReactionDao()
+            .deleteAllReactionsFromMessages(messageId = messageId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun insertAllReactionOnMessage(
+        reactionsList: List<Reaction>,
+        messageId: Long
+    ): Completable {
+        return database.getMessagesAndReactionDao()
+            .insertOrReplaceAllReactionOnMessages(reactionsList.map { reaction ->
+                ReactionEntity.toEntity(
+                    reaction = reaction,
+                    messageId = messageId
+                )
+            })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }

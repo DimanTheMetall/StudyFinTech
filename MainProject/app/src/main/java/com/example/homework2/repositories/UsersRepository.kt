@@ -20,6 +20,7 @@ interface UsersRepository {
     fun loadMyProfile(): Single<Member>
 
     fun loadPresence(member: Member): Single<Presence>
+
 }
 
 class UsersRepositoryImpl @Inject constructor(val retrofitService: RetrofitService) :

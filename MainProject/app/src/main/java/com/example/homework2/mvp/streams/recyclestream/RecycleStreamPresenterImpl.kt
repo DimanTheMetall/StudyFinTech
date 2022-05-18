@@ -124,10 +124,13 @@ class RecycleStreamPresenterImpl(
         when (isAllNeeded) {
             true -> {
                 val disposable = model.loadAllStreams()
-                    .subscribe({
-                        view.showStreams(streamList = it)
+                    .subscribe({ allStreamList ->
+                        view.showStreams(streamList = allStreamList)
                         val insertDisposable =
-                            model.insertStreamsAndTopics(streamsList = it, isSubscribed = false)
+                            model.insertStreamsAndTopics(
+                                streamsList = allStreamList,
+                                isSubscribed = false
+                            )
                                 .subscribe(
                                     { },
                                     { Log.e(Constants.LogTag.TOPIC_AND_STREAM, it.toString()) })
@@ -140,10 +143,13 @@ class RecycleStreamPresenterImpl(
             }
             false -> {
                 val disposable = model.loadSubscribedStreams()
-                    .subscribe({
-                        view.showStreams(streamList = it)
+                    .subscribe({ subscribedStreamList ->
+                        view.showStreams(streamList = subscribedStreamList)
                         val insertDisposable =
-                            model.insertStreamsAndTopics(streamsList = it, isSubscribed = true)
+                            model.insertStreamsAndTopics(
+                                streamsList = subscribedStreamList,
+                                isSubscribed = true
+                            )
                                 .subscribe(
                                     { },
                                     { Log.e(Constants.LogTag.TOPIC_AND_STREAM, it.toString()) })
