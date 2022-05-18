@@ -26,4 +26,5 @@ class ChatDiffCallback : DiffUtil.ItemCallback<SelectViewTypeClass>() {
     ): Boolean {
         return oldItem == newItem
     }
+
 }

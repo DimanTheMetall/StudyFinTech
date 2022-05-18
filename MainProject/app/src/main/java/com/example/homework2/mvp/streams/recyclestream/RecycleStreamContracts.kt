@@ -71,4 +71,5 @@ interface RecycleStreamModel : BaseModel {
     fun selectSubscribedStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>>
 
     fun createOrSubscribeStream(subscriptions: Subscriptions): Single<ResultResponse>
+
 }

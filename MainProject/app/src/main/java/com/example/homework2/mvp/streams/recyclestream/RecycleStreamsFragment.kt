@@ -99,7 +99,7 @@ class RecycleStreamsFragment :
         compositeDisposable.add(disposable)
 
         (parentFragment as StreamFragment).binding.searchStreamsEditText.addTextChangedListener { text: Editable? ->
-            if (text.toString().isNotBlank()) {
+            if (text.toString().isNotEmpty()) {
                 (parentFragment as StreamFragment).binding.cancelImage.visibility = View.VISIBLE
                 textSubject.onNext(text.toString())
             } else {

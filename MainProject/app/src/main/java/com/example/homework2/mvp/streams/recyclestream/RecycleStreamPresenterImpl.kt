@@ -26,6 +26,7 @@ class RecycleStreamPresenterImpl(
             }, {
                 view.showError(throwable = it, error = it.toErrorType())
             })
+
         compositeDisposable.add(disposable)
     }
 
@@ -38,6 +39,7 @@ class RecycleStreamPresenterImpl(
             }, {
                 view.showError(throwable = it, error = it.toErrorType())
             })
+
         compositeDisposable.add(disposable)
     }
 
@@ -47,6 +49,7 @@ class RecycleStreamPresenterImpl(
                 view.showStreams(streamList = mapStreams(map = map))
                 loadStreams(true)
             }
+
         compositeDisposable.add(selectDisposable)
     }
 
@@ -56,6 +59,7 @@ class RecycleStreamPresenterImpl(
                 view.showStreams(streamList = mapStreams(map = map))
                 loadStreams(false)
             }
+
         compositeDisposable.add(selectDisposable)
     }
 

@@ -349,7 +349,6 @@ class ChatPresenterImpl @Inject constructor(
                         .filterNot { it.id == currentMessageList.first().id }.toMutableList()
                     newList.addAll(currentMessageList)
                     currentMessageList = newList
-
                     view.showMessages(messages = currentMessageList)
                 }, {
                     view.showError(throwable = it, error = it.toErrorType())
@@ -433,6 +432,7 @@ class ChatPresenterImpl @Inject constructor(
                         "MESSAGE ${Constants.LogMessage.DELETE_ERROR}"
                     )
                 })
+
             compositeDisposable.add(deleteDisposable)
         }
     }
@@ -469,6 +469,7 @@ class ChatPresenterImpl @Inject constructor(
                                     "MESSAGE ${Constants.LogMessage.INSERT_ERROR}"
                                 )
                             })
+
                     compositeDisposable.add(insertDisposable)
                 },
                 {
@@ -509,8 +510,8 @@ class ChatPresenterImpl @Inject constructor(
                 }, {
                     view.showError(throwable = it, error = it.toErrorType())
                 })
-
             refresherIsSubscribed = true
+
             compositeDisposable.add(refreshDisposable)
         }
     }
@@ -523,6 +524,7 @@ class ChatPresenterImpl @Inject constructor(
                 })
 
             refresherIsSubscribed = true
+
             compositeDisposable.add(refreshDisposable)
         }
     }
@@ -578,6 +580,7 @@ class ChatPresenterImpl @Inject constructor(
                                 "TOPIC ${Constants.LogMessage.INSERT_ERROR}"
                             )
                         })
+
                     compositeDisposable.add(disposable)
                 } else editMessageInList(newMessage = message)
 
@@ -623,13 +626,13 @@ class ChatPresenterImpl @Inject constructor(
                                     "MESSAGE ${Constants.LogMessage.DELETE_ERROR}"
                                 )
                             })
-
-                    compositeDisposable.add(deleteDisposable)
                     loadedIsLast = result.foundNewest
                     if (loadedIsLast) subscribeTopicRefresher(topic = topic, stream = stream)
 
                     currentMessageList.addAll(newMessageList)
                     view.showMessages(currentMessageList)
+
+                    compositeDisposable.add(deleteDisposable)
                 },
                 {
                     view.showError(throwable = it, error = it.toErrorType())

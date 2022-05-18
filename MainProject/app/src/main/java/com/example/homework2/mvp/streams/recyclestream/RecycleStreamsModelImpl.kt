@@ -37,7 +37,6 @@ class RecycleStreamsModelImpl @Inject constructor(
     override fun selectAllStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>> =
         streamsRepositoryImpl.selectAllStreamsAndTopics()
 
-
     override fun selectSubscribedStreamsAndTopics(): Single<Map<StreamEntity, List<TopicEntity>>> =
         streamsRepositoryImpl.selectSubscribedStreamsAndTopics()
 

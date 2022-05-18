@@ -16,6 +16,7 @@ interface PeoplesView : BaseView {
     fun showError(throwable: Throwable, error: Errors)
 
     fun showUsers(userList: List<Member>)
+
 }
 
 
@@ -26,6 +27,7 @@ interface PeoplesPresenter : BasePresenter {
     fun onSearchedTextChanged(searchedText: String)
 
     fun onStart()
+
 }
 
 
@@ -34,4 +36,5 @@ interface PeoplesModel : BaseModel {
     fun getUsersWithOutPresence(): Single<List<Member>>
 
     fun getAllUsersWithPresence(): Single<List<Member>>
+
 }

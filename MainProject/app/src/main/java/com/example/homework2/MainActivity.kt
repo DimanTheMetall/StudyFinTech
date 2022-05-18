@@ -10,21 +10,18 @@ import com.example.homework2.mvp.chat.ChatFragment
 import com.example.homework2.mvp.myprofile.MyProfileFragment
 import com.example.homework2.mvp.peoples.PeoplesFragment
 import com.example.homework2.mvp.streams.StreamFragment
-import io.reactivex.disposables.CompositeDisposable
 
 class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
-    private lateinit var compositeDisposable: CompositeDisposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        compositeDisposable = CompositeDisposable()
 
-        replaceFrag(StreamFragment.newInstance())
+        replaceFragment(StreamFragment.newInstance())
 
         supportFragmentManager.addOnBackStackChangedListener {
             val currentFragment = supportFragmentManager.findFragmentByTag(ChatFragment.TAG)
@@ -37,9 +34,9 @@ class MainActivity : AppCompatActivity() {
         }
         binding.bNavigation.setOnItemSelectedListener {
             when (it.itemId) {
-                R.id.item_channels -> replaceFrag(StreamFragment.newInstance())
-                R.id.item_people -> replaceFrag(PeoplesFragment.newInstance())
-                R.id.item_profile -> replaceFrag(MyProfileFragment.newInstance())
+                R.id.item_channels -> replaceFragment(StreamFragment.newInstance())
+                R.id.item_people -> replaceFragment(PeoplesFragment.newInstance())
+                R.id.item_profile -> replaceFragment(MyProfileFragment.newInstance())
             }
             true
         }
@@ -56,10 +53,9 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        compositeDisposable.clear()
     }
 
-    private fun replaceFrag(fragment: Fragment) {
+    private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(binding.fragmentHolder.id, fragment)
             .commit()

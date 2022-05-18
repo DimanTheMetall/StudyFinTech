@@ -65,7 +65,6 @@ class PeopleAdapter(private val openFrag: (Member) -> Unit) :
                     onlineImage.isVisible = false
                 }
             }
-
             profileEmail.text = member.email
             profileName.text = member.fullName
             root.setOnClickListener {
