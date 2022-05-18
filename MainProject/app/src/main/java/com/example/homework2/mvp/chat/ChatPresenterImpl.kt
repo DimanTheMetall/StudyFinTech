@@ -68,7 +68,9 @@ class ChatPresenterImpl @Inject constructor(
                         .subscribe({ message ->
                             onReactionUpdateMapList(changedMessage = message)
                             view.showMessages(messages = currentMessageList)
-                        }, { view.showError(throwable = it, error = it.toErrorType()) })
+                        }, {
+                            view.showError(throwable = it, error = it.toErrorType())
+                        })
 
                     compositeDisposable.add(addDisposable)
                 }, {
@@ -126,7 +128,7 @@ class ChatPresenterImpl @Inject constructor(
         if (!loadedIsFirst) loadPreviousTopicsMessages(stream = stream, topic = topic)
     }
 
-    override fun onStreamMessageNextPgeLoadRequest(stream: Stream) {
+    override fun onStreamMessageNextPageLoadRequest(stream: Stream) {
         if (!loadedIsLast) loadNextStreamMessages(stream = stream)
     }
 
@@ -147,7 +149,7 @@ class ChatPresenterImpl @Inject constructor(
                         view.clearMessageField()
                         currentMessageList.addAll(messages)
                         if (!isStreamChat) {
-                            checkAndDelete(stream = stream, topic = topic)
+                            checkAndDeleteTopicMessages(stream = stream, topic = topic)
                         } else {
                             updateHelpTopicList(streamId = stream.streamId)
                         }
@@ -165,12 +167,16 @@ class ChatPresenterImpl @Inject constructor(
     }
 
     override fun onInitMessageForTopicRequest(stream: Stream, topic: Topic) {
-        val disposable = model.getMessageFromDataBase(stream = stream, topic = topic)
+        val disposable = model.getTopicMessagesFromDB(stream = stream, topic = topic)
             .subscribe({ messages ->
                 if (messages.isNullOrEmpty()) {
                     loadNextTopicMessages(stream = stream, topic = topic)
                 } else {
-                    initRefreshLoad(stream = stream, topic = topic, messages = messages)
+                    initRefreshLoadForTopicMessage(
+                        stream = stream,
+                        topic = topic,
+                        messages = messages
+                    )
                 }
             }, {
                 view.showError(throwable = it, error = Errors.SYSTEM)
@@ -180,7 +186,20 @@ class ChatPresenterImpl @Inject constructor(
     }
 
     override fun onInitMessageForStreamRequest(stream: Stream) {
-        loadNextStreamMessages(stream = stream)
+        val selectDisposable = model.getStreamMessagesFromDB(stream = stream)
+            .subscribe({ messages ->
+                if (messages.isEmpty()) {
+                    loadNextStreamMessages(stream = stream)
+                } else {
+                    initRefreshLoadForStreamMessages(stream = stream, messages = messages)
+                }
+            }, {
+                Log.e(
+                    Constants.LogTag.MESSAGES_AND_REACTIONS,
+                    "MESSAGES ${Constants.LogMessage.SELECT_ERROR}"
+                )
+            })
+        compositeDisposable.add(selectDisposable)
     }
 
     override fun onEmojiInSheetDialogClick(
@@ -291,24 +310,6 @@ class ChatPresenterImpl @Inject constructor(
         loadedIsLast = false
     }
 
-    private fun checkAndDelete(stream: Stream, topic: Topic) {
-        if (currentMessageList.size > Constants.LIMIT_MESSAGE_COUNT_FOR_TOPIC) {
-            val deleteDisposable = model.deleteOldestMessagesWhereIdLess(
-                messageIdToSave =
-                currentMessageList[currentMessageList.lastIndex - Constants.LIMIT_MESSAGE_COUNT_FOR_TOPIC].id,
-                stream = stream,
-                topic = topic
-            )
-                .subscribe({ }, {
-                    Log.e(
-                        Constants.LogTag.MESSAGES_AND_REACTIONS,
-                        "MESSAGE ${Constants.LogMessage.DELETE_ERROR}"
-                    )
-                })
-            compositeDisposable.add(deleteDisposable)
-        }
-    }
-
     private fun updateHelpTopicList(streamId: Int) {
         val disposable = model.loadTopicList(streamId = streamId)
             .subscribe({
@@ -360,18 +361,119 @@ class ChatPresenterImpl @Inject constructor(
             numAfter = Constants.MESSAGES_COUNT_PAGINATION,
             numBefore = 0
         )
-            .subscribe({ json ->
-                val messages = json.messages.filterNot { it.id == lastMessageId }
-                loadedIsLast = json.foundNewest
+            .subscribe({ resultMessages ->
+                val messages = resultMessages.messages.filterNot { it.id == lastMessageId }
+                loadedIsLast = resultMessages.foundNewest
                 if (loadedIsLast) subscribeStreamsRefresher(stream = stream)
+                val insertDisposable = model.insertAllMessagesAndReactions(messages)
+                    .subscribe({
+                        checkAndDeleteForStreamMessages(stream = stream)
+                    }, {
+                        Log.e(
+                            Constants.LogTag.MESSAGES_AND_REACTIONS,
+                            "MESSAGE ${Constants.LogMessage.INSERT_ERROR}"
+                        )
+                    })
 
                 currentMessageList.addAll(messages.sortedBy { it.timestamp })
                 view.showMessages(currentMessageList)
+
+                compositeDisposable.add(insertDisposable)
             }, {
                 view.showError(throwable = it, error = it.toErrorType())
             })
 
         compositeDisposable.add(disposable)
+    }
+
+    private fun initRefreshLoadForStreamMessages(
+        stream: Stream,
+        messages: List<SelectViewTypeClass.Message>,
+    ) {
+        view.showMessages(messages = messages)
+        @Suppress("UNCHECKED_CAST") val disposable = model.loadStreamMessages(
+            stream = stream, anchor = "${messages.first().id}",
+            numAfter = Constants.LIMIT_MESSAGE_COUNT_FOR_TOPIC,
+            numBefore = 0
+        )
+            .subscribe(
+                { result ->
+                    val newMessageList = result.messages
+                    val deleteDisposable =
+                        model.deleteMessagesFromStream(stream = stream)
+                            .subscribe({
+                                val insertDisposable =
+                                    model.insertAllMessagesAndReactions(messages = newMessageList)
+                                        .subscribe({ }, {
+                                            Log.e(
+                                                Constants.LogTag.MESSAGES_AND_REACTIONS,
+                                                "MESSAGE ${Constants.LogMessage.INSERT_ERROR}"
+                                            )
+                                        })
+
+                                compositeDisposable.add(insertDisposable)
+                            }, {
+                                Log.e(
+                                    Constants.LogTag.MESSAGES_AND_REACTIONS,
+                                    "MESSAGE ${Constants.LogMessage.DELETE_ERROR}"
+                                )
+                            })
+
+                    compositeDisposable.add(deleteDisposable)
+                    loadedIsLast = result.foundNewest
+                    if (loadedIsLast) subscribeStreamsRefresher(stream = stream)
+
+                    currentMessageList.addAll(newMessageList)
+                    view.showMessages(currentMessageList)
+                },
+                {
+                    view.showError(throwable = it, error = it.toErrorType())
+                })
+
+        compositeDisposable.add(disposable)
+    }
+
+    private fun checkAndDeleteForStreamMessages(stream: Stream) {
+        val bySubject = currentMessageList.groupBy { it.subject }
+        //Subject сообщения это имя топика
+        bySubject.keys.forEach { key ->
+            val listOfTopicMessages = bySubject[key]
+            if (listOfTopicMessages != null && listOfTopicMessages.size > Constants.LIMIT_MESSAGE_COUNT_FOR_TOPIC) {
+                val deleteDisposable =
+                    model.deleteOldestMessagesWhereIdLess(
+                        messageIdToSave = listOfTopicMessages[listOfTopicMessages.lastIndex - Constants.LIMIT_MESSAGE_COUNT_FOR_TOPIC].id,
+                        stream = stream,
+                        topic = Topic(name = key)
+                    )
+                        .subscribe({ }, {
+                            Log.e(
+                                Constants.LogTag.MESSAGES_AND_REACTIONS,
+                                "MESSAGES ${Constants.LogMessage.DELETE_ERROR}"
+                            )
+                        })
+
+                compositeDisposable.add(deleteDisposable)
+            }
+        }
+
+    }
+
+    private fun checkAndDeleteTopicMessages(stream: Stream, topic: Topic) {
+        if (currentMessageList.size > Constants.LIMIT_MESSAGE_COUNT_FOR_TOPIC) {
+            val deleteDisposable = model.deleteOldestMessagesWhereIdLess(
+                messageIdToSave =
+                currentMessageList[currentMessageList.lastIndex - Constants.LIMIT_MESSAGE_COUNT_FOR_TOPIC].id,
+                stream = stream,
+                topic = topic
+            )
+                .subscribe({ }, {
+                    Log.e(
+                        Constants.LogTag.MESSAGES_AND_REACTIONS,
+                        "MESSAGE ${Constants.LogMessage.DELETE_ERROR}"
+                    )
+                })
+            compositeDisposable.add(deleteDisposable)
+        }
     }
 
     private fun loadNextTopicMessages(stream: Stream, topic: Topic) {
@@ -399,7 +501,7 @@ class ChatPresenterImpl @Inject constructor(
                     val insertDisposable = model.insertAllMessagesAndReactions(messages = messages)
                         .subscribe(
                             {
-                                checkAndDelete(stream = stream, topic = topic)
+                                checkAndDeleteTopicMessages(stream = stream, topic = topic)
                             }, {
                                 Log.e(
                                     Constants.LogTag.MESSAGES_AND_REACTIONS,
@@ -526,7 +628,7 @@ class ChatPresenterImpl @Inject constructor(
         compositeDisposable.add(editDisposable)
     }
 
-    private fun initRefreshLoad(
+    private fun initRefreshLoadForTopicMessage(
         stream: Stream,
         topic: Topic,
         messages: List<SelectViewTypeClass.Message>

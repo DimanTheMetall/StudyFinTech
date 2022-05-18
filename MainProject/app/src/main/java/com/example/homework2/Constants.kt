@@ -41,10 +41,9 @@ object Constants {
 
     object LogMessage {
         const val INSERT_ERROR = "INSERT ERROR"
-
         const val UPDATE_ERROR = "UPDATE ERROR"
-
         const val DELETE_ERROR = "DELETE ERROR"
+        const val SELECT_ERROR = "SELECT ERROR"
     }
 
     //URL

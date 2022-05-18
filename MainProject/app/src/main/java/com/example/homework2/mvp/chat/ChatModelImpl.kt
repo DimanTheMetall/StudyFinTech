@@ -38,6 +38,10 @@ class ChatModelImpl @Inject constructor(
         return chatRepositoryImpl.deleteMessagesFromTopic(stream = stream, topic = topic)
     }
 
+    override fun deleteMessagesFromStream(stream: Stream): Completable {
+        return chatRepositoryImpl.deleteMessagesFromStream(stream)
+    }
+
     override fun loadTopicList(streamId: Int): Single<ResultTopic> {
         return streamsRepositoryImpl.getTopicList(streamId = streamId)
     }
@@ -139,11 +143,15 @@ class ChatModelImpl @Inject constructor(
         )
     }
 
-    override fun getMessageFromDataBase(
+    override fun getTopicMessagesFromDB(
         stream: Stream,
         topic: Topic
     ): Single<MutableList<SelectViewTypeClass.Message>> {
-        return chatRepositoryImpl.selectMessage(stream = stream, topic = topic)
+        return chatRepositoryImpl.selectMessagesToTopic(stream = stream, topic = topic)
+    }
+
+    override fun getStreamMessagesFromDB(stream: Stream): Single<MutableList<SelectViewTypeClass.Message>> {
+        return chatRepositoryImpl.selectMessagesToStream(stream = stream)
     }
 
     override fun updateMessageInDB(message: SelectViewTypeClass.Message): Completable {

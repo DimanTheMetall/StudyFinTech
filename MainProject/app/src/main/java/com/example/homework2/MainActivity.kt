@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity() {
             true
         }
         supportActionBar?.hide()
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -454,7 +454,7 @@ class ChatFragment : BaseFragment<ChatPresenter, FragmentChatBinding>(), ChatVie
         binding.rcView.apply {
             addOnPageScrollListener({
                 if (isStreamChat) {
-                    presenter.onStreamMessageNextPgeLoadRequest(stream = stream)
+                    presenter.onStreamMessageNextPageLoadRequest(stream = stream)
                 } else {
                     presenter.onTopicMessagesNextPageLoadRequested(stream = stream, topic = topic)
                 }

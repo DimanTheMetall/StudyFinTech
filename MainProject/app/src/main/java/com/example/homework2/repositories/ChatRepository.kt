@@ -66,10 +66,12 @@ interface ChatRepository {
         topic: Topic
     ): Completable
 
-    fun selectMessage(
+    fun selectMessagesToTopic(
         stream: Stream,
         topic: Topic
     ): Single<MutableList<SelectViewTypeClass.Message>>
+
+    fun selectMessagesToStream(stream: Stream): Single<MutableList<SelectViewTypeClass.Message>>
 
     fun deleteMessageFromDB(message: SelectViewTypeClass.Message): Completable
 
@@ -82,6 +84,8 @@ interface ChatRepository {
     fun insertMessageInDB(messageEntity: MessageEntity): Completable
 
     fun deleteMessagesFromTopic(stream: Stream, topic: Topic): Completable
+
+    fun deleteMessagesFromStream(stream: Stream): Completable
 }
 
 class ChatRepositoryImpl @Inject constructor(
@@ -249,12 +253,30 @@ class ChatRepositoryImpl @Inject constructor(
 
     }
 
-    override fun selectMessage(
+    override fun selectMessagesToTopic(
         stream: Stream,
         topic: Topic
     ): Single<MutableList<SelectViewTypeClass.Message>> {
         return database.getMessagesAndReactionDao()
             .selectMessagesAndReactionFromTopic(topicName = topic.name, streamId = stream.streamId)
+            .subscribeOn(Schedulers.io())
+            .map { map ->
+                val resultMessages = mutableListOf<SelectViewTypeClass.Message>()
+                map.keys.forEach { messageEntity ->
+                    val message = messageEntity.toMessage()
+                    val reactionList =
+                        map.getValue(messageEntity).map { it.toReaction() }
+                    message.reactions = reactionList
+                    resultMessages.add(message)
+                }
+                resultMessages
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun selectMessagesToStream(stream: Stream): Single<MutableList<SelectViewTypeClass.Message>> {
+        return database.getMessagesAndReactionDao()
+            .selectMessagesAndReactionFromStream(streamId = stream.streamId)
             .subscribeOn(Schedulers.io())
             .map { map ->
                 val resultMessages = mutableListOf<SelectViewTypeClass.Message>()
@@ -308,6 +330,13 @@ class ChatRepositoryImpl @Inject constructor(
     override fun deleteMessagesFromTopic(stream: Stream, topic: Topic): Completable {
         return database.getMessagesAndReactionDao()
             .deleteAllMessagesFromTopic(streamId = stream.streamId, topicName = topic.name)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun deleteMessagesFromStream(stream: Stream): Completable {
+        return database.getMessagesAndReactionDao()
+            .deleteAllMessagesFromStream(streamId = stream.streamId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }

@@ -77,7 +77,7 @@ interface ChatPresenter : BasePresenter {
 
     fun onTopicMessagePreviousPageLoadRequest(stream: Stream, topic: Topic)
 
-    fun onStreamMessageNextPgeLoadRequest(stream: Stream)
+    fun onStreamMessageNextPageLoadRequest(stream: Stream)
 
     fun onStreamMessagePreviousPgeLoadRequest(stream: Stream)
 
@@ -131,6 +131,8 @@ interface ChatModel : BaseModel {
 
     fun deleteMessagesFromTopic(topic: Topic, stream: Stream): Completable
 
+    fun deleteMessagesFromStream(stream: Stream): Completable
+
     fun loadTopicList(streamId: Int): Single<ResultTopic>
 
     fun loadMessageById(messageId: Long): Single<SelectViewTypeClass.Message>
@@ -173,10 +175,12 @@ interface ChatModel : BaseModel {
         topic: Topic
     ): Completable
 
-    fun getMessageFromDataBase(
+    fun getTopicMessagesFromDB(
         stream: Stream,
         topic: Topic
     ): Single<MutableList<SelectViewTypeClass.Message>>
+
+    fun getStreamMessagesFromDB(stream: Stream): Single<MutableList<SelectViewTypeClass.Message>>
 
     fun editMessageInZulip(message: SelectViewTypeClass.Message): Single<ResultResponse>
 
