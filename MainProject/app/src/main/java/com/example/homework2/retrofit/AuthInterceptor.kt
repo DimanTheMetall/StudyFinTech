@@ -1,5 +1,6 @@
 package com.example.homework2.retrofit
 
+import com.example.homework2.BuildConfig
 import com.example.homework2.Constants
 import okhttp3.Credentials
 import okhttp3.Interceptor
@@ -12,8 +13,8 @@ class AuthInterceptor : Interceptor {
 
         val requestBuilder = original.newBuilder().method(original.method, original.body)
         val authorize = Credentials.basic(
-            "kozlovdiman_je@yahoo.com",
-            "8gN1Cz944LyqukGE6Uw1t9fzIbqCdRje"
+            BuildConfig.ZULIP_EMAIL,
+            BuildConfig.ZULIP_APIKEY
         )
         requestBuilder.header(Constants.AUTHORIZATION_HEADER, authorize)
 

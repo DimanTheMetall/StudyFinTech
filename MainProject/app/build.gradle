@@ -5,6 +5,10 @@ plugins {
     id "kotlin-kapt"
 }
 
+def localProperties = new Properties()
+file("../local.properties").withInputStream { localProperties.load(it) }
+
+
 android {
     compileSdk rootProject.compileSdkVersion
 
@@ -22,6 +26,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+        }
+        debug {
+            buildConfigField("String", "ZULIP_EMAIL", '"' + localProperties.getProperty("zulip.email") + '"')
+            buildConfigField("String", "ZULIP_APIKEY", '"' + localProperties.getProperty("zulip.apikey") + '"')
         }
     }
     compileOptions {
